@@ -9,12 +9,18 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = RedE31, // Primary accent color (for buttons, CTAs)
+    secondary = RedBB0, // Secondary accent color (for hover, highlights)
+    background = Black111, // Background color
+    surface = Black1C1, // Card, modal, and section backgrounds
+    onPrimary = Color.White, // Text color for primary elements
+    onSecondary = Color.White, // Text color for secondary elements
+    onBackground = Color.White, // Text color for background
+    onSurface = Color.White // Text color for surface elements
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -37,7 +43,7 @@ private val LightColorScheme = lightColorScheme(
 fun MovieGoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -51,7 +57,7 @@ fun MovieGoTheme(
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = DarkColorScheme,
         typography = Typography,
         content = content
     )
