@@ -9,6 +9,7 @@ import com.example.moviego.domain.manager.LocalUserManager
 import com.example.moviego.domain.repository.admin.AdminRepository
 import com.example.moviego.domain.repository.user.UserRepository
 import com.example.moviego.domain.usecases.admin_usecases.AdminUseCases
+import com.example.moviego.domain.usecases.admin_usecases.GetAllShows
 import com.example.moviego.domain.usecases.admin_usecases.LoginAdminUseCase
 import com.example.moviego.domain.usecases.admin_usecases.RefreshAdminToken
 import com.example.moviego.domain.usecases.admin_usecases.SignUpAdminUseCase
@@ -103,7 +104,8 @@ class AppModule {
         return  AdminUseCases(
             loginAdminUseCase = LoginAdminUseCase(adminRepository, localUserManager),
             signUpAdminUseCase = SignUpAdminUseCase(adminRepository, localUserManager),
-            refreshAdminToken = RefreshAdminToken(adminRepository,localUserManager)
+            refreshAdminToken = RefreshAdminToken(adminRepository,localUserManager),
+            getAllShows = GetAllShows(adminRepository)
         )
     }
 

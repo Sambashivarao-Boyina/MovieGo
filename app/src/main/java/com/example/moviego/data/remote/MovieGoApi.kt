@@ -3,6 +3,7 @@ package com.example.moviego.data.remote
 import com.example.moviego.data.remote.Dao.AuthResponse
 import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.SignUp
+import com.example.moviego.domain.model.Show
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -22,6 +23,9 @@ interface MovieGoApi {
 
     @GET("api/admin/auth/refreshtoken")
     suspend fun refreshAdminToken():Response<AuthResponse>
+
+    @GET("api/admin/show")
+    suspend fun getAllShows():Response<List<Show>>
 
 
 

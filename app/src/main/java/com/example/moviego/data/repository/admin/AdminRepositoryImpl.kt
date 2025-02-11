@@ -4,6 +4,7 @@ import com.example.moviego.data.remote.Dao.AuthResponse
 import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.MovieGoApi
+import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.repository.admin.AdminRepository
 import retrofit2.Response
 
@@ -21,4 +22,10 @@ class AdminRepositoryImp(
     override suspend fun refreshAdminToken(): Response<AuthResponse> {
         return movieGoApi.refreshAdminToken()
     }
+
+    override suspend fun getAllShows(): Response<List<Show>> {
+        return movieGoApi.getAllShows()
+    }
+
+
 }
