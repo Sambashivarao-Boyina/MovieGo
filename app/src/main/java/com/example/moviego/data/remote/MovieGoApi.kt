@@ -2,12 +2,18 @@ package com.example.moviego.data.remote
 
 import com.example.moviego.data.remote.Dao.AuthResponse
 import com.example.moviego.data.remote.Dao.Login
+import com.example.moviego.data.remote.Dao.NewShow
 import com.example.moviego.data.remote.Dao.SignUp
+import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
+import com.example.moviego.domain.model.ShowDetails
+import com.example.moviego.domain.model.TheaterDetails
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface MovieGoApi {
     //Admin Apis
@@ -27,6 +33,19 @@ interface MovieGoApi {
     @GET("api/admin/show")
     suspend fun getAllShows():Response<List<Show>>
 
+    @GET("api/admin/show/{showId}")
+    suspend fun getShowDetails(@Path("showId") showId:String): Response<ShowDetails>
+
+    @GET("api/admin/movie")
+    suspend fun getAllAdminMovies(): Response<List<Movie>>
+
+    @GET("api/admin/theater")
+    suspend fun getAllAdminTheaters(): Response<List<TheaterDetails>>
+
+    @POST("api/admin/show")
+    suspend fun createShow(
+        @Body show: NewShow
+    ): Response<ResponseBody>
 
 
     //User Apis

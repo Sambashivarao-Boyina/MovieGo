@@ -12,6 +12,8 @@ object Constants {
     const val USER = "User"
     const val BASE_URL = "http://10.0.2.2:3000/"
 
+    const val SHOW_ID = "showId"
+
     fun extractData(responseBody: ResponseBody?, element:String): String? {
         responseBody?.let {
             val responseJson = it.string()

@@ -10,12 +10,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.moviego.domain.model.Show
 import com.example.moviego.presentation.admin.components.ShowCard
+import com.example.moviego.presentation.navgraph.Route
 
 @Composable
 fun AdminShowsScreen(
-    shows:List<Show>
+    shows:List<Show>,
+    navController: NavHostController
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
@@ -23,7 +26,9 @@ fun AdminShowsScreen(
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         items(shows) { show ->
-            ShowCard(show)
+            ShowCard(show = show, onClick = {
+                navController.navigate(Route.AdminShowDetails.passShowId(showId =  show._id))
+            })
         }
     }
 }

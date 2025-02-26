@@ -4,5 +4,9 @@ data class AdminUseCases(
     val loginAdminUseCase: LoginAdminUseCase,
     val signUpAdminUseCase: SignUpAdminUseCase,
     val refreshAdminToken: RefreshAdminToken,
-    val getAllShows: GetAllShows
+    val getAllShows: GetAllShows,
+    val getShowDetails: GetShowDetails,
+    val getAllAdminMovies: GetAllAdminMovies,
+    val getAllAdminTheaters: GetAllAdminTheaters,
+    val createNewShow: CreateNewShow
 )
