@@ -4,6 +4,8 @@ import com.example.moviego.data.remote.Dao.AuthResponse
 import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.NewShow
 import com.example.moviego.data.remote.Dao.SignUp
+import com.example.moviego.data.remote.Dao.UpdateBody
+import com.example.moviego.domain.model.Admin
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.ShowDetails
@@ -12,6 +14,7 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -47,6 +50,17 @@ interface MovieGoApi {
         @Body show: NewShow
     ): Response<ResponseBody>
 
+    //Admin Details
+    @GET("api/admin")
+    suspend fun getAdminDetails(): Response<Admin>
+
+    @PATCH("api/admin/phoneNumber")
+    suspend fun updatePhone(@Body data: UpdateBody): Response<Admin>
+
+    @PATCH("api/admin/password")
+    suspend fun updatePassword(@Body data:UpdateBody): Response<ResponseBody>
+
+
 
     //User Apis
     @POST("api/user/auth/signup")
@@ -61,5 +75,7 @@ interface MovieGoApi {
 
     @GET("api/user/auth/refreshtoken")
     suspend fun refreshUserToken(): Response<AuthResponse>
+
+
 
 }

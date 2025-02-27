@@ -37,4 +37,7 @@ sealed class Route(val route: String) {
     }
 
 
+    object AdminMovies: Route("adminMovies")
+    object AdminTheaters: Route("adminTheaters")
+
 }

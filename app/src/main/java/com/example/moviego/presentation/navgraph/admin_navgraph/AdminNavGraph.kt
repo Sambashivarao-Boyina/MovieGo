@@ -18,10 +18,19 @@ import androidx.navigation.navArgument
 import com.example.moviego.presentation.admin.admin_add_show.AdminAddShowEvent
 import com.example.moviego.presentation.admin.admin_add_show.AdminAddShowScreen
 import com.example.moviego.presentation.admin.admin_add_show.AdminAddShowViewModel
+import com.example.moviego.presentation.admin.admin_details.AdminDetailsEvent
+import com.example.moviego.presentation.admin.admin_details.AdminDetailsScreen
+import com.example.moviego.presentation.admin.admin_details.AdminDetailsViewModel
+import com.example.moviego.presentation.admin.admin_movies.AdminMoviesEvent
+import com.example.moviego.presentation.admin.admin_movies.AdminMoviesScreen
+import com.example.moviego.presentation.admin.admin_movies.AdminMoviesViewModel
 import com.example.moviego.presentation.admin.admin_show_details.AdminShowDetailsScreen
 import com.example.moviego.presentation.admin.admin_show_details.AdminShowDetailsViewModel
 import com.example.moviego.presentation.admin.admin_shows.AdminShowsScreen
 import com.example.moviego.presentation.admin.admin_shows.AdminShowsViewModel
+import com.example.moviego.presentation.admin.admin_theaters.AdminTheatersEvent
+import com.example.moviego.presentation.admin.admin_theaters.AdminTheatersScreen
+import com.example.moviego.presentation.admin.admin_theaters.AdminTheatersViewModel
 import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.util.Constants.SHOW_ID
 
@@ -79,7 +88,58 @@ fun AdminNavGraph(
         }
 
         composable(route = Route.AdminDetails.route) {
+            val adminDetailsViewModel: AdminDetailsViewModel = hiltViewModel()
+            if(adminDetailsViewModel.sideEffect != null) {
+                Toast.makeText(
+                    LocalContext.current,
+                    adminDetailsViewModel.sideEffect,
+                    Toast.LENGTH_SHORT
+                ).show()
+                adminDetailsViewModel.onEvent(AdminDetailsEvent.RemoveSideEffect)
+            }
 
+            AdminDetailsScreen(
+                admin = adminDetailsViewModel.adminDetails,
+                isLoading = adminDetailsViewModel.isLoading,
+                changePhoneNumber = adminDetailsViewModel.changePhoneNumber,
+                changePassword = adminDetailsViewModel.changePassword,
+                onEvent = adminDetailsViewModel::onEvent,
+                navController = navController
+            )
+        }
+
+        composable(route = Route.AdminMovies.route) {
+            val adminMoviesViewModel : AdminMoviesViewModel = hiltViewModel()
+            if(adminMoviesViewModel.sideEffect != null) {
+                Toast.makeText(
+                    LocalContext.current,
+                    adminMoviesViewModel.sideEffect,
+                    Toast.LENGTH_SHORT
+                ).show()
+                adminMoviesViewModel.onEvent(AdminMoviesEvent.RemoveSideEffect)
+            }
+
+            AdminMoviesScreen(
+                movies = adminMoviesViewModel.movies,
+                isLoading = adminMoviesViewModel.isLoading
+            )
+        }
+
+        composable(route = Route.AdminTheaters.route) {
+            val adminTheatersViewModel: AdminTheatersViewModel = hiltViewModel()
+            if(adminTheatersViewModel.sideEffect != null) {
+                Toast.makeText(
+                    LocalContext.current,
+                    adminTheatersViewModel.sideEffect,
+                    Toast.LENGTH_SHORT
+                ).show()
+                adminTheatersViewModel.onEvent(AdminTheatersEvent.RemoveSideEffect)
+            }
+
+            AdminTheatersScreen(
+                theaters = adminTheatersViewModel.theaters,
+                isLoading = adminTheatersViewModel.isLoading
+            )
         }
     }
 }

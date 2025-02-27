@@ -4,7 +4,9 @@ import com.example.moviego.data.remote.Dao.AuthResponse
 import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.NewShow
 import com.example.moviego.data.remote.Dao.SignUp
+import com.example.moviego.data.remote.Dao.UpdateBody
 import com.example.moviego.data.remote.MovieGoApi
+import com.example.moviego.domain.model.Admin
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.ShowDetails
@@ -46,6 +48,18 @@ class AdminRepositoryImp(
 
     override suspend fun createNewShow(newShow: NewShow): Response<ResponseBody> {
         return movieGoApi.createShow(newShow)
+    }
+
+    override suspend fun getAdminDetails(): Response<Admin> {
+        return movieGoApi.getAdminDetails()
+    }
+
+    override suspend fun updatePhoneNumber(data: UpdateBody): Response<Admin> {
+        return movieGoApi.updatePhone(data = data)
+    }
+
+    override suspend fun updatePassword(data: UpdateBody): Response<ResponseBody> {
+        return movieGoApi.updatePassword(data)
     }
 
 
