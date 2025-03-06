@@ -15,6 +15,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.moviego.presentation.admin.admin_add_movie.AdminAddMovieScreen
+import com.example.moviego.presentation.admin.admin_add_movie.AdminAddMovieViewModel
 import com.example.moviego.presentation.admin.admin_add_show.AdminAddShowEvent
 import com.example.moviego.presentation.admin.admin_add_show.AdminAddShowScreen
 import com.example.moviego.presentation.admin.admin_add_show.AdminAddShowViewModel
@@ -28,11 +30,14 @@ import com.example.moviego.presentation.admin.admin_show_details.AdminShowDetail
 import com.example.moviego.presentation.admin.admin_show_details.AdminShowDetailsViewModel
 import com.example.moviego.presentation.admin.admin_shows.AdminShowsScreen
 import com.example.moviego.presentation.admin.admin_shows.AdminShowsViewModel
+import com.example.moviego.presentation.admin.admin_theater_details.AdminTheaterDetailsScreen
+import com.example.moviego.presentation.admin.admin_theater_details.AdminTheaterDetailsViewModel
 import com.example.moviego.presentation.admin.admin_theaters.AdminTheatersEvent
 import com.example.moviego.presentation.admin.admin_theaters.AdminTheatersScreen
 import com.example.moviego.presentation.admin.admin_theaters.AdminTheatersViewModel
 import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.util.Constants.SHOW_ID
+import com.example.moviego.util.Constants.THEATER_ID
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -121,7 +126,8 @@ fun AdminNavGraph(
 
             AdminMoviesScreen(
                 movies = adminMoviesViewModel.movies,
-                isLoading = adminMoviesViewModel.isLoading
+                isLoading = adminMoviesViewModel.isLoading,
+                navController = navController
             )
         }
 
@@ -138,7 +144,36 @@ fun AdminNavGraph(
 
             AdminTheatersScreen(
                 theaters = adminTheatersViewModel.theaters,
-                isLoading = adminTheatersViewModel.isLoading
+                isLoading = adminTheatersViewModel.isLoading,
+                navController = navController
+            )
+        }
+
+        composable(
+            route = Route.AdminTheaterDetails.route,
+            arguments = listOf(navArgument(THEATER_ID) { type = NavType.StringType })
+        ) {backStackEntry ->
+            val theaterId = backStackEntry.arguments?.getString(THEATER_ID) ?: return@composable
+            val adminTheaterDetailsViewModel: AdminTheaterDetailsViewModel = hiltViewModel()
+
+            LaunchedEffect(key1 = theaterId) {
+                adminTheaterDetailsViewModel.initializeTheater(theaterId)
+            }
+
+            AdminTheaterDetailsScreen(
+                theaterDetails = adminTheaterDetailsViewModel.theaterDetails,
+                isLoading = adminTheaterDetailsViewModel.isLoading,
+                navController = navController
+            )
+        }
+
+        composable(route = Route.AdminAddMovie.route) {
+            val adminAddMovieViewModel : AdminAddMovieViewModel = hiltViewModel()
+
+            AdminAddMovieScreen(
+                addMovieState = adminAddMovieViewModel.addMovieState,
+                onEvent = adminAddMovieViewModel::onEvent,
+                isLoading = adminAddMovieViewModel.isLoading
             )
         }
     }

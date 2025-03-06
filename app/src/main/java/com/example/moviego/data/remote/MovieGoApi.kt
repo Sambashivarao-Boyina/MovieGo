@@ -2,6 +2,7 @@ package com.example.moviego.data.remote
 
 import com.example.moviego.data.remote.Dao.AuthResponse
 import com.example.moviego.data.remote.Dao.Login
+import com.example.moviego.data.remote.Dao.NewMovie
 import com.example.moviego.data.remote.Dao.NewShow
 import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
@@ -10,12 +11,14 @@ import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.ShowDetails
 import com.example.moviego.domain.model.TheaterDetails
+import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface MovieGoApi {
@@ -42,8 +45,18 @@ interface MovieGoApi {
     @GET("api/admin/movie")
     suspend fun getAllAdminMovies(): Response<List<Movie>>
 
+    @POST("api/admin/movie")
+    suspend fun addNewMovie(
+        @Body movie: NewMovie,
+        @Part poster: MultipartBody.Part
+    ): Response<ResponseBody>
+
+
     @GET("api/admin/theater")
     suspend fun getAllAdminTheaters(): Response<List<TheaterDetails>>
+
+    @GET("api/admin/theater/{theaterId}")
+    suspend fun getTheaterDetails(@Path("theaterId") theaterId: String): Response<TheaterDetails>
 
     @POST("api/admin/show")
     suspend fun createShow(
@@ -59,6 +72,8 @@ interface MovieGoApi {
 
     @PATCH("api/admin/password")
     suspend fun updatePassword(@Body data:UpdateBody): Response<ResponseBody>
+
+
 
 
 

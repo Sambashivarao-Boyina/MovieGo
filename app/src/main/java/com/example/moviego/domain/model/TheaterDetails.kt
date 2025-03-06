@@ -5,6 +5,7 @@ data class TheaterDetails(
     val address: String,
     val admin: String,
     val city: String,
+    val image: String,
     val contactNumber: String,
     val name: String,
     val pincode: String,

@@ -2,6 +2,7 @@ package com.example.moviego.domain.repository.admin
 
 import com.example.moviego.data.remote.Dao.AuthResponse
 import com.example.moviego.data.remote.Dao.Login
+import com.example.moviego.data.remote.Dao.NewMovie
 import com.example.moviego.data.remote.Dao.NewShow
 import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
@@ -10,6 +11,7 @@ import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.ShowDetails
 import com.example.moviego.domain.model.TheaterDetails
+import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 
@@ -25,4 +27,6 @@ interface AdminRepository {
     suspend fun getAdminDetails(): Response<Admin>
     suspend fun updatePhoneNumber(data: UpdateBody): Response<Admin>
     suspend fun updatePassword(data: UpdateBody): Response<ResponseBody>
+    suspend fun getTheaterDetails(theaterId: String): Response<TheaterDetails>
+    suspend fun addNewMovie(movie: NewMovie, poster: MultipartBody.Part): Response<ResponseBody>
 }

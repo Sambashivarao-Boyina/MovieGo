@@ -8,6 +8,7 @@ import com.example.moviego.data.repository.user.UserRepositoryImpl
 import com.example.moviego.domain.manager.LocalUserManager
 import com.example.moviego.domain.repository.admin.AdminRepository
 import com.example.moviego.domain.repository.user.UserRepository
+import com.example.moviego.domain.usecases.admin_usecases.AddNewMovie
 import com.example.moviego.domain.usecases.admin_usecases.AdminUseCases
 import com.example.moviego.domain.usecases.admin_usecases.CreateNewShow
 import com.example.moviego.domain.usecases.admin_usecases.GetAdminDetails
@@ -15,6 +16,7 @@ import com.example.moviego.domain.usecases.admin_usecases.GetAllAdminMovies
 import com.example.moviego.domain.usecases.admin_usecases.GetAllAdminTheaters
 import com.example.moviego.domain.usecases.admin_usecases.GetAllShows
 import com.example.moviego.domain.usecases.admin_usecases.GetShowDetails
+import com.example.moviego.domain.usecases.admin_usecases.GetTheaterDetails
 import com.example.moviego.domain.usecases.admin_usecases.LogOutAdmin
 import com.example.moviego.domain.usecases.admin_usecases.LoginAdminUseCase
 import com.example.moviego.domain.usecases.admin_usecases.RefreshAdminToken
@@ -121,7 +123,9 @@ class AppModule {
             getAdminDetails = GetAdminDetails(adminRepository),
             updatePhoneNumber = UpdatePhoneNumber(adminRepository),
             updatePassword = UpdatePassword(adminRepository),
-            logOutAdmin = LogOutAdmin(localUserManager)
+            logOutAdmin = LogOutAdmin(localUserManager),
+            getTheaterDetails = GetTheaterDetails(adminRepository),
+            addNewMovie = AddNewMovie(adminRepository)
         )
     }
 

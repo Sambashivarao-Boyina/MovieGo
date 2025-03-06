@@ -13,6 +13,7 @@ object Constants {
     const val BASE_URL = "http://10.0.2.2:3000/"
 
     const val SHOW_ID = "showId"
+    const val THEATER_ID = "theaterId"
 
     fun extractData(responseBody: ResponseBody?, element:String): String? {
         responseBody?.let {
