@@ -23,7 +23,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,8 +42,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.moviego.R
+import com.example.moviego.presentation.admin.components.TopBar
 import com.example.moviego.presentation.authentication.components.InputBox
 import com.example.moviego.presentation.authentication.components.SubmitButton
 import com.example.moviego.ui.theme.Black1C1
@@ -50,7 +55,8 @@ import java.io.File
 fun AdminAddMovieScreen(
     addMovieState: MovieState,
     isLoading: Boolean,
-    onEvent: (AdminAddMovieEvent) -> Unit
+    onEvent: (AdminAddMovieEvent) -> Unit,
+    navController: NavHostController
 ) {
     val context = LocalContext.current
     var permissionGranted by remember { mutableStateOf(false) }
@@ -77,114 +83,133 @@ fun AdminAddMovieScreen(
         }
     )
 
-
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Black1C1, shape = RoundedCornerShape(12.dp))
-                    .clickable {
-                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                            launcher.launch("image/*")
-                        } else {
-                            permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        }
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                if (addMovieState.posterImage != null) {
-                    // Show selected image
-                    Image(
-                        painter = rememberAsyncImagePainter(addMovieState.posterImage),
-                        contentDescription = "Selected Image",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Fit
-                    )
-                } else {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.SpaceEvenly,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(painter = painterResource(R.drawable.upload), contentDescription = null, modifier = Modifier.size(50.dp))
-                        Text(text = "Upload Poster")
+    Scaffold (
+        topBar = {
+            TopBar(
+                title = "Add Movie",
+                navigationBox = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "back",
+                            tint = Color.White
+                        )
                     }
+                }
+            )
+        }
+    ) {
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(it).padding(horizontal = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Black1C1, shape = RoundedCornerShape(12.dp))
+                        .clickable {
+                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                launcher.launch("image/*")
+                            } else {
+                                permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                            }
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (addMovieState.posterImage != null) {
+                        // Show selected image
+                        Image(
+                            painter = rememberAsyncImagePainter(addMovieState.posterImage),
+                            contentDescription = "Selected Image",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Fit
+                        )
+                    } else {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.SpaceEvenly,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(painter = painterResource(R.drawable.upload), contentDescription = null, modifier = Modifier.size(50.dp))
+                            Text(text = "Upload Poster")
+                        }
+                    }
+                }
+
+                if(addMovieState.isPosterImageError.isNotEmpty()) {
+                    Text(
+                        text = addMovieState.isPosterImageError, color = Color.Red, modifier = Modifier.padding(
+                            start = 20.dp, top = 10.dp
+                        )
+                    )
                 }
             }
 
-            if(addMovieState.isPosterImageError.isNotEmpty()) {
-                Text(
-                    text = addMovieState.isPosterImageError, color = Color.Red, modifier = Modifier.padding(
-                        start = 20.dp, top = 10.dp
-                    )
+            item {
+                InputBox(
+                    value = addMovieState.title,
+                    onChange = {
+                        onEvent(AdminAddMovieEvent.UpdateTitle(it))
+                    },
+                    placeHolder = "Enter Movie Name",
+                    keyboardType = KeyboardType.Text,
+                    leadingIcon = {
+                        Icon(painter = painterResource(R.drawable.movie), contentDescription = "movie", modifier = Modifier.size(25.dp))
+                    },
+                    error = addMovieState.isTitleError
+                )
+            }
+            item {
+                InputBox(
+                    value = addMovieState.duration.toString(),
+                    onChange = {
+                        val duration = it.toIntOrNull()
+                        if(duration != null) {
+                            onEvent(AdminAddMovieEvent.UpdateDuration(duration))
+                        } else {
+                            onEvent(AdminAddMovieEvent.UpdateDuration(0))
+                        }
+                    },
+                    placeHolder = "Enter Duration of Movie",
+                    keyboardType = KeyboardType.Number,
+                    leadingIcon = {
+                        Icon(painter = painterResource(R.drawable.time), contentDescription = "duration", modifier = Modifier.size(25.dp))
+                    },
+                    error = addMovieState.isDurationError
+                )
+            }
+            item {
+                InputBox(
+                    value = addMovieState.language,
+                    onChange = {
+                        onEvent(AdminAddMovieEvent.UpdateLanguage(it))
+                    },
+                    placeHolder = "Enter Language",
+                    keyboardType = KeyboardType.Text,
+                    leadingIcon = {
+                        Icon(painter = painterResource(R.drawable.language), contentDescription = "language", modifier = Modifier.size(25.dp))
+                    },
+                    error = addMovieState.isLanguageError
+                )
+            }
+
+            item{
+                SubmitButton(
+                    title = "Add",
+                    loading = isLoading,
+                    onClick = {
+                        onEvent(AdminAddMovieEvent.SubmitMovie)
+                    }
                 )
             }
         }
-
-        item {
-            InputBox(
-                value = addMovieState.title,
-                onChange = {
-                    onEvent(AdminAddMovieEvent.UpdateTitle(it))
-                },
-                placeHolder = "Enter Movie Name",
-                keyboardType = KeyboardType.Text,
-                leadingIcon = {
-                    Icon(painter = painterResource(R.drawable.movie), contentDescription = "movie", modifier = Modifier.size(25.dp))
-                },
-                error = addMovieState.isTitleError
-            )
-        }
-        item {
-            InputBox(
-                value = addMovieState.duration.toString(),
-                onChange = {
-                    val duration = it.toIntOrNull()
-                    if(duration != null) {
-                        onEvent(AdminAddMovieEvent.UpdateDuration(duration))
-                    } else {
-                        onEvent(AdminAddMovieEvent.UpdateDuration(0))
-                    }
-                },
-                placeHolder = "Enter Duration of Movie",
-                keyboardType = KeyboardType.Number,
-                leadingIcon = {
-                    Icon(painter = painterResource(R.drawable.time), contentDescription = "duration", modifier = Modifier.size(25.dp))
-                },
-                error = addMovieState.isDurationError
-            )
-        }
-        item {
-            InputBox(
-                value = addMovieState.language,
-                onChange = {
-                    onEvent(AdminAddMovieEvent.UpdateLanguage(it))
-                },
-                placeHolder = "Enter Language",
-                keyboardType = KeyboardType.Text,
-                leadingIcon = {
-                    Icon(painter = painterResource(R.drawable.language), contentDescription = "language", modifier = Modifier.size(25.dp))
-                },
-                error = addMovieState.isLanguageError
-            )
-        }
-
-        item{
-            SubmitButton(
-                title = "Add",
-                loading = isLoading,
-                onClick = {
-                    onEvent(AdminAddMovieEvent.SubmitMovie)
-                }
-            )
-        }
     }
+
+
 }
 
 fun getFileFromUri(context: Context, uri: Uri): File {

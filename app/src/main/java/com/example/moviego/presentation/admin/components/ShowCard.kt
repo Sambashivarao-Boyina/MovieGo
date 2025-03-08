@@ -1,5 +1,6 @@
 package com.example.moviego.presentation.admin.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,23 +11,32 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviego.R
 import com.example.moviego.domain.model.Show
+import com.example.moviego.ui.theme.RedBB0
 import com.example.moviego.ui.theme.RedE31
 
 @Composable
@@ -44,6 +54,7 @@ fun ShowCard(
         ),
         onClick = onClick
     ) {
+
 
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -64,64 +75,74 @@ fun ShowCard(
             Column(
                 modifier = Modifier
                     .weight(0.6f)
+                    .padding(20.dp)
                     .fillMaxHeight(),
-                verticalArrangement = Arrangement.SpaceEvenly
+                verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                        .weight(0.7f)
+               Column {
+                   Text(
+                       text = show.movie.title,
+                       style = MaterialTheme.typography.titleLarge
+                   )
+                   Row(
+                       modifier = Modifier.height(20.dp),
+                       horizontalArrangement = Arrangement.spacedBy(10.dp)
+                   ) {
+                       Text(
+                           text = show.movie.language,
+                           color = Color.Gray
+                       )
+                       VerticalDivider(color = Color.White)
+                       Text(
+                           text = "${show.movie.duration} min",
+                           color = Color.Gray
+                       )
+                   }
+               }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(9.dp)
                 ) {
-                    Text(
-                        text = show.movie.title,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                        color = RedE31,
-                        style = MaterialTheme.typography.headlineSmall
+                    Icon(
+                        painter = painterResource(R.drawable.location),
+                        tint = RedE31,
+                        contentDescription = null,
+                        modifier = Modifier.size(17.dp)
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Column {
-                            Text("Theater")
-                            Text("Screen")
-                            Text("Ticket")
-                        }
-                        Column {
-                            for(i in 1..3) {
-                                Text(":")
-                            }
-                        }
-                        Column {
-                            Text("${show.theater.name}")
-                            Text("${show.screen.screenName}")
-                            Text(text = "₹ ${show.ticketCost}", color = RedE31)
-                        }
-                    }
-
+                    Text(text = show.theater.name)
                 }
 
-
-
-                HorizontalDivider()
                 Row(
-                    modifier = Modifier
-                        .weight(0.3f)
-                        .fillMaxWidth()
-                        .padding(5.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.spacedBy(9.dp)
                 ) {
-                    Text(
-                        text = show.date,
-                        modifier = Modifier.weight(0.5f),
-                        textAlign = TextAlign.Center
+                    Icon(
+                        painter = painterResource(R.drawable.calender),
+                        tint = RedE31,
+                        contentDescription = null,
+                        modifier = Modifier.size(17.dp)
                     )
-                    VerticalDivider()
-                    Text(
-                        text = show.showTime,
-                        modifier = Modifier.weight(0.5f),
-                        textAlign = TextAlign.Center
+                    Text(text = show.date)
+                }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.clock_outline),
+                        tint = RedE31,
+                        contentDescription = null,
+                        modifier = Modifier.size(17.dp)
                     )
+                    Text(text = show.showTime)
+                }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.movie),
+                        tint = RedE31,
+                        contentDescription = null,
+                        modifier = Modifier.size(17.dp)
+                    )
+                    Text(text ="${show.screen.screenName} (${show.screen.screenType})")
                 }
             }
         }

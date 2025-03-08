@@ -9,8 +9,10 @@ import com.example.moviego.domain.manager.LocalUserManager
 import com.example.moviego.domain.repository.admin.AdminRepository
 import com.example.moviego.domain.repository.user.UserRepository
 import com.example.moviego.domain.usecases.admin_usecases.AddNewMovie
+import com.example.moviego.domain.usecases.admin_usecases.AddNewScreen
 import com.example.moviego.domain.usecases.admin_usecases.AdminUseCases
 import com.example.moviego.domain.usecases.admin_usecases.CreateNewShow
+import com.example.moviego.domain.usecases.admin_usecases.EditScreen
 import com.example.moviego.domain.usecases.admin_usecases.GetAdminDetails
 import com.example.moviego.domain.usecases.admin_usecases.GetAllAdminMovies
 import com.example.moviego.domain.usecases.admin_usecases.GetAllAdminTheaters
@@ -125,7 +127,9 @@ class AppModule {
             updatePassword = UpdatePassword(adminRepository),
             logOutAdmin = LogOutAdmin(localUserManager),
             getTheaterDetails = GetTheaterDetails(adminRepository),
-            addNewMovie = AddNewMovie(adminRepository)
+            addNewMovie = AddNewMovie(adminRepository),
+            addNewScreen = AddNewScreen(adminRepository),
+            editScreen = EditScreen(adminRepository)
         )
     }
 

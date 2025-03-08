@@ -14,5 +14,7 @@ data class AdminUseCases(
     val updatePassword: UpdatePassword,
     val logOutAdmin: LogOutAdmin,
     val getTheaterDetails: GetTheaterDetails,
-    val addNewMovie: AddNewMovie
+    val addNewMovie: AddNewMovie,
+    val addNewScreen: AddNewScreen,
+    val editScreen: EditScreen
 )

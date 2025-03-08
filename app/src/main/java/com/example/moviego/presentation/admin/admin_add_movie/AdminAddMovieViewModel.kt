@@ -5,9 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.moviego.data.remote.Dao.NewMovie
 import com.example.moviego.domain.usecases.admin_usecases.AdminUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -16,6 +18,9 @@ import javax.inject.Inject
 class AdminAddMovieViewModel @Inject constructor(
     private val adminUseCases: AdminUseCases
 ): ViewModel() {
+
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
     var sideEffect by mutableStateOf<String?>(null)
         private set
 
@@ -42,7 +47,10 @@ class AdminAddMovieViewModel @Inject constructor(
                 }
             }
             is AdminAddMovieEvent.UpdatePosterImage ->  {
-                addMovieState = addMovieState.copy(posterImage = event.file)
+                addMovieState = addMovieState.copy(posterImage = event.file, isPosterImageError = "")
+            }
+            AdminAddMovieEvent.RemoveSideEffect -> {
+                sideEffect = null
             }
         }
     }
@@ -73,9 +81,26 @@ class AdminAddMovieViewModel @Inject constructor(
     private fun subMitMovie() {
         viewModelScope.launch {
             isLoading = true
-
+            val result = adminUseCases.addNewMovie(
+                movie = NewMovie(
+                    title = addMovieState.title,
+                    language = addMovieState.language,
+                    duration = addMovieState.duration
+                ),
+                poster = addMovieState.posterImage!!
+            )
+            if(result.isSuccess) {
+                sideEffect = result.getOrElse { "Movie Created Successfully" }
+                _eventFlow.emit(UiEvent.Success)
+            } else {
+                sideEffect = result.exceptionOrNull()?.message
+            }
             isLoading = false
         }
+    }
+
+    sealed class UiEvent {
+        data object Success : UiEvent()
     }
 
 }
@@ -83,7 +108,7 @@ class AdminAddMovieViewModel @Inject constructor(
 data class MovieState(
     val title: String = "",
     val isTitleError: String = "",
-    val duration: Number = 0,
+    val duration: Int = 0,
     val isDurationError: String = "",
     val language: String = "",
     val isLanguageError: String = "",
@@ -91,10 +116,12 @@ data class MovieState(
     val isPosterImageError: String = ""
 )
 
+
 sealed class AdminAddMovieEvent {
     data class UpdateTitle(var title: String): AdminAddMovieEvent()
     data class UpdateDuration(var duration: Int): AdminAddMovieEvent()
     data class UpdateLanguage(var language: String): AdminAddMovieEvent()
     data class UpdatePosterImage(var file: File): AdminAddMovieEvent()
     data object SubmitMovie: AdminAddMovieEvent()
+    data object RemoveSideEffect: AdminAddMovieEvent()
 }

@@ -15,14 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-
 @Composable
 fun InputBox(
-    value:String,
-    onChange:(String)->Unit,
-    placeHolder:String,
-    error:String = "",
-    leadingIcon: @Composable () -> Unit,
+    value: String,
+    onChange: (String) -> Unit,
+    placeHolder: String,
+    error: String = "",
+    leadingIcon: (@Composable () -> Unit)? = null,
     keyboardType: KeyboardType
 ) {
     Column {
@@ -31,9 +30,7 @@ fun InputBox(
             onValueChange = onChange,
             modifier = Modifier.fillMaxWidth(),
             shape = CircleShape,
-            leadingIcon = {
-                leadingIcon()
-            },
+            leadingIcon = leadingIcon?.let { { it() } }, // Only add if not null
             placeholder = {
                 Text(text = placeHolder)
             },
@@ -46,9 +43,8 @@ fun InputBox(
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType
             )
-
         )
-        if(error.isNotEmpty()) {
+        if (error.isNotEmpty()) {
             Text(
                 text = error, color = Color.Red, modifier = Modifier.padding(
                     start = 20.dp, top = 10.dp

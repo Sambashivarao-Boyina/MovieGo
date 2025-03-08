@@ -3,6 +3,7 @@ package com.example.moviego.data.repository.admin
 import com.example.moviego.data.remote.Dao.AuthResponse
 import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.NewMovie
+import com.example.moviego.data.remote.Dao.NewScreen
 import com.example.moviego.data.remote.Dao.NewShow
 import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
@@ -14,6 +15,7 @@ import com.example.moviego.domain.model.ShowDetails
 import com.example.moviego.domain.model.TheaterDetails
 import com.example.moviego.domain.repository.admin.AdminRepository
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 
@@ -69,10 +71,24 @@ class AdminRepositoryImp(
     }
 
     override suspend fun addNewMovie(
-        movie: NewMovie,
+        movie: RequestBody,
         poster: MultipartBody.Part
     ): Response<ResponseBody> {
         return movieGoApi.addNewMovie(movie = movie,poster = poster)
+    }
+
+    override suspend fun createNewScreen(
+        theaterId: String,
+        newScreen: NewScreen
+    ): Response<TheaterDetails> {
+        return  movieGoApi.createNewScreen(theaterId = theaterId, newScreen = newScreen)
+    }
+
+    override suspend fun editScreen(
+        screenId: String,
+        editScreen: NewScreen
+    ): Response<TheaterDetails> {
+        return movieGoApi.editScreen(screenId = screenId, editScreen = editScreen)
     }
 
 

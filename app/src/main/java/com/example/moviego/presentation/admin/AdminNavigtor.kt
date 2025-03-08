@@ -1,5 +1,6 @@
 package com.example.moviego.presentation.admin
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import com.example.moviego.presentation.components.BottomNavItem
 import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.presentation.navgraph.admin_navgraph.AdminNavGraph
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AdminNavigator() {
@@ -58,7 +60,7 @@ fun AdminNavigator() {
         }
     ) {
         Column(
-            modifier = Modifier.padding(it).fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             AdminNavGraph(navController = navController)
         }
