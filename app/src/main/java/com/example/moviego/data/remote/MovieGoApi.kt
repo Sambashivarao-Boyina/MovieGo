@@ -5,12 +5,14 @@ import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.NewMovie
 import com.example.moviego.data.remote.Dao.NewScreen
 import com.example.moviego.data.remote.Dao.NewShow
+import com.example.moviego.data.remote.Dao.NewTheater
 import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
 import com.example.moviego.domain.model.Admin
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.ShowDetails
+import com.example.moviego.domain.model.Theater
 import com.example.moviego.domain.model.TheaterDetails
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -54,6 +56,13 @@ interface MovieGoApi {
     suspend fun addNewMovie(
         @Part poster: MultipartBody.Part,
         @Part("movie") movie: RequestBody
+    ): Response<ResponseBody>
+
+    @Multipart
+    @POST("api/admin/theater")
+    suspend fun addNewTheater(
+        @Part image: MultipartBody.Part,
+        @Part("theater") theater:RequestBody
     ): Response<ResponseBody>
 
 

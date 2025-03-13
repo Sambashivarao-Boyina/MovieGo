@@ -1,5 +1,6 @@
 package com.example.moviego.presentation.components
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.os.Build
 import android.widget.DatePicker
@@ -27,16 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.moviego.R
 import java.util.Calendar
-
+@SuppressLint("DefaultLocale")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DatePicker(
     selectedDate: String,
     onSelected: (date: String) -> Unit,
     error: String,
+    allowPastDates: Boolean = false,
 ) {
-
-
     val calendar = Calendar.getInstance()
     val currentYear = calendar.get(Calendar.YEAR)
     val currentMonth = calendar.get(Calendar.MONTH)
@@ -45,18 +45,21 @@ fun DatePicker(
     val datePickerDialog = DatePickerDialog(
         LocalContext.current,
         { _, year, month, dayOfMonth ->
-            onSelected("$dayOfMonth-${month + 1}-$year")
+            val formattedDate = String.format("%02d-%02d-%d", dayOfMonth, month + 1, year)
+            onSelected(formattedDate)
         },
         currentYear,
         currentMonth,
         currentDay
     ).apply {
-        datePicker.minDate = calendar.timeInMillis // Only allow future dates
+        if (!allowPastDates) {
+            datePicker.minDate = calendar.timeInMillis
+        }
     }
 
     Column(
         modifier = Modifier.fillMaxWidth()
-    ){
+    ) {
         Text(
             text = selectedDate.ifEmpty { "Select the Date" },
             modifier = Modifier
@@ -72,15 +75,12 @@ fun DatePicker(
                 .padding(20.dp)
         )
 
-        if(error.isNotEmpty()) {
+        if (error.isNotEmpty()) {
             Text(
-                text = error, color = Color.Red, modifier = Modifier.padding(
-                    start = 20.dp, top = 10.dp
-                )
+                text = error,
+                color = Color.Red,
+                modifier = Modifier.padding(start = 20.dp, top = 10.dp)
             )
         }
     }
-
-
-
 }

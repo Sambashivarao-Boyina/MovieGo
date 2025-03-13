@@ -60,7 +60,7 @@ fun AdminNavigator() {
         }
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().padding(bottom = it.calculateBottomPadding())
         ) {
             AdminNavGraph(navController = navController)
         }

@@ -5,6 +5,7 @@ import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.NewMovie
 import com.example.moviego.data.remote.Dao.NewScreen
 import com.example.moviego.data.remote.Dao.NewShow
+import com.example.moviego.data.remote.Dao.NewTheater
 import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
 import com.example.moviego.data.remote.MovieGoApi
@@ -18,6 +19,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
+import java.io.File
 
 class AdminRepositoryImp(
     private val movieGoApi: MovieGoApi
@@ -91,5 +93,10 @@ class AdminRepositoryImp(
         return movieGoApi.editScreen(screenId = screenId, editScreen = editScreen)
     }
 
-
+    override suspend fun addNewTheater(
+        image: MultipartBody.Part,
+        newTheater: RequestBody
+    ): Response<ResponseBody> {
+        return movieGoApi.addNewTheater(image = image, theater = newTheater)
+    }
 }

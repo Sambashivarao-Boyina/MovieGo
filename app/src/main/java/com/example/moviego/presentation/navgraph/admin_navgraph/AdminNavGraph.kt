@@ -55,7 +55,10 @@ fun AdminNavGraph(
             val adminShowsViewModel: AdminShowsViewModel = hiltViewModel()
             AdminShowsScreen(
                 shows = adminShowsViewModel.shows.value,
-                navController = navController
+                onEvent = adminShowsViewModel::onEvent,
+                navController = navController,
+                selectedFilters = adminShowsViewModel.selectedFilters,
+                filterOptions = adminShowsViewModel.filterOptions
             )
         }
 

@@ -43,7 +43,7 @@ fun BottomBar(
     Row(
         modifier = Modifier
             .background(Black111)
-            .padding(vertical = 10.dp)
+            .padding(bottom = 10.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
@@ -51,7 +51,7 @@ fun BottomBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
-                .height(70.dp)
+                .height(60.dp)
                 .clip(RoundedCornerShape(50.dp))
                 .background(
                     Black1C1

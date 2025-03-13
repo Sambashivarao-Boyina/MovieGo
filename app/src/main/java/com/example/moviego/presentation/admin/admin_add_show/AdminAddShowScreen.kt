@@ -66,7 +66,7 @@ fun AdminAddShowScreen(
         Column(
             modifier = Modifier
                 .padding(it)
-                .fillMaxHeight()
+                .fillMaxSize()
         ) {
             Box(modifier = Modifier.weight(0.05f)) {
                 Text(
@@ -79,7 +79,7 @@ fun AdminAddShowScreen(
             }
 
             LazyColumn(
-                modifier = Modifier.weight(0.8f).padding(horizontal = 10.dp) ,
+                modifier = Modifier.weight(0.85f).padding(horizontal = 10.dp) ,
                 verticalArrangement = Arrangement.Top
             ) {
                 item {
@@ -196,7 +196,7 @@ fun AdminAddShowScreen(
 
 
             Box(
-                modifier = Modifier.weight(0.15f)
+                modifier = Modifier.weight(0.1f)
                     .padding(10.dp)
             ) {
                 SubmitButton(

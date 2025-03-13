@@ -4,6 +4,7 @@ import com.example.moviego.data.remote.Dao.AuthResponse
 import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.NewScreen
 import com.example.moviego.data.remote.Dao.NewShow
+import com.example.moviego.data.remote.Dao.NewTheater
 import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
 import com.example.moviego.domain.model.Admin
@@ -15,6 +16,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
+import java.io.File
 
 interface AdminRepository {
     suspend fun loginAdmin(admin: Login): Response<AuthResponse>
@@ -32,4 +34,5 @@ interface AdminRepository {
     suspend fun addNewMovie(movie: RequestBody, poster: MultipartBody.Part): Response<ResponseBody>
     suspend fun createNewScreen(theaterId: String, newScreen: NewScreen): Response<TheaterDetails>
     suspend fun editScreen(screenId: String, editScreen: NewScreen): Response<TheaterDetails>
+    suspend fun addNewTheater(image: MultipartBody.Part, newTheater: RequestBody): Response<ResponseBody>
 }

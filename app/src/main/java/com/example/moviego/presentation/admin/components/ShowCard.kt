@@ -36,6 +36,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviego.R
 import com.example.moviego.domain.model.Show
+import com.example.moviego.ui.theme.Black111
+import com.example.moviego.ui.theme.Black161
 import com.example.moviego.ui.theme.RedBB0
 import com.example.moviego.ui.theme.RedE31
 
@@ -47,15 +49,13 @@ fun ShowCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
+            .height(240.dp)
             .clickable { },
         colors = CardDefaults.cardColors().copy(
             containerColor = MaterialTheme.colorScheme.surface
         ),
         onClick = onClick
     ) {
-
-
         Row(
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -79,26 +79,26 @@ fun ShowCard(
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-               Column {
-                   Text(
-                       text = show.movie.title,
-                       style = MaterialTheme.typography.titleLarge
-                   )
-                   Row(
-                       modifier = Modifier.height(20.dp),
-                       horizontalArrangement = Arrangement.spacedBy(10.dp)
-                   ) {
-                       Text(
-                           text = show.movie.language,
-                           color = Color.Gray
-                       )
-                       VerticalDivider(color = Color.White)
-                       Text(
-                           text = "${show.movie.duration} min",
-                           color = Color.Gray
-                       )
-                   }
-               }
+                Column {
+                    Text(
+                        text = show.movie.title,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Row(
+                        modifier = Modifier.height(20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Text(
+                            text = show.movie.language,
+                            color = Color.Gray
+                        )
+                        VerticalDivider(color = Color.White)
+                        Text(
+                            text = "${show.movie.duration} min",
+                            color = Color.Gray
+                        )
+                    }
+                }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(9.dp)
                 ) {
@@ -143,6 +143,32 @@ fun ShowCard(
                         modifier = Modifier.size(17.dp)
                     )
                     Text(text ="${show.screen.screenName} (${show.screen.screenType})")
+                }
+                Spacer(modifier = Modifier.height(5.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth().clip(
+                        RoundedCornerShape(10.dp)
+                    ).background(Black161).padding(5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Column(
+                        modifier = Modifier.weight(0.45f),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = "\u20B9 ${show.ticketCost}", color = RedE31)
+                        Text(text = "Ticket Cost",style = MaterialTheme.typography.labelLarge, color = Color.Gray)
+                    }
+                    VerticalDivider(color = Color.Gray)
+                    Column(
+                        modifier = Modifier.weight(0.45f),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = "${show.bookedSeatsCount}", color = RedE31)
+                        Text(text = "Booked Seats", style = MaterialTheme.typography.labelLarge, color = Color.Gray)
+                    }
                 }
             }
         }
