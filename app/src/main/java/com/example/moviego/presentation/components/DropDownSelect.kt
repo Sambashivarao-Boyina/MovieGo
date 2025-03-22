@@ -16,6 +16,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +26,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.moviego.ui.theme.Black1C1
 
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropDownSelect(
@@ -32,21 +36,33 @@ fun DropDownSelect(
     onSelect: (DropDownItem) -> Unit,
     error: String,
     unAvailableMessage: String,
+    unSelectedMessage: String = "No Option Selected",
+    initialValue: DropDownItem? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember(items) { mutableStateOf<DropDownItem?>(null) }
+    var selectedItem by remember { mutableStateOf(initialValue) }
+
+    // Sync selectedItem with initialValue if it changes
+    val currentItem by remember(initialValue) {
+        derivedStateOf { initialValue }
+    }
+
+    // Update selectedItem when initialValue changes
+    if (selectedItem != currentItem) {
+        selectedItem = currentItem
+    }
 
     Column {
         ExposedDropdownMenuBox(
             expanded = expanded,
-            onExpandedChange = { if (items.isNotEmpty()) expanded = it } // Only expand if items exist
+            onExpandedChange = { if (items.isNotEmpty()) expanded = it }
         ) {
             OutlinedTextField(
-                value = selectedItem?.title ?: if (items.isEmpty()) unAvailableMessage else "No Option Selected" ,
+                value = selectedItem?.title ?: if (items.isEmpty()) unAvailableMessage else unSelectedMessage,
                 onValueChange = {},
                 readOnly = true,
                 placeholder = { Text("Choose an option") },
-                enabled = items.isNotEmpty(), // Disable TextField if empty
+                enabled = items.isNotEmpty(),
                 modifier = Modifier.menuAnchor().fillMaxWidth(),
                 colors = TextFieldDefaults.colors().copy(
                     focusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -63,7 +79,8 @@ fun DropDownSelect(
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(Black1C1)
             ) {
                 items.forEach { item ->
@@ -90,8 +107,7 @@ fun DropDownSelect(
     }
 }
 
-
 data class DropDownItem(
-    val title:String,
+    val title: String,
     val ref: String
 )

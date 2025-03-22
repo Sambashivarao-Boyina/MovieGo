@@ -14,6 +14,7 @@ import com.example.moviego.domain.usecases.admin_usecases.AddNewTheater
 import com.example.moviego.domain.usecases.admin_usecases.AdminUseCases
 import com.example.moviego.domain.usecases.admin_usecases.CreateNewShow
 import com.example.moviego.domain.usecases.admin_usecases.EditScreen
+import com.example.moviego.domain.usecases.admin_usecases.EditTheater
 import com.example.moviego.domain.usecases.admin_usecases.GetAdminDetails
 import com.example.moviego.domain.usecases.admin_usecases.GetAllAdminMovies
 import com.example.moviego.domain.usecases.admin_usecases.GetAllAdminTheaters
@@ -117,7 +118,7 @@ class AppModule {
         return  AdminUseCases(
             loginAdminUseCase = LoginAdminUseCase(adminRepository, localUserManager),
             signUpAdminUseCase = SignUpAdminUseCase(adminRepository, localUserManager),
-            refreshAdminToken = RefreshAdminToken(adminRepository,localUserManager),
+            refreshAdminToken = RefreshAdminToken(adminRepository, localUserManager),
             getAllShows = GetAllShows(adminRepository),
             getShowDetails = GetShowDetails(adminRepository),
             getAllAdminMovies = GetAllAdminMovies(adminRepository),
@@ -131,7 +132,8 @@ class AppModule {
             addNewMovie = AddNewMovie(adminRepository),
             addNewScreen = AddNewScreen(adminRepository),
             editScreen = EditScreen(adminRepository),
-            addNewTheater = AddNewTheater(adminRepository)
+            addNewTheater = AddNewTheater(adminRepository),
+            editTheater = EditTheater(adminRepository)
         )
     }
 

@@ -1,35 +1,21 @@
 package com.example.moviego.presentation.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.moviego.R
-import com.example.moviego.presentation.navgraph.Route
-import com.example.moviego.ui.theme.Black111
-import com.example.moviego.ui.theme.Black161
 import com.example.moviego.ui.theme.Black1C1
-import com.example.moviego.ui.theme.RedBB0
+import com.example.moviego.ui.theme.RedE31
 
 @Composable
 fun BottomBar(
@@ -40,30 +26,13 @@ fun BottomBar(
     val currentRoute = remember(key1 = backstack) {
         backstack?.destination?.route
     }
-    Row(
-        modifier = Modifier
-            .background(Black111)
-            .padding(bottom = 10.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .height(60.dp)
-                .clip(RoundedCornerShape(50.dp))
-                .background(
-                    Black1C1
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            navItems.forEach { item ->
+    BottomAppBar(
+        actions = {
+            navItems.map {
                 NavigationBarItem(
-                    selected = item.route == currentRoute,
+                    selected = currentRoute === it.route,
                     onClick = {
-                        navController.navigate(item.route) {
+                        navController.navigate(it.route) {
                             navController.graph.startDestinationRoute?.let { homeScreen ->
                                 popUpTo(homeScreen) {
                                     saveState = true
@@ -73,20 +42,24 @@ fun BottomBar(
                             }
                         }
                     },
+                    label = {
+                        Text(text = it.label)
+                    },
                     icon = {
-                        Icon(painter = painterResource(item.icon), contentDescription = null, modifier = Modifier.size(35.dp))
+                        Icon(painter = painterResource(it.icon), contentDescription = it.label,modifier = Modifier.size(30.dp))
                     },
                     colors = NavigationBarItemDefaults.colors().copy(
-                        selectedIconColor = RedBB0,
-                        selectedTextColor = RedBB0,
-                        unselectedIconColor = Color.Gray,
-                        unselectedTextColor = Color.Gray,
-                        selectedIndicatorColor = Color.Transparent
+                        selectedTextColor = RedE31,
+                        selectedIconColor = RedE31,
+                        selectedIndicatorColor = RedE31.copy(alpha = 0.1f)
                     )
                 )
             }
-        }
-    }
+        },
+        containerColor = Black1C1,
+        tonalElevation = 0.dp,
+        contentColor = Color.Red
+    )
 }
 
 data class BottomNavItem(val route:String, val icon: Int, val label:String)

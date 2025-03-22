@@ -22,6 +22,7 @@ fun SubmitButton(
     onClick:()->Unit
 ) {
     Button(
+        enabled = !loading,
         onClick = onClick,
         modifier = Modifier.fillMaxWidth()
             .height(50.dp),

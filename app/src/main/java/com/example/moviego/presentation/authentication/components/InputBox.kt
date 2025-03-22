@@ -22,11 +22,13 @@ fun InputBox(
     placeHolder: String,
     error: String = "",
     leadingIcon: (@Composable () -> Unit)? = null,
-    keyboardType: KeyboardType
+    keyboardType: KeyboardType,
+    singleLine: Boolean = true
 ) {
     Column {
         OutlinedTextField(
             value = value,
+            singleLine = singleLine,
             onValueChange = onChange,
             modifier = Modifier.fillMaxWidth(),
             shape = CircleShape,

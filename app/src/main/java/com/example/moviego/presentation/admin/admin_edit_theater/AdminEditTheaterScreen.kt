@@ -1,4 +1,4 @@
-package com.example.moviego.presentation.admin.admin_add_theater
+package com.example.moviego.presentation.admin.admin_edit_theater
 
 import android.Manifest
 import android.net.Uri
@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.moviego.R
+import com.example.moviego.presentation.admin.admin_add_theater.states
 import com.example.moviego.presentation.admin.components.TopBar
 import com.example.moviego.presentation.authentication.components.InputBox
 import com.example.moviego.presentation.authentication.components.SubmitButton
@@ -53,14 +54,13 @@ import com.example.moviego.ui.theme.Black1C1
 import com.example.moviego.util.Constants.getFileFromUri
 
 @Composable
-fun AdminAddTheaterScreen(
-    newTheaterState: NewTheaterState,
-    onEvent: (AdminAddTheaterEvent) -> Unit,
-    navController: NavHostController,
+fun AdminEditTheaterScreen(
+    editTheaterState: EditTheaterState,
     isLoading: Boolean,
-    isSuccess: Boolean
+    onEvent: (AdminEditTheaterEvent) -> Unit,
+    isSuccess: Boolean,
+    navController: NavHostController
 ) {
-
     val context = LocalContext.current
     var permissionGranted by remember { mutableStateOf(false) }
 
@@ -75,7 +75,7 @@ fun AdminAddTheaterScreen(
         onResult = { uri: Uri? ->
             uri?.let {
                 val file = getFileFromUri(context, uri)
-                onEvent(AdminAddTheaterEvent.UpdateImage(file))
+                onEvent(AdminEditTheaterEvent.UpdateImage(file))
             }
 
         }
@@ -121,12 +121,12 @@ fun AdminAddTheaterScreen(
             ) {
                 item {
                     InputBox(
-                        value = newTheaterState.name,
+                        value = editTheaterState.name,
                         onChange = {
-                            onEvent(AdminAddTheaterEvent.UpdateName(it))
+                            onEvent(AdminEditTheaterEvent.UpdateName(it))
                         },
                         placeHolder = "Enter Name",
-                        error = newTheaterState.nameError,
+                        error = editTheaterState.nameError,
                         leadingIcon = null,
                         keyboardType = KeyboardType.Text,
                     )
@@ -134,12 +134,12 @@ fun AdminAddTheaterScreen(
 
                 item {
                     InputBox(
-                        value = newTheaterState.contactNumber,
+                        value = editTheaterState.contactNumber,
                         onChange = {
-                            onEvent(AdminAddTheaterEvent.UpdateContactNumber(it))
+                            onEvent(AdminEditTheaterEvent.UpdateContactNumber(it))
                         },
                         placeHolder = "Enter Contact Number",
-                        error = newTheaterState.contactNumberError,
+                        error = editTheaterState.contactNumberError,
                         leadingIcon = null,
                         keyboardType = KeyboardType.Phone,
                     )
@@ -154,22 +154,26 @@ fun AdminAddTheaterScreen(
                             )
                         },
                         onSelect = {
-                            onEvent(AdminAddTheaterEvent.UpdateState(it.title))
+                            onEvent(AdminEditTheaterEvent.UpdateState(it.title))
                         },
-                        error = newTheaterState.stateError,
+                        error = editTheaterState.stateError,
                         unAvailableMessage = "Select the State",
-                        unSelectedMessage = "Select the State"
+                        unSelectedMessage = "Select the State",
+                        initialValue = DropDownItem(
+                            title = editTheaterState.state,
+                            ref = editTheaterState.state
+                        )
                     )
                 }
 
                 item {
                     InputBox(
-                        value = newTheaterState.pincode,
+                        value = editTheaterState.pincode,
                         onChange = {
-                            onEvent(AdminAddTheaterEvent.UpdatePincode(it))
+                            onEvent(AdminEditTheaterEvent.UpdatePincode(it))
                         },
                         placeHolder = "Enter PinCode",
-                        error = newTheaterState.pincodeError,
+                        error = editTheaterState.pincodeError,
                         leadingIcon = null,
                         keyboardType = KeyboardType.Number,
                     )
@@ -177,12 +181,12 @@ fun AdminAddTheaterScreen(
 
                 item {
                     InputBox(
-                        value = newTheaterState.city,
+                        value = editTheaterState.city,
                         onChange = {
-                            onEvent(AdminAddTheaterEvent.UpdateCity(it))
+                            onEvent(AdminEditTheaterEvent.UpdateCity(it))
                         },
                         placeHolder = "Enter City",
-                        error = newTheaterState.cityError,
+                        error = editTheaterState.cityError,
                         leadingIcon = null,
                         keyboardType = KeyboardType.Text
                     )
@@ -190,12 +194,12 @@ fun AdminAddTheaterScreen(
 
                 item {
                     InputBox(
-                        value = newTheaterState.address,
+                        value = editTheaterState.address,
                         onChange = {
-                            onEvent(AdminAddTheaterEvent.UpdateAddress(it))
+                            onEvent(AdminEditTheaterEvent.UpdateAddress(it))
                         },
                         placeHolder = "Enter Address",
-                        error = newTheaterState.addressError,
+                        error = editTheaterState.addressError,
                         leadingIcon = null,
                         keyboardType = KeyboardType.Text,
                     )
@@ -217,10 +221,10 @@ fun AdminAddTheaterScreen(
                             },
                         contentAlignment = Alignment.Center
                     ) {
-                        if (newTheaterState.image != null) {
+                        if (editTheaterState.image != null) {
                             // Show selected image
                             Image(
-                                painter = rememberAsyncImagePainter(newTheaterState.image),
+                                painter = rememberAsyncImagePainter(editTheaterState.image),
                                 contentDescription = "Selected Image",
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Fit
@@ -237,9 +241,9 @@ fun AdminAddTheaterScreen(
                         }
                     }
 
-                    if(newTheaterState.imageError.isNotEmpty()) {
+                    if(editTheaterState.imageError.isNotEmpty()) {
                         Text(
-                            text = newTheaterState.imageError, color = Color.Red, modifier = Modifier.padding(
+                            text = editTheaterState.imageError, color = Color.Red, modifier = Modifier.padding(
                                 start = 20.dp, top = 10.dp
                             )
                         )
@@ -250,7 +254,7 @@ fun AdminAddTheaterScreen(
             Spacer(Modifier.height(20.dp))
             SubmitButton(
                 onClick = {
-                    onEvent(AdminAddTheaterEvent.SubmitNewTheater)
+                    onEvent(AdminEditTheaterEvent.SubmitEditTheater)
                 },
                 loading = isLoading,
                 title = "Submit"
@@ -258,40 +262,3 @@ fun AdminAddTheaterScreen(
         }
     }
 }
-
-var states: Array<String> = arrayOf("Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
-    "Andaman and Nicobar Islands",
-    "Chandigarh",
-    "Dadra and Nagar Haveli and Daman and Diu",
-    "Lakshadweep",
-    "Delhi",
-    "Puducherry",
-    "Ladakh",
-    "Jammu and Kashmir")

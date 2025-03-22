@@ -10,24 +10,28 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
-class AddNewTheater (
+class EditTheater (
     private val adminRepository: AdminRepository
 ) {
-    suspend operator fun invoke(image: File, newTheater: NewTheater): Result<String> {
+    suspend operator fun invoke(theaterId: String, image: File?, editTheater: NewTheater): Result<String> {
         return try {
-            val requestFile = image.asRequestBody("image/*".toMediaTypeOrNull())
-            val body = MultipartBody.Part.createFormData("image",image.name, requestFile )
+
+            var body: MultipartBody.Part? = null
+            image?.let {
+                val requestFile = image.asRequestBody("image/*".toMediaTypeOrNull())
+                body = MultipartBody.Part.createFormData("image",image.name, requestFile )
+            }
 
             val gson = Gson()
-            val theaterJson = gson.toJson(newTheater)
+            val theaterJson = gson.toJson(editTheater)
 
             // Convert JSON to RequestBody
             val theaterRequestBody = theaterJson.toRequestBody("application/json".toMediaTypeOrNull())
 
-            val response = adminRepository.addNewTheater(newTheater = theaterRequestBody, image = body)
+            val response = adminRepository.editTheater(editTheater = theaterRequestBody, image = body, theaterId = theaterId)
 
             if(response.isSuccessful) {
-                return Result.success("Theater is Added")
+                return Result.success("Theater is Edited")
             } else {
                 val message = extractData(response.errorBody(), "message")
                 return Result.failure(Exception(message))

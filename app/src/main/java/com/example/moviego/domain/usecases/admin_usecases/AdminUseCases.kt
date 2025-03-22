@@ -17,5 +17,6 @@ data class AdminUseCases(
     val addNewMovie: AddNewMovie,
     val addNewScreen: AddNewScreen,
     val editScreen: EditScreen,
-    val addNewTheater: AddNewTheater
+    val addNewTheater: AddNewTheater,
+    val editTheater: EditTheater
 )

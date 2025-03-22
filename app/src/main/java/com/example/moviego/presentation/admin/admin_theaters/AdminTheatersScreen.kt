@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -41,6 +43,7 @@ fun AdminTheatersScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
+                    navController.navigate(Route.AdminAddTheater.route)
                 },
                 shape = CircleShape,
                 containerColor = RedE31
@@ -82,7 +85,12 @@ fun AdminTheatersScreen(
                     items(theaters) { theater ->
                         TheaterCard(theater, onClick = {
                             navController.navigate(Route.AdminTheaterDetails.passTheaterId(theater._id))
+                        }, onEditClick = {
+                            navController.navigate(Route.AdminEditTheater.passTheaterId(theater._id))
                         })
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(100.dp))
                     }
                 }
             }

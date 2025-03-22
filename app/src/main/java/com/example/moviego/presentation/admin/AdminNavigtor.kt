@@ -45,7 +45,7 @@ fun AdminNavigator() {
                             icon = R.drawable.ticket
                         ),
                         BottomNavItem(
-                            label = "Add",
+                            label = "Add Show",
                             route = Route.AdminAddShow.route,
                             icon = R.drawable.add
                         ),

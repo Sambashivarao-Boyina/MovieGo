@@ -49,6 +49,7 @@ import com.example.moviego.presentation.admin.components.TopBar
 import com.example.moviego.presentation.authentication.components.InputBox
 import com.example.moviego.presentation.authentication.components.SubmitButton
 import com.example.moviego.ui.theme.Black1C1
+import com.example.moviego.util.Constants.getFileFromUri
 import java.io.File
 
 @Composable
@@ -212,13 +213,3 @@ fun AdminAddMovieScreen(
 
 }
 
-fun getFileFromUri(context: Context, uri: Uri): File {
-    val contextResolver = context.contentResolver
-    val inputStream = contextResolver.openInputStream(uri)
-    val tempFile = File.createTempFile("${System.currentTimeMillis()}",".jpg",context.cacheDir)
-    tempFile.outputStream().use { outputStream ->
-        inputStream?.copyTo(outputStream)
-    }
-
-    return tempFile
-}

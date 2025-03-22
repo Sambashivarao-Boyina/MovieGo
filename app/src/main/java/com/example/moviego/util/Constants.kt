@@ -1,7 +1,10 @@
 package com.example.moviego.util
 
+import android.content.Context
+import android.net.Uri
 import okhttp3.ResponseBody
 import org.json.JSONObject
+import java.io.File
 
 object Constants {
     const val USER_SETTINGS = "userSettings"
@@ -23,5 +26,16 @@ object Constants {
             return jsonObject.optString(element, null)
         }
         return null
+    }
+
+    fun getFileFromUri(context: Context, uri: Uri): File {
+        val contextResolver = context.contentResolver
+        val inputStream = contextResolver.openInputStream(uri)
+        val tempFile = File.createTempFile("${System.currentTimeMillis()}",".jpg",context.cacheDir)
+        tempFile.outputStream().use { outputStream ->
+            inputStream?.copyTo(outputStream)
+        }
+
+        return tempFile
     }
 }

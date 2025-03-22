@@ -50,4 +50,12 @@ sealed class Route(val route: String) {
         }
     }
 
+    object AdminAddTheater: Route("adminAddTheater")
+
+    object AdminEditTheater: Route("adminEditTheater/{${THEATER_ID}}") {
+        fun passTheaterId(theaterId: String): String {
+            return this.route.replace(oldValue = "{${THEATER_ID}}", newValue = theaterId)
+        }
+    }
+
 }

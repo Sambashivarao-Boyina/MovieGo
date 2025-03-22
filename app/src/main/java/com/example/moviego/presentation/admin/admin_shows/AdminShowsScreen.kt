@@ -167,7 +167,11 @@ fun AdminShowsScreen(
                                 }))
                             },
                             error = "",
-                            unAvailableMessage = "Select Movie"
+                            unAvailableMessage = "Select Movie",
+                            initialValue = if(selectedFilters.movie !== null) DropDownItem(
+                                title = selectedFilters.movie.title,
+                                ref = selectedFilters.movie._id
+                            ) else null
                         )
                         DropDownSelect(
                             items = filterOptions.theaters.map {
@@ -179,7 +183,11 @@ fun AdminShowsScreen(
                                 }))
                             },
                             error = "",
-                            unAvailableMessage = "Select Theater"
+                            unAvailableMessage = "Select Theater",
+                            initialValue = if(selectedFilters.theater !== null) DropDownItem(
+                                title = selectedFilters.theater.name,
+                                ref = selectedFilters.theater._id
+                            ) else null
                         )
 
                         Row(

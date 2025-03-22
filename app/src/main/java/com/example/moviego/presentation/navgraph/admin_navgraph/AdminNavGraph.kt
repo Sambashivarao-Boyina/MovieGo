@@ -21,9 +21,15 @@ import com.example.moviego.presentation.admin.admin_add_movie.AdminAddMovieViewM
 import com.example.moviego.presentation.admin.admin_add_show.AdminAddShowEvent
 import com.example.moviego.presentation.admin.admin_add_show.AdminAddShowScreen
 import com.example.moviego.presentation.admin.admin_add_show.AdminAddShowViewModel
+import com.example.moviego.presentation.admin.admin_add_theater.AdminAddTheaterEvent
+import com.example.moviego.presentation.admin.admin_add_theater.AdminAddTheaterScreen
+import com.example.moviego.presentation.admin.admin_add_theater.AdminAddTheaterViewModel
 import com.example.moviego.presentation.admin.admin_details.AdminDetailsEvent
 import com.example.moviego.presentation.admin.admin_details.AdminDetailsScreen
 import com.example.moviego.presentation.admin.admin_details.AdminDetailsViewModel
+import com.example.moviego.presentation.admin.admin_edit_theater.AdminEditTheaterEvent
+import com.example.moviego.presentation.admin.admin_edit_theater.AdminEditTheaterScreen
+import com.example.moviego.presentation.admin.admin_edit_theater.AdminEditTheaterViewModel
 import com.example.moviego.presentation.admin.admin_movies.AdminMoviesEvent
 import com.example.moviego.presentation.admin.admin_movies.AdminMoviesScreen
 import com.example.moviego.presentation.admin.admin_movies.AdminMoviesViewModel
@@ -71,14 +77,14 @@ fun AdminNavGraph(
             adminShowDetailsViewModel.loadShow(showId)
             AdminShowDetailsScreen(
                 showDetails = adminShowDetailsViewModel.showDetails,
-                isLoading =  adminShowDetailsViewModel.isLoading,
+                isLoading = adminShowDetailsViewModel.isLoading,
                 onEvent = adminShowDetailsViewModel::onEvent
             )
         }
 
         composable(route = Route.AdminAddShow.route) {
             val adminAddShowViewModel: AdminAddShowViewModel = hiltViewModel()
-            if(adminAddShowViewModel.sideEffect != null) {
+            if (adminAddShowViewModel.sideEffect != null) {
                 Toast.makeText(
                     LocalContext.current,
                     adminAddShowViewModel.sideEffect,
@@ -99,7 +105,7 @@ fun AdminNavGraph(
 
         composable(route = Route.AdminDetails.route) {
             val adminDetailsViewModel: AdminDetailsViewModel = hiltViewModel()
-            if(adminDetailsViewModel.sideEffect != null) {
+            if (adminDetailsViewModel.sideEffect != null) {
                 Toast.makeText(
                     LocalContext.current,
                     adminDetailsViewModel.sideEffect,
@@ -119,8 +125,8 @@ fun AdminNavGraph(
         }
 
         composable(route = Route.AdminMovies.route) {
-            val adminMoviesViewModel : AdminMoviesViewModel = hiltViewModel()
-            if(adminMoviesViewModel.sideEffect != null) {
+            val adminMoviesViewModel: AdminMoviesViewModel = hiltViewModel()
+            if (adminMoviesViewModel.sideEffect != null) {
                 Toast.makeText(
                     LocalContext.current,
                     adminMoviesViewModel.sideEffect,
@@ -138,7 +144,7 @@ fun AdminNavGraph(
 
         composable(route = Route.AdminTheaters.route) {
             val adminTheatersViewModel: AdminTheatersViewModel = hiltViewModel()
-            if(adminTheatersViewModel.sideEffect != null) {
+            if (adminTheatersViewModel.sideEffect != null) {
                 Toast.makeText(
                     LocalContext.current,
                     adminTheatersViewModel.sideEffect,
@@ -157,11 +163,11 @@ fun AdminNavGraph(
         composable(
             route = Route.AdminTheaterDetails.route,
             arguments = listOf(navArgument(THEATER_ID) { type = NavType.StringType })
-        ) {backStackEntry ->
+        ) { backStackEntry ->
             val theaterId = backStackEntry.arguments?.getString(THEATER_ID) ?: return@composable
             val adminTheaterDetailsViewModel: AdminTheaterDetailsViewModel = hiltViewModel()
 
-            if(adminTheaterDetailsViewModel.sideEffect != null) {
+            if (adminTheaterDetailsViewModel.sideEffect != null) {
                 Toast.makeText(
                     LocalContext.current,
                     adminTheaterDetailsViewModel.sideEffect,
@@ -185,7 +191,7 @@ fun AdminNavGraph(
         }
 
         composable(route = Route.AdminAddMovie.route) {
-            val adminAddMovieViewModel : AdminAddMovieViewModel = hiltViewModel()
+            val adminAddMovieViewModel: AdminAddMovieViewModel = hiltViewModel()
             LaunchedEffect(Unit) {
                 adminAddMovieViewModel.eventFlow.collect { event ->
                     when (event) {
@@ -195,7 +201,7 @@ fun AdminNavGraph(
                     }
                 }
             }
-            if(adminAddMovieViewModel.sideEffect != null) {
+            if (adminAddMovieViewModel.sideEffect != null) {
                 Toast.makeText(
                     LocalContext.current,
                     adminAddMovieViewModel.sideEffect,
@@ -208,6 +214,61 @@ fun AdminNavGraph(
                 addMovieState = adminAddMovieViewModel.addMovieState,
                 onEvent = adminAddMovieViewModel::onEvent,
                 isLoading = adminAddMovieViewModel.isLoading,
+                navController = navController
+            )
+        }
+
+        composable(route = Route.AdminAddTheater.route) {
+            val adminAddTheaterViewModel: AdminAddTheaterViewModel = hiltViewModel()
+
+            if (adminAddTheaterViewModel.sideEffect != null) {
+                Toast.makeText(
+                    LocalContext.current,
+                    adminAddTheaterViewModel.sideEffect,
+                    Toast.LENGTH_SHORT
+                ).show()
+                adminAddTheaterViewModel.onEvent(AdminAddTheaterEvent.RemoveSideEffect)
+            }
+
+            AdminAddTheaterScreen(
+                newTheaterState = adminAddTheaterViewModel.newTheaterState,
+                isLoading = adminAddTheaterViewModel.isLoading,
+                isSuccess = adminAddTheaterViewModel.isSuccess,
+                onEvent = adminAddTheaterViewModel::onEvent,
+                navController = navController
+            )
+        }
+
+        composable(
+            route = Route.AdminEditTheater.route,
+            arguments = listOf(navArgument(THEATER_ID) { type = NavType.StringType })
+        ) { backStackEntry ->
+            val theaterId = backStackEntry.arguments?.getString(THEATER_ID) ?: return@composable
+            val adminEditTheaterViewModel: AdminEditTheaterViewModel = hiltViewModel()
+
+
+            LaunchedEffect(key1 = theaterId) {
+                if(theaterId != null) {
+                    adminEditTheaterViewModel.initializeTheater(theaterId)
+                }
+            }
+
+
+            if (adminEditTheaterViewModel.sideEffect != null) {
+                Toast.makeText(
+                    LocalContext.current,
+                    adminEditTheaterViewModel.sideEffect,
+                    Toast.LENGTH_SHORT
+                ).show()
+                adminEditTheaterViewModel.onEvent(AdminEditTheaterEvent.RemoveSideEffect)
+            }
+
+
+            AdminEditTheaterScreen(
+                editTheaterState = adminEditTheaterViewModel.editTheaterState,
+                isLoading = adminEditTheaterViewModel.isLoading,
+                onEvent = adminEditTheaterViewModel::onEvent,
+                isSuccess = adminEditTheaterViewModel.isSuccess,
                 navController = navController
             )
         }

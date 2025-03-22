@@ -41,11 +41,10 @@ import com.example.moviego.ui.theme.RedE31
 
 
 @Composable
-fun TheaterCard(theater: TheaterDetails, onClick:()->Unit) {
+fun TheaterCard(theater: TheaterDetails, onClick:()->Unit, onEditClick:()->Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
             .padding(8.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Black161), // Dark background
@@ -62,6 +61,7 @@ fun TheaterCard(theater: TheaterDetails, onClick:()->Unit) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(180.dp)
+                            .clickable { onClick() }
                             .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
                         contentScale = ContentScale.Crop
                     )
@@ -84,6 +84,7 @@ fun TheaterCard(theater: TheaterDetails, onClick:()->Unit) {
                 // Theater Info
                 Column(
                     modifier = Modifier
+                        .clickable { onClick() }
                         .fillMaxWidth()
                         .padding(12.dp)
                 ) {
@@ -126,7 +127,9 @@ fun TheaterCard(theater: TheaterDetails, onClick:()->Unit) {
                     .align(Alignment.BottomEnd)
             ){
                 IconButton(
-                    onClick = { /* Handle Edit Action */ }
+                    onClick = {
+                        onEditClick()
+                    }
                 ) {
                     Row {
                         Icon(
