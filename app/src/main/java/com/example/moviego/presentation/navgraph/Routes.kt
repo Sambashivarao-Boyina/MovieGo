@@ -16,13 +16,6 @@ sealed class Route(val route: String) {
     object AdminSignUpScreen: Route("adminSignUpScreen")
     object AdminLoginScreen: Route("adminLoginScreen")
 
-    //User Routes
-    object UserRoutes: Route("userRoutes")
-    object UserNavigatorScreen: Route("userNavigatorScreen")
-    object UserHomeRoute: Route("userHomeRoute")
-
-
-
     //Admin Routes
     object AdminRoutes: Route("adminRoutes")
     object AdminNavigatorScreen: Route("adminNavigatorScreen")
@@ -57,5 +50,14 @@ sealed class Route(val route: String) {
             return this.route.replace(oldValue = "{${THEATER_ID}}", newValue = theaterId)
         }
     }
+
+    /////////////////////////////
+    //User Routes
+    object UserRoutes: Route("userRoutes")
+    object UserNavigatorScreen: Route("userNavigatorScreen")
+    object UserHomeRoute: Route("userHomeRoute")
+    object UserBookings: Route("userBookings")
+    object UserDetails: Route("userDetails")
+
 
 }
