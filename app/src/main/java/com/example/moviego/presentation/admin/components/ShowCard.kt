@@ -61,7 +61,7 @@ fun ShowCard(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(show.movie.posterUrl)
+                    .data(show.movie.Poster)
                     .placeholder(R.drawable.placeholder)
                     .error(R.drawable.placeholder)
                     .build(),
@@ -81,7 +81,7 @@ fun ShowCard(
             ) {
                 Column {
                     Text(
-                        text = show.movie.title,
+                        text = show.movie.Title,
                         style = MaterialTheme.typography.titleLarge
                     )
                     Row(
@@ -89,12 +89,12 @@ fun ShowCard(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Text(
-                            text = show.movie.language,
+                            text = show.movie.Language,
                             color = Color.Gray
                         )
                         VerticalDivider(color = Color.White)
                         Text(
-                            text = "${show.movie.duration} min",
+                            text = "${show.movie.Runtime} min",
                             color = Color.Gray
                         )
                     }

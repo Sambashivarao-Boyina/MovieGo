@@ -25,13 +25,14 @@ interface AdminRepository {
     suspend fun getAllShows():Response<List<Show>>
     suspend fun getShowDetails(showId: String): Response<ShowDetails>
     suspend fun getAllAdminMovies(): Response<List<Movie>>
+    suspend fun getMovieDetails(movieId: String): Response<Movie>
     suspend fun getAllAdminTheaters(): Response<List<TheaterDetails>>
     suspend fun createNewShow(newShow: NewShow): Response<ResponseBody>
     suspend fun getAdminDetails(): Response<Admin>
     suspend fun updatePhoneNumber(data: UpdateBody): Response<Admin>
     suspend fun updatePassword(data: UpdateBody): Response<ResponseBody>
     suspend fun getTheaterDetails(theaterId: String): Response<TheaterDetails>
-    suspend fun addNewMovie(movie: RequestBody, poster: MultipartBody.Part): Response<ResponseBody>
+    suspend fun addNewMovie(movieName: String): Response<ResponseBody>
     suspend fun createNewScreen(theaterId: String, newScreen: NewScreen): Response<TheaterDetails>
     suspend fun editScreen(screenId: String, editScreen: NewScreen): Response<TheaterDetails>
     suspend fun addNewTheater(image: MultipartBody.Part, newTheater: RequestBody): Response<ResponseBody>

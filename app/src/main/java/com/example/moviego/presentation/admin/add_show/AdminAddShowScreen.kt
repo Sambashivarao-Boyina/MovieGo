@@ -81,7 +81,7 @@ fun AdminAddShowScreen(
                         DropDownSelect(
                             items = movies.map { movie ->
                                 DropDownItem(
-                                    title = movie.title,
+                                    title = movie.Title,
                                     ref = movie._id
                                 )
                             },

@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -27,6 +28,8 @@ import com.example.moviego.presentation.admin.details.AdminDetailsViewModel
 import com.example.moviego.presentation.admin.edit_theater.AdminEditTheaterEvent
 import com.example.moviego.presentation.admin.edit_theater.AdminEditTheaterScreen
 import com.example.moviego.presentation.admin.edit_theater.AdminEditTheaterViewModel
+import com.example.moviego.presentation.admin.movie_details.AdminMovieDetailsScreen
+import com.example.moviego.presentation.admin.movie_details.AdminMovieDetailsViewModel
 import com.example.moviego.presentation.admin.movies.AdminMoviesEvent
 import com.example.moviego.presentation.admin.movies.AdminMoviesScreen
 import com.example.moviego.presentation.admin.movies.AdminMoviesViewModel
@@ -41,6 +44,7 @@ import com.example.moviego.presentation.admin.theaters.AdminTheatersEvent
 import com.example.moviego.presentation.admin.theaters.AdminTheatersScreen
 import com.example.moviego.presentation.admin.theaters.AdminTheatersViewModel
 import com.example.moviego.presentation.navgraph.Route
+import com.example.moviego.util.Constants.MOVIE_ID
 import com.example.moviego.util.Constants.SHOW_ID
 import com.example.moviego.util.Constants.THEATER_ID
 
@@ -208,7 +212,7 @@ fun AdminNavGraph(
             }
 
             AdminAddMovieScreen(
-                addMovieState = adminAddMovieViewModel.addMovieState,
+                movieName = adminAddMovieViewModel.movieName,
                 onEvent = adminAddMovieViewModel::onEvent,
                 isLoading = adminAddMovieViewModel.isLoading,
                 navController = navController
@@ -267,6 +271,33 @@ fun AdminNavGraph(
                 onEvent = adminEditTheaterViewModel::onEvent,
                 isSuccess = adminEditTheaterViewModel.isSuccess,
                 navController = navController
+            )
+        }
+
+        composable(
+            route = Route.AdminMovieDetails.route,
+            arguments = listOf(navArgument(MOVIE_ID) { type = NavType.StringType })
+        ) { backStackEntry ->
+            val movieId = backStackEntry.arguments?.getString(MOVIE_ID) ?: return@composable
+            val adminMovieDetailsViewModel: AdminMovieDetailsViewModel = hiltViewModel()
+            if (adminMovieDetailsViewModel.sideEffect != null) {
+                Toast.makeText(
+                    LocalContext.current,
+                    adminMovieDetailsViewModel.sideEffect,
+                    Toast.LENGTH_SHORT
+                ).show()
+                adminMovieDetailsViewModel.removeSideEffect()
+            }
+
+            LaunchedEffect(key1 = movieId) {
+                adminMovieDetailsViewModel.initalizeMovie(movieId)
+            }
+
+            AdminMovieDetailsScreen(
+                movie = adminMovieDetailsViewModel.movie,
+                isLoading = adminMovieDetailsViewModel.isLoading,
+                navController = navController,
+                navigateBack = adminMovieDetailsViewModel.navigateBack
             )
         }
     }

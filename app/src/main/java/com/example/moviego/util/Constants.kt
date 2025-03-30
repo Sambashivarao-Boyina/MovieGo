@@ -17,6 +17,7 @@ object Constants {
 
     const val SHOW_ID = "showId"
     const val THEATER_ID = "theaterId"
+    const val MOVIE_ID = "movieID"
 
     fun extractData(responseBody: ResponseBody?, element:String): String? {
         responseBody?.let {

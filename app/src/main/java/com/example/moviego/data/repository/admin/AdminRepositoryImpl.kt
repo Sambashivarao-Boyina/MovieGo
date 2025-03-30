@@ -45,6 +45,10 @@ class AdminRepositoryImp(
         return movieGoApi.getAllAdminMovies()
     }
 
+    override suspend fun getMovieDetails(movieId: String): Response<Movie> {
+        return movieGoApi.getMovieDetails(movieId)
+    }
+
     override suspend fun getAllAdminTheaters(): Response<List<TheaterDetails>> {
         return movieGoApi.getAllAdminTheaters()
     }
@@ -70,10 +74,9 @@ class AdminRepositoryImp(
     }
 
     override suspend fun addNewMovie(
-        movie: RequestBody,
-        poster: MultipartBody.Part
+        movieName: String
     ): Response<ResponseBody> {
-        return movieGoApi.addNewMovie(movie = movie,poster = poster)
+        return movieGoApi.addNewMovie(movieName)
     }
 
     override suspend fun createNewScreen(

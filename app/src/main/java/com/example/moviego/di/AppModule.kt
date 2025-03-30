@@ -19,6 +19,7 @@ import com.example.moviego.domain.usecases.admin_usecases.GetAdminDetails
 import com.example.moviego.domain.usecases.admin_usecases.GetAllAdminMovies
 import com.example.moviego.domain.usecases.admin_usecases.GetAllAdminTheaters
 import com.example.moviego.domain.usecases.admin_usecases.GetAllShows
+import com.example.moviego.domain.usecases.admin_usecases.GetMovieDetails
 import com.example.moviego.domain.usecases.admin_usecases.GetShowDetails
 import com.example.moviego.domain.usecases.admin_usecases.GetTheaterDetails
 import com.example.moviego.domain.usecases.admin_usecases.LogOutAdmin
@@ -27,9 +28,13 @@ import com.example.moviego.domain.usecases.admin_usecases.RefreshAdminToken
 import com.example.moviego.domain.usecases.admin_usecases.SignUpAdminUseCase
 import com.example.moviego.domain.usecases.admin_usecases.UpdatePassword
 import com.example.moviego.domain.usecases.admin_usecases.UpdatePhoneNumber
+import com.example.moviego.domain.usecases.user_usecases.GetUserDetails
 import com.example.moviego.domain.usecases.user_usecases.LoginUserUseCase
+import com.example.moviego.domain.usecases.user_usecases.LogoutUser
 import com.example.moviego.domain.usecases.user_usecases.RefreshUserToken
 import com.example.moviego.domain.usecases.user_usecases.SignUpUserUseCase
+import com.example.moviego.domain.usecases.user_usecases.UpdateUserPassword
+import com.example.moviego.domain.usecases.user_usecases.UpdateUserPhone
 import com.example.moviego.domain.usecases.user_usecases.UserUseCases
 import com.example.moviego.util.Constants
 import dagger.Module
@@ -52,7 +57,7 @@ class AppModule {
     @Singleton
     fun provideLocalUserManger(
         application: Application
-    ):LocalUserManager = LocalUserManagerImpl(application)
+    ): LocalUserManager = LocalUserManagerImpl(application)
 
     @Provides
     @Singleton
@@ -72,7 +77,7 @@ class AppModule {
                 .readTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .addInterceptor(loggingInterceptor)
-                .addInterceptor{ chain ->
+                .addInterceptor { chain ->
                     val token = runBlocking {
                         localUserManager.getUserToken().firstOrNull() ?: ""
                     }
@@ -101,7 +106,7 @@ class AppModule {
     @Singleton
     fun provideAdminRepository(
         movieGoApi: MovieGoApi
-    ):AdminRepository = AdminRepositoryImp(movieGoApi = movieGoApi)
+    ): AdminRepository = AdminRepositoryImp(movieGoApi = movieGoApi)
 
     @Provides
     @Singleton
@@ -114,8 +119,8 @@ class AppModule {
     fun provideAdminUseCases(
         adminRepository: AdminRepository,
         localUserManager: LocalUserManager
-    ):AdminUseCases{
-        return  AdminUseCases(
+    ): AdminUseCases {
+        return AdminUseCases(
             loginAdminUseCase = LoginAdminUseCase(adminRepository, localUserManager),
             signUpAdminUseCase = SignUpAdminUseCase(adminRepository, localUserManager),
             refreshAdminToken = RefreshAdminToken(adminRepository, localUserManager),
@@ -133,7 +138,8 @@ class AppModule {
             addNewScreen = AddNewScreen(adminRepository),
             editScreen = EditScreen(adminRepository),
             addNewTheater = AddNewTheater(adminRepository),
-            editTheater = EditTheater(adminRepository)
+            editTheater = EditTheater(adminRepository),
+            getMovieDetails = GetMovieDetails(adminRepository)
         )
     }
 
@@ -142,11 +148,15 @@ class AppModule {
     fun provideUserUseCases(
         userRepository: UserRepository,
         localUserManager: LocalUserManager
-    ):UserUseCases {
+    ): UserUseCases {
         return UserUseCases(
-            loginUserUseCase = LoginUserUseCase(userRepository,localUserManager),
-            signUpUserUseCase = SignUpUserUseCase(userRepository,localUserManager),
-            refreshUserToken = RefreshUserToken(userRepository, localUserManager)
+            loginUserUseCase = LoginUserUseCase(userRepository, localUserManager),
+            signUpUserUseCase = SignUpUserUseCase(userRepository, localUserManager),
+            refreshUserToken = RefreshUserToken(userRepository, localUserManager),
+            getUserDetails = GetUserDetails(userRepository),
+            updateUserPassword = UpdateUserPassword(userRepository),
+            updateUserPhone = UpdateUserPhone(userRepository),
+            logoutUser = LogoutUser(localUserManager)
         )
     }
 }

@@ -11,6 +11,7 @@ import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.ShowDetails
 import com.example.moviego.domain.model.TheaterDetails
+import com.example.moviego.domain.model.User
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -48,11 +49,12 @@ interface MovieGoApi {
     @GET("api/admin/movie")
     suspend fun getAllAdminMovies(): Response<List<Movie>>
 
-    @Multipart
-    @POST("api/admin/movie")
+    @GET("api/admin/movie/{movieId}")
+    suspend fun getMovieDetails(@Path("movieId") movieId: String):Response<Movie>
+
+    @POST("api/admin/movie/{movieName}")
     suspend fun addNewMovie(
-        @Part poster: MultipartBody.Part,
-        @Part("movie") movie: RequestBody
+        @Path("movieName") movieName:String
     ): Response<ResponseBody>
 
     @Multipart
@@ -118,5 +120,15 @@ interface MovieGoApi {
 
     @GET("api/user/auth/refreshtoken")
     suspend fun refreshUserToken(): Response<AuthResponse>
+
+    //User Details
+    @GET("api/user")
+    suspend fun getUserDetails(): Response<User>
+
+    @PATCH("api/user/phoneNumber")
+    suspend fun updateUserPhone(@Body data: UpdateBody): Response<User>
+
+    @PATCH("api/user/password")
+    suspend fun updateUserPassword(@Body data: UpdateBody): Response<ResponseBody>
 
 }

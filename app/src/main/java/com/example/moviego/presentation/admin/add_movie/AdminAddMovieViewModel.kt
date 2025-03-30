@@ -27,67 +27,32 @@ class AdminAddMovieViewModel @Inject constructor(
     var isLoading by mutableStateOf(false)
         private set
 
-    var addMovieState by mutableStateOf(MovieState())
+    var movieName by mutableStateOf("")
         private set
 
     fun onEvent(event: AdminAddMovieEvent) {
         when(event) {
-            is AdminAddMovieEvent.UpdateDuration -> {
-                addMovieState = addMovieState.copy(duration = event.duration, isDurationError = "")
-            }
-            is AdminAddMovieEvent.UpdateLanguage -> {
-                addMovieState = addMovieState.copy(language = event.language, isLanguageError = "")
-            }
-            is AdminAddMovieEvent.UpdateTitle -> {
-                addMovieState = addMovieState.copy(title = event.title, isTitleError = "")
-            }
             AdminAddMovieEvent.SubmitMovie -> {
-                if(isValidMovie()) {
+                if(movieName.isNotEmpty()) {
                     subMitMovie()
                 }
-            }
-            is AdminAddMovieEvent.UpdatePosterImage ->  {
-                addMovieState = addMovieState.copy(posterImage = event.file, isPosterImageError = "")
             }
             AdminAddMovieEvent.RemoveSideEffect -> {
                 sideEffect = null
             }
+
+            is AdminAddMovieEvent.UpdateTitle -> {
+                movieName = event.title
+            }
         }
     }
 
-    private fun isValidMovie():Boolean {
-        var result = true
-        if(addMovieState.posterImage == null) {
-            result = false
-            addMovieState = addMovieState.copy(isPosterImageError = "Please Select a Image")
-        }
-        if(addMovieState.title.isEmpty()) {
-            result = false
-            addMovieState = addMovieState.copy(isTitleError = "Title is Required")
-        }
-        if(addMovieState.duration == 0) {
-            result = false
-            addMovieState = addMovieState.copy(isDurationError = "Enter Duration")
-        }
-
-        if(addMovieState.language.isEmpty()) {
-            result = false
-            addMovieState = addMovieState.copy(isLanguageError = "Language is Required")
-        }
-
-        return result
-    }
 
     private fun subMitMovie() {
         viewModelScope.launch {
             isLoading = true
             val result = adminUseCases.addNewMovie(
-                movie = NewMovie(
-                    title = addMovieState.title,
-                    language = addMovieState.language,
-                    duration = addMovieState.duration
-                ),
-                poster = addMovieState.posterImage!!
+                movieName = movieName
             )
             if(result.isSuccess) {
                 sideEffect = result.getOrElse { "Movie Created Successfully" }
@@ -105,23 +70,10 @@ class AdminAddMovieViewModel @Inject constructor(
 
 }
 
-data class MovieState(
-    val title: String = "",
-    val isTitleError: String = "",
-    val duration: Int = 0,
-    val isDurationError: String = "",
-    val language: String = "",
-    val isLanguageError: String = "",
-    val posterImage: File? = null,
-    val isPosterImageError: String = ""
-)
 
 
 sealed class AdminAddMovieEvent {
     data class UpdateTitle(var title: String): AdminAddMovieEvent()
-    data class UpdateDuration(var duration: Int): AdminAddMovieEvent()
-    data class UpdateLanguage(var language: String): AdminAddMovieEvent()
-    data class UpdatePosterImage(var file: File): AdminAddMovieEvent()
     data object SubmitMovie: AdminAddMovieEvent()
     data object RemoveSideEffect: AdminAddMovieEvent()
 }

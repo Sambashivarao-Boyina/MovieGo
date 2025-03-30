@@ -181,8 +181,8 @@ fun MovieInfoHeader(movie: Movie, ticketCost: Int) {
         ) {
             // Movie Poster
             AsyncImage(
-                model = movie.posterUrl,
-                contentDescription = "${movie.title} Poster",
+                model = movie.Poster,
+                contentDescription = "${movie.Title} Poster",
                 modifier = Modifier
                     .width(100.dp)
                     .height(150.dp)
@@ -200,7 +200,7 @@ fun MovieInfoHeader(movie: Movie, ticketCost: Int) {
             // Movie Details
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = movie.title,
+                    text = movie.Title,
                     color = TextPrimary,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
@@ -209,7 +209,7 @@ fun MovieInfoHeader(movie: Movie, ticketCost: Int) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Duration: ${movie.duration} minutes",
+                    text = "Duration: ${movie.Runtime} minutes",
                     color = TextSecondary,
                     fontSize = 14.sp
                 )
@@ -217,7 +217,7 @@ fun MovieInfoHeader(movie: Movie, ticketCost: Int) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Language: ${movie.language}",
+                    text = "Language: ${movie.Language}",
                     color = TextSecondary,
                     fontSize = 14.sp
                 )

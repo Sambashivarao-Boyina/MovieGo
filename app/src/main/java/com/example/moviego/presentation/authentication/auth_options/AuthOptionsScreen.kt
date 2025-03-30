@@ -50,7 +50,7 @@ fun AuthOptionsScreen(navController: NavHostController) {
         Text(text = "How would you like to sign in?", textAlign = TextAlign.Center, style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(10.dp))
         PersonCard(
-            image = R.drawable.profile,
+            image = R.drawable.shield,
             title = "Admin",
             description = "Manage theaters, movies, and administrative functions",
             onClick = {
@@ -59,7 +59,7 @@ fun AuthOptionsScreen(navController: NavHostController) {
         )
         Spacer(modifier = Modifier.height(10.dp))
         PersonCard(
-            image = R.drawable.shield,
+            image = R.drawable.profile,
             title = "User",
             description = "Book tickets, check showtimes, and manage your reservations",
             onClick = {

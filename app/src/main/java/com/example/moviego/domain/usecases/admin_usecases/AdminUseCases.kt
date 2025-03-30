@@ -7,6 +7,7 @@ data class AdminUseCases(
     val getAllShows: GetAllShows,
     val getShowDetails: GetShowDetails,
     val getAllAdminMovies: GetAllAdminMovies,
+    val getMovieDetails: GetMovieDetails,
     val getAllAdminTheaters: GetAllAdminTheaters,
     val createNewShow: CreateNewShow,
     val getAdminDetails: GetAdminDetails,

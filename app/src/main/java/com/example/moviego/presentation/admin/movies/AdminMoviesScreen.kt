@@ -85,7 +85,7 @@ fun AdminMoviesScreen(
                        MovieCard(
                            movie = movie,
                            onClick = {
-
+                               navController.navigate(Route.AdminMovieDetails.passMovieId(movie._id))
                            }
                        )
                    }

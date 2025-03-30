@@ -92,7 +92,7 @@ fun AdminShowsScreen(
                 }
                 if (selectedFilters.movie != null) {
                     item {
-                        FilterCard(title = selectedFilters.movie.title) {
+                        FilterCard(title = selectedFilters.movie.Title) {
                             onEvent(AdminShowEvent.UpdateFilterMovie(null))
 
                         }
@@ -146,7 +146,7 @@ fun AdminShowsScreen(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         DatePicker(
-                            selectedDate = if (selectedFilters.date == null) "" else selectedFilters.date,
+                            selectedDate = selectedFilters.date,
                             onSelected = {
                                 onEvent(AdminShowEvent.UpdateFilterDate(it))
                             },
@@ -156,7 +156,7 @@ fun AdminShowsScreen(
 
                         DropDownSelect(
                             items = filterOptions.movies.map {
-                                DropDownItem(title = it.title, ref = it._id)
+                                DropDownItem(title = it.Title, ref = it._id)
                             },
                             onSelect = {
                                 onEvent(AdminShowEvent.UpdateFilterMovie(filterOptions.movies.find { movie ->
@@ -166,7 +166,7 @@ fun AdminShowsScreen(
                             error = "",
                             unAvailableMessage = "Select Movie",
                             initialValue = if(selectedFilters.movie !== null) DropDownItem(
-                                title = selectedFilters.movie.title,
+                                title = selectedFilters.movie.Title,
                                 ref = selectedFilters.movie._id
                             ) else null
                         )
