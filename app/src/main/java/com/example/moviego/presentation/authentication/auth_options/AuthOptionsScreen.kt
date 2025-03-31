@@ -61,7 +61,7 @@ fun AuthOptionsScreen(navController: NavHostController) {
         PersonCard(
             image = R.drawable.profile,
             title = "User",
-            description = "Book tickets, check showtimes, and manage your reservations",
+            description = "Book tickets, check show times, and manage your reservations",
             onClick = {
                 navController.navigate(Route.UserLoginScreen.route)
             }

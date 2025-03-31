@@ -5,6 +5,8 @@ import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
 import com.example.moviego.data.remote.MovieGoApi
+import com.example.moviego.domain.model.Movie
+import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.User
 import com.example.moviego.domain.repository.user.UserRepository
 import okhttp3.ResponseBody
@@ -35,5 +37,17 @@ class UserRepositoryImpl(
 
     override suspend fun updateUserPassword(data: UpdateBody): Response<ResponseBody> {
         return movieGoApi.updateUserPassword(data = data)
+    }
+
+    override suspend fun getMovies(): Response<List<Movie>> {
+        return movieGoApi.getMovies()
+    }
+
+    override suspend fun getMovieDetails(movieId: String): Response<Movie> {
+        return movieGoApi.getUserMovieDetails(movieId)
+    }
+
+    override suspend fun getMovieShows(movieId: String): Response<List<Show>> {
+        return movieGoApi.getMovieShows(movieId)
     }
 }

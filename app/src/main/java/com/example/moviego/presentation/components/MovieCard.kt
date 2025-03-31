@@ -108,7 +108,7 @@ fun MovieCard(movie: Movie, onClick:()-> Unit) {
                         text = movie.Title,
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
-                        maxLines = 2,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.padding(bottom = 4.dp)
                     )

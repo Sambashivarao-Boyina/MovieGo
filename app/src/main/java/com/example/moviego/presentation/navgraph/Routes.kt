@@ -64,6 +64,17 @@ sealed class Route(val route: String) {
     object UserHomeRoute: Route("userHomeRoute")
     object UserBookings: Route("userBookings")
     object UserDetails: Route("userDetails")
+    object UserMovieDetails: Route("userMovieDetails/{${MOVIE_ID}}") {
+        fun passMovieId(movieId: String): String {
+            return this.route.replace(oldValue = "{${MOVIE_ID}}", newValue = movieId)
+        }
+    }
+
+    object UserMovieShows: Route("userMovieShow/{${MOVIE_ID}}") {
+        fun passMovieId(movieId: String): String {
+            return this.route.replace(oldValue = "{${MOVIE_ID}}", newValue = movieId)
+        }
+    }
 
 
 }

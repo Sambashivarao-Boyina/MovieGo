@@ -117,8 +117,8 @@ fun AdminMovieDetailsScreen(
                                         brush = Brush.verticalGradient(
                                             colors = listOf(
                                                 Color.Transparent,
-                                                Color(0xFF121212).copy(alpha = 0.5f),
-                                                Color(0xFF121212)
+                                                Color.Transparent,
+                                                Color(0xFF121212).copy(alpha = 0.8f)
                                             ),
                                             startY = 0f,
                                             endY = with(LocalDensity.current) { 500.dp.toPx() }

@@ -131,4 +131,18 @@ interface MovieGoApi {
     @PATCH("api/user/password")
     suspend fun updateUserPassword(@Body data: UpdateBody): Response<ResponseBody>
 
+    @GET("api/user/movie")
+    suspend fun getMovies(): Response<List<Movie>>
+
+    @GET("api/user/movie/{movieId}")
+    suspend fun getUserMovieDetails(
+        @Path("movieId") movieId: String
+    ): Response<Movie>
+
+    @GET("api/user/show/{movieId}")
+    suspend fun getMovieShows(
+        @Path("movieId") movieId: String
+    ): Response<List<Show>>
+
+
 }

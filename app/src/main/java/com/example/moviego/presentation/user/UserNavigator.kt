@@ -54,7 +54,7 @@ fun UserNavigator() {
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
-                .padding(it)
+                .padding(bottom = it.calculateBottomPadding())
         ) {
             UserNavGraph(navController = navController)
         }

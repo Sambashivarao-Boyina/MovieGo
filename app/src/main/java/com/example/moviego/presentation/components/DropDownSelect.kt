@@ -42,16 +42,6 @@ fun DropDownSelect(
     var expanded by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(initialValue) }
 
-    // Sync selectedItem with initialValue if it changes
-    val currentItem by remember(initialValue) {
-        derivedStateOf { initialValue }
-    }
-
-    // Update selectedItem when initialValue changes
-    if (selectedItem != currentItem) {
-        selectedItem = currentItem
-    }
-
     Column {
         ExposedDropdownMenuBox(
             expanded = expanded,
@@ -87,7 +77,7 @@ fun DropDownSelect(
                     DropdownMenuItem(
                         text = { Text(item.title) },
                         onClick = {
-                            selectedItem = item
+                            selectedItem = item  // Correctly updates the selected item
                             expanded = false
                             onSelect(item)
                         },
@@ -106,6 +96,7 @@ fun DropDownSelect(
         }
     }
 }
+
 
 data class DropDownItem(
     val title: String,
