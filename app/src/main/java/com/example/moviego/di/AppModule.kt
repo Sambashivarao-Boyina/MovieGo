@@ -30,6 +30,7 @@ import com.example.moviego.domain.usecases.admin_usecases.UpdatePassword
 import com.example.moviego.domain.usecases.admin_usecases.UpdatePhoneNumber
 import com.example.moviego.domain.usecases.user_usecases.GetMovieShows
 import com.example.moviego.domain.usecases.user_usecases.GetMovies
+import com.example.moviego.domain.usecases.user_usecases.GetShowDetailsForBooking
 import com.example.moviego.domain.usecases.user_usecases.GetUserDetails
 import com.example.moviego.domain.usecases.user_usecases.GetUserMovieDetails
 import com.example.moviego.domain.usecases.user_usecases.LoginUserUseCase
@@ -162,7 +163,8 @@ class AppModule {
             logoutUser = LogoutUser(localUserManager),
             getMovies = GetMovies(userRepository),
             getMovieDetails = GetUserMovieDetails(userRepository),
-            getMovieShows = GetMovieShows(userRepository)
+            getMovieShows = GetMovieShows(userRepository),
+            getShowDetailsForBooking = GetShowDetailsForBooking(userRepository)
         )
     }
 }

@@ -70,9 +70,15 @@ sealed class Route(val route: String) {
         }
     }
 
-    object UserMovieShows: Route("userMovieShow/{${MOVIE_ID}}") {
+    object UserMovieShows: Route("userMovieShows/{${MOVIE_ID}}") {
         fun passMovieId(movieId: String): String {
             return this.route.replace(oldValue = "{${MOVIE_ID}}", newValue = movieId)
+        }
+    }
+
+    object UserMovieShowBooking: Route("userMovieShowBooking/{${SHOW_ID}}") {
+        fun passShowId(showId: String): String {
+            return this.route.replace(oldValue = "{${SHOW_ID}}", newValue = showId)
         }
     }
 

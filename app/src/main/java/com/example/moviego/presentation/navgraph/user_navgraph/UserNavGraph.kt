@@ -25,7 +25,10 @@ import com.example.moviego.presentation.user.movie_details.UserMovieDetailsViewM
 import com.example.moviego.presentation.user.movie_shows.UserMovieShowsEvent
 import com.example.moviego.presentation.user.movie_shows.UserMovieShowsScreen
 import com.example.moviego.presentation.user.movie_shows.UserMovieShowsViewModel
+import com.example.moviego.presentation.user.show_booking.ShowBookingScreen
+import com.example.moviego.presentation.user.show_booking.ShowBookingViewModel
 import com.example.moviego.util.Constants.MOVIE_ID
+import com.example.moviego.util.Constants.SHOW_ID
 
 @Composable
 fun UserNavGraph(
@@ -34,10 +37,10 @@ fun UserNavGraph(
     NavHost(
         navController = navController,
         startDestination = Route.UserHomeRoute.route
-    ){
-        composable(route = Route.UserHomeRoute.route){
+    ) {
+        composable(route = Route.UserHomeRoute.route) {
             val userHomeViewModel: UserHomeViewModel = hiltViewModel()
-            if(userHomeViewModel.sideEffect != null) {
+            if (userHomeViewModel.sideEffect != null) {
                 Toast.makeText(
                     LocalContext.current,
                     userHomeViewModel.sideEffect,
@@ -54,7 +57,7 @@ fun UserNavGraph(
 
         composable(route = Route.UserDetails.route) {
             val userDetailsViewModel: UserDetailsViewModel = hiltViewModel()
-            if(userDetailsViewModel.sideEffect != null) {
+            if (userDetailsViewModel.sideEffect != null) {
                 Toast.makeText(
                     LocalContext.current,
                     userDetailsViewModel.sideEffect,
@@ -84,12 +87,12 @@ fun UserNavGraph(
             val userMovieDetailsViewModel: UserMovieDetailsViewModel = hiltViewModel()
 
             LaunchedEffect(key1 = movieId) {
-                if(movieId.isNotEmpty()) {
+                if (movieId.isNotEmpty()) {
                     userMovieDetailsViewModel.initalizeMovieId(movieId)
                 }
             }
 
-            if(userMovieDetailsViewModel.sideEffect != null) {
+            if (userMovieDetailsViewModel.sideEffect != null) {
                 Toast.makeText(
                     LocalContext.current,
                     userMovieDetailsViewModel.sideEffect,
@@ -113,7 +116,7 @@ fun UserNavGraph(
             val movieId = backStackEntry.arguments?.getString(MOVIE_ID) ?: return@composable
             val userMovieShowsViewModel: UserMovieShowsViewModel = hiltViewModel()
 
-            if(userMovieShowsViewModel.sideEffect != null) {
+            if (userMovieShowsViewModel.sideEffect != null) {
                 Toast.makeText(
                     LocalContext.current,
                     userMovieShowsViewModel.sideEffect,
@@ -132,6 +135,31 @@ fun UserNavGraph(
                 onEvent = userMovieShowsViewModel::onEvent,
                 movie = userMovieShowsViewModel.movie,
                 navController = navController
+            )
+        }
+
+        composable(
+            route = Route.UserMovieShowBooking.route,
+            arguments = listOf(navArgument(SHOW_ID) { type = NavType.StringType })
+        ) { backStackEntry ->
+            val showId = backStackEntry.arguments?.getString(SHOW_ID) ?: return@composable
+            val showBookingViewModel: ShowBookingViewModel = hiltViewModel()
+            LaunchedEffect(key1 = showId) {
+                showBookingViewModel.initializeShowId(showId)
+            }
+
+            if(showBookingViewModel.sideEffect != null) {
+                Toast.makeText(
+                    LocalContext.current,
+                    showBookingViewModel.sideEffect,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            ShowBookingScreen(
+                showDetails = showBookingViewModel.showDetails,
+                isLoading = showBookingViewModel.isLoading,
+                onEvent = showBookingViewModel::onEvent
             )
         }
     }

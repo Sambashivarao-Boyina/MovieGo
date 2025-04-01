@@ -144,5 +144,9 @@ interface MovieGoApi {
         @Path("movieId") movieId: String
     ): Response<List<Show>>
 
+    @GET("api/user/show/{showId}/details")
+    suspend fun getShowDetailsForBooking(
+        @Path("showId") showId: String
+    ): Response<ShowDetails>
 
 }

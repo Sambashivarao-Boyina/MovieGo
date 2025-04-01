@@ -6,6 +6,7 @@ import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
+import com.example.moviego.domain.model.ShowDetails
 import com.example.moviego.domain.model.User
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -20,4 +21,5 @@ interface UserRepository {
     suspend fun getMovies(): Response<List<Movie>>
     suspend fun getMovieDetails(movieId: String): Response<Movie>
     suspend fun getMovieShows(movieId: String): Response<List<Show>>
+    suspend fun getShowDetailsForBooking(showId: String): Response<ShowDetails>
 }

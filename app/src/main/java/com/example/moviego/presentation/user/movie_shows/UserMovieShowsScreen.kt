@@ -48,6 +48,7 @@ import com.example.moviego.domain.model.Screen
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.Theater
 import com.example.moviego.presentation.admin.components.TopBar
+import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.ui.theme.Black111
 import com.example.moviego.ui.theme.Black161
 import com.example.moviego.ui.theme.Black1C1
@@ -157,7 +158,7 @@ fun UserMovieShowsScreen(
 
                     LazyColumn(modifier = Modifier.fillMaxSize().padding(8.dp)) {
                         items(theaters.keys.toList()) { theater ->
-                            TheaterItem(theater, theaters[theater] ?: emptyMap())
+                            TheaterItem(theater, theaters[theater] ?: emptyMap(), navController)
                         }
                     }
 
@@ -176,7 +177,7 @@ fun getNextSevenDays(): List<LocalDate> {
 }
 
 @Composable
-fun TheaterItem(theater: Theater, screens: Map<Screen, List<Show>>) {
+fun TheaterItem(theater: Theater, screens: Map<Screen, List<Show>>, navController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -195,13 +196,13 @@ fun TheaterItem(theater: Theater, screens: Map<Screen, List<Show>>) {
             )
 
             screens.forEach { (screen, shows) ->
-                ScreenItem(screen, shows)
+                ScreenItem(screen, shows,navController)
             }
         }
     }
 }
 @Composable
-fun ScreenItem(screen: Screen, shows: List<Show>) {
+fun ScreenItem(screen: Screen, shows: List<Show>, navController: NavHostController) {
     Column(modifier = Modifier.padding(start = 16.dp, top = 8.dp)) {
         Row(
             verticalAlignment = Alignment.Bottom,
@@ -231,13 +232,15 @@ fun ScreenItem(screen: Screen, shows: List<Show>) {
                             text = show.showTime,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier
-                                .clickable { }
                                 .weight(1f) // Makes each item occupy 1/3 of the row
                                 .border(
                                     width = 2.dp,
                                     color = RedE31.copy(alpha = 0.6f),
                                     shape = RoundedCornerShape(10.dp)
                                 )
+                                .clickable {
+                                    navController.navigate(Route.UserMovieShowBooking.passShowId(show._id))
+                                }
                                 .background(RedE31.copy(alpha = 0.1f))
                                 .padding(vertical = 10.dp),
                             textAlign = TextAlign.Center

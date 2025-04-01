@@ -7,6 +7,7 @@ import com.example.moviego.data.remote.Dao.UpdateBody
 import com.example.moviego.data.remote.MovieGoApi
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
+import com.example.moviego.domain.model.ShowDetails
 import com.example.moviego.domain.model.User
 import com.example.moviego.domain.repository.user.UserRepository
 import okhttp3.ResponseBody
@@ -49,5 +50,9 @@ class UserRepositoryImpl(
 
     override suspend fun getMovieShows(movieId: String): Response<List<Show>> {
         return movieGoApi.getMovieShows(movieId)
+    }
+
+    override suspend fun getShowDetailsForBooking(showId: String): Response<ShowDetails> {
+        return movieGoApi.getShowDetailsForBooking(showId)
     }
 }
