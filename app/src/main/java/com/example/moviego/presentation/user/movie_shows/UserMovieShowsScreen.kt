@@ -1,6 +1,7 @@
 package com.example.moviego.presentation.user.movie_shows
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -95,6 +96,7 @@ fun UserMovieShowsScreen(
                 CircularProgressIndicator()
             }
         } else {
+            Log.d("map", shows.toString())
             if (shows.isEmpty()) {
                 Column(
                     modifier = Modifier
@@ -156,11 +158,29 @@ fun UserMovieShowsScreen(
                     }
                     val theaters = shows[selectedDate.format(formatter)] ?: emptyMap() // Get data for the date
 
-                    LazyColumn(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-                        items(theaters.keys.toList()) { theater ->
-                            TheaterItem(theater, theaters[theater] ?: emptyMap(), navController)
+                    if(theaters.isEmpty()) {
+                        Column(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "No Shows Available for this Movie on this Date",
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    } else {
+                        LazyColumn(modifier = Modifier.fillMaxSize().padding(8.dp)) {
+                            items(theaters.keys.toList()) { theater ->
+                                TheaterItem(theater, theaters[theater] ?: emptyMap(), navController)
+                            }
                         }
                     }
+
+
 
                 }
             }
@@ -181,8 +201,7 @@ fun TheaterItem(theater: Theater, screens: Map<Screen, List<Show>>, navControlle
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            ,
+            .padding(8.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth().background(Black161).padding(16.dp)) {

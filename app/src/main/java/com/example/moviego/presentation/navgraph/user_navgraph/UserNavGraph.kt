@@ -159,7 +159,10 @@ fun UserNavGraph(
             ShowBookingScreen(
                 showDetails = showBookingViewModel.showDetails,
                 isLoading = showBookingViewModel.isLoading,
-                onEvent = showBookingViewModel::onEvent
+                onEvent = showBookingViewModel::onEvent,
+                navController = navController,
+                seatSelectionLimit = showBookingViewModel.seatSelectionLimit,
+                selectedSeats = showBookingViewModel.selectedSeats
             )
         }
     }

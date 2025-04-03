@@ -1,6 +1,7 @@
 package com.example.moviego.presentation.user.show_booking
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -16,6 +17,12 @@ class ShowBookingViewModel @Inject constructor(
     private val userUseCases: UserUseCases
 ): ViewModel() {
     var showId by mutableStateOf("")
+        private set
+
+    var selectedSeats by mutableStateOf<Set<String>>(emptySet())
+        private set
+
+    var seatSelectionLimit by mutableIntStateOf(1)
         private set
 
     var showDetails by mutableStateOf<ShowDetails?>(null)
@@ -37,6 +44,19 @@ class ShowBookingViewModel @Inject constructor(
             ShowBookingEvent.RemoveSideEffect -> {
                 sideEffect = null
             }
+            is ShowBookingEvent.UpdateSeatSelectionLimit -> {
+                if(event.limit in 1..6) {
+                    seatSelectionLimit = event.limit
+                }
+            }
+
+            is ShowBookingEvent.ToggleSeat -> {
+                if(selectedSeats.contains(event.seatId)) {
+                    selectedSeats.minus(event.seatId)
+                } else if(selectedSeats.size < seatSelectionLimit) {
+                    selectedSeats.plus(event.seatId)
+                }
+            }
         }
     }
 
@@ -56,4 +76,6 @@ class ShowBookingViewModel @Inject constructor(
 
 sealed class ShowBookingEvent {
     data object RemoveSideEffect: ShowBookingEvent()
+    data class UpdateSeatSelectionLimit(val limit: Int): ShowBookingEvent()
+    data class ToggleSeat(val seatId: String): ShowBookingEvent()
 }
