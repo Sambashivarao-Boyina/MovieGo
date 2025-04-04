@@ -1,12 +1,14 @@
 package com.example.moviego.data.remote
 
 import com.example.moviego.data.remote.Dao.AuthResponse
+import com.example.moviego.data.remote.Dao.BookingData
 import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.NewScreen
 import com.example.moviego.data.remote.Dao.NewShow
 import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
 import com.example.moviego.domain.model.Admin
+import com.example.moviego.domain.model.Booking
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.ShowDetails
@@ -148,5 +150,10 @@ interface MovieGoApi {
     suspend fun getShowDetailsForBooking(
         @Path("showId") showId: String
     ): Response<ShowDetails>
+
+    @POST("api/user/booking")
+    suspend fun createBooking(
+        @Body data:BookingData
+    ): Response<Booking>
 
 }

@@ -1,6 +1,7 @@
 package com.example.moviego.presentation.user.show_booking
 
-import android.widget.Space
+
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,7 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -28,7 +28,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,9 +48,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -77,7 +75,7 @@ fun ShowBookingScreen(
     onEvent: (ShowBookingEvent) -> Unit,
     navController: NavHostController,
     seatSelectionLimit: Int,
-    selectedSeats: Set<String>
+    selectedSeats: MutableSet<String>
 ) {
 
     var showSeatSelectionSheet by rememberSaveable {
@@ -121,6 +119,7 @@ fun ShowBookingScreen(
                     ),
                     end = it.calculateEndPadding(layoutDirection = LayoutDirection.Rtl)
                 )
+                .padding(horizontal = 10.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
@@ -134,7 +133,7 @@ fun ShowBookingScreen(
                 }
             } else {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
                     Row(
@@ -157,10 +156,34 @@ fun ShowBookingScreen(
                 }
 
                 SeatLegend()
+
+                Spacer(Modifier.height(20.dp))
+                Canvas(modifier = Modifier.size(800.dp, 10.dp)) {
+                    val width = size.width
+                    val height = size.height
+
+                    drawPath(
+                        path = Path().apply {
+                            moveTo(0f, height)
+                            quadraticTo(
+                                width / 2,
+                                -height,
+                                width,
+                                height
+                            ) // Control point to create curve
+                            lineTo(width, height)
+                            lineTo(0f, height)
+                            close()
+                        },
+                        color = RedE31
+                    )
+                }
+                Spacer(Modifier.height(20.dp))
+
                 showDetails?.let {
                     Row(
-                        modifier = Modifier.fillMaxSize()
-                            .padding(horizontal = 10.dp)
+                        modifier = Modifier.fillMaxWidth()
+                            .weight(1f)
                             .verticalScroll(rememberScrollState())
                     ) {
                         Column(
@@ -193,11 +216,12 @@ fun ShowBookingScreen(
 
                             }
                         }
-                        
+
                         Column (
                             modifier = Modifier.fillMaxSize()
                                 .horizontalScroll(rememberScrollState())
-                        ) { 
+                        ) {
+
                             showDetails.seats.chunked(20).forEachIndexed{rowIndex, rowSeats ->
                                 Row(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -210,9 +234,9 @@ fun ShowBookingScreen(
                                         BookingSeat(
                                             seat = seat,
                                             onClick = {
-
+                                                onEvent(ShowBookingEvent.ToggleSeat(seat._id))
                                             },
-                                            selected = false
+                                            selected = selectedSeats.contains(seat._id)
                                         )
                                     }
                                 }
@@ -220,7 +244,7 @@ fun ShowBookingScreen(
                         }
                     }
                 }
-                if(selectedSeats.size > 1) {
+                if(selectedSeats.isNotEmpty()) {
                     if (showDetails != null) {
                         SubmitButton(
                             title = "Pay \u20B9 ${selectedSeats.size * showDetails.ticketCost}",
@@ -231,6 +255,7 @@ fun ShowBookingScreen(
                         )
                     }
                 }
+
 
                 if(showSeatSelectionSheet) {
                     ModalBottomSheet(

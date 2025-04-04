@@ -40,7 +40,7 @@ fun BookingSeat(
         } else if(seat.status == "Booked") {
             Triple(DarkComponent, BorderDark, Color.Gray)
         } else {
-            Triple(RedE31, Black161, Color.Gray)
+            Triple(Color.Transparent, RedE31, Color.White)
         }
 
         Box(

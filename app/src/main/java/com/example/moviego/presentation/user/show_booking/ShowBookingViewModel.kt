@@ -1,5 +1,6 @@
 package com.example.moviego.presentation.user.show_booking
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -19,7 +20,7 @@ class ShowBookingViewModel @Inject constructor(
     var showId by mutableStateOf("")
         private set
 
-    var selectedSeats by mutableStateOf<Set<String>>(emptySet())
+    var selectedSeats by mutableStateOf(mutableSetOf<String>())
         private set
 
     var seatSelectionLimit by mutableIntStateOf(1)
@@ -49,12 +50,13 @@ class ShowBookingViewModel @Inject constructor(
                     seatSelectionLimit = event.limit
                 }
             }
-
             is ShowBookingEvent.ToggleSeat -> {
-                if(selectedSeats.contains(event.seatId)) {
-                    selectedSeats.minus(event.seatId)
-                } else if(selectedSeats.size < seatSelectionLimit) {
-                    selectedSeats.plus(event.seatId)
+                selectedSeats = if (selectedSeats.contains(event.seatId)) {
+                    selectedSeats.toMutableSet().apply { remove(event.seatId) } // Create a new set
+                } else if (selectedSeats.size < seatSelectionLimit) {
+                    selectedSeats.toMutableSet().apply { add(event.seatId) } // Create a new set
+                } else {
+                    selectedSeats // Return the original set if no change
                 }
             }
         }

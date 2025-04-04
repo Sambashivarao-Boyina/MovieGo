@@ -1,9 +1,11 @@
 package com.example.moviego.domain.repository.user
 
 import com.example.moviego.data.remote.Dao.AuthResponse
+import com.example.moviego.data.remote.Dao.BookingData
 import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
+import com.example.moviego.domain.model.Booking
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.ShowDetails
@@ -22,4 +24,5 @@ interface UserRepository {
     suspend fun getMovieDetails(movieId: String): Response<Movie>
     suspend fun getMovieShows(movieId: String): Response<List<Show>>
     suspend fun getShowDetailsForBooking(showId: String): Response<ShowDetails>
+    suspend fun createBooking(data: BookingData): Response<Booking>
 }
