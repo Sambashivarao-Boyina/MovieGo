@@ -25,8 +25,13 @@ import com.example.moviego.presentation.user.movie_details.UserMovieDetailsViewM
 import com.example.moviego.presentation.user.movie_shows.UserMovieShowsEvent
 import com.example.moviego.presentation.user.movie_shows.UserMovieShowsScreen
 import com.example.moviego.presentation.user.movie_shows.UserMovieShowsViewModel
+import com.example.moviego.presentation.user.payment_confirmation.UserPaymentConfirmationEvent
+import com.example.moviego.presentation.user.payment_confirmation.UserPaymentConfirmationScreen
+import com.example.moviego.presentation.user.payment_confirmation.UserPaymentConfirmationViewModel
+import com.example.moviego.presentation.user.show_booking.ShowBookingEvent
 import com.example.moviego.presentation.user.show_booking.ShowBookingScreen
 import com.example.moviego.presentation.user.show_booking.ShowBookingViewModel
+import com.example.moviego.util.Constants.BOOKING_ID
 import com.example.moviego.util.Constants.MOVIE_ID
 import com.example.moviego.util.Constants.SHOW_ID
 
@@ -154,6 +159,7 @@ fun UserNavGraph(
                     showBookingViewModel.sideEffect,
                     Toast.LENGTH_SHORT
                 ).show()
+                showBookingViewModel.onEvent(ShowBookingEvent.RemoveSideEffect)
             }
 
             ShowBookingScreen(
@@ -162,7 +168,38 @@ fun UserNavGraph(
                 onEvent = showBookingViewModel::onEvent,
                 navController = navController,
                 seatSelectionLimit = showBookingViewModel.seatSelectionLimit,
-                selectedSeats = showBookingViewModel.selectedSeats
+                selectedSeats = showBookingViewModel.selectedSeats,
+                isCreatingBooking = showBookingViewModel.isCreatingBooking,
+                bookingId = showBookingViewModel.bookingId
+            )
+        }
+
+
+        composable(
+            route = Route.UserPaymentConfirmation.route,
+            arguments = listOf(navArgument(BOOKING_ID) {type = NavType.StringType})
+        ) { backStackEntry ->
+            val bookingId = backStackEntry.arguments?.getString(BOOKING_ID) ?: return@composable
+            val userPaymentConfirmationViewModel: UserPaymentConfirmationViewModel = hiltViewModel()
+
+            if(userPaymentConfirmationViewModel.sideEffect != null) {
+                Toast.makeText(
+                    LocalContext.current,
+                    userPaymentConfirmationViewModel.sideEffect,
+                    Toast.LENGTH_SHORT
+                ).show()
+                userPaymentConfirmationViewModel.onEvent(UserPaymentConfirmationEvent.RemoveSideEffect)
+            }
+
+            LaunchedEffect(key1 = bookingId) {
+                userPaymentConfirmationViewModel.initializeBookingId(bookingId)
+            }
+
+            UserPaymentConfirmationScreen(
+                navController = navController,
+                isLoading = userPaymentConfirmationViewModel.isLoading,
+                booking = userPaymentConfirmationViewModel.booking,
+                onEvent = userPaymentConfirmationViewModel::onEvent
             )
         }
     }

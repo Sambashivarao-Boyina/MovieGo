@@ -28,6 +28,9 @@ import com.example.moviego.domain.usecases.admin_usecases.RefreshAdminToken
 import com.example.moviego.domain.usecases.admin_usecases.SignUpAdminUseCase
 import com.example.moviego.domain.usecases.admin_usecases.UpdatePassword
 import com.example.moviego.domain.usecases.admin_usecases.UpdatePhoneNumber
+import com.example.moviego.domain.usecases.user_usecases.CancelBooking
+import com.example.moviego.domain.usecases.user_usecases.CreateBooking
+import com.example.moviego.domain.usecases.user_usecases.GetBookingDetails
 import com.example.moviego.domain.usecases.user_usecases.GetMovieShows
 import com.example.moviego.domain.usecases.user_usecases.GetMovies
 import com.example.moviego.domain.usecases.user_usecases.GetShowDetailsForBooking
@@ -164,7 +167,10 @@ class AppModule {
             getMovies = GetMovies(userRepository),
             getMovieDetails = GetUserMovieDetails(userRepository),
             getMovieShows = GetMovieShows(userRepository),
-            getShowDetailsForBooking = GetShowDetailsForBooking(userRepository)
+            getShowDetailsForBooking = GetShowDetailsForBooking(userRepository),
+            createBooking = CreateBooking(userRepository),
+            getBookingDetails = GetBookingDetails(userRepository),
+            cancelBooking = CancelBooking(userRepository)
         )
     }
 }

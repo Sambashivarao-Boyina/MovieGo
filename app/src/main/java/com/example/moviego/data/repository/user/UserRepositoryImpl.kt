@@ -58,7 +58,15 @@ class UserRepositoryImpl(
         return movieGoApi.getShowDetailsForBooking(showId)
     }
 
-    override suspend fun createBooking(data: BookingData): Response<Booking> {
+    override suspend fun createBooking(data: BookingData): Response<ResponseBody> {
         return movieGoApi.createBooking(data)
+    }
+
+    override suspend fun getBookingDetails(bookingId: String): Response<Booking> {
+        return movieGoApi.getBookingDetails(bookingId)
+    }
+
+    override suspend fun cancelBooking(bookingId: String): Response<ResponseBody> {
+        return movieGoApi.cancelBooking(bookingId)
     }
 }

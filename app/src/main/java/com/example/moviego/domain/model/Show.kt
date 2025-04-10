@@ -9,5 +9,6 @@ data class Show(
     val screen: Screen,
     val showTime: String,
     val theater: Theater,
-    val ticketCost: Int
+    val ticketCost: Int,
+    val bookingStatus:String
 )

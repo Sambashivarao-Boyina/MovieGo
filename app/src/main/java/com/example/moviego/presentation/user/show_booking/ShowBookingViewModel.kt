@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.moviego.data.remote.Dao.BookingData
 import com.example.moviego.domain.model.ShowDetails
 import com.example.moviego.domain.usecases.user_usecases.UserUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ShowBookingViewModel @Inject constructor(
     private val userUseCases: UserUseCases
-): ViewModel() {
+) : ViewModel() {
     var showId by mutableStateOf("")
         private set
 
@@ -35,21 +36,29 @@ class ShowBookingViewModel @Inject constructor(
     var isLoading by mutableStateOf(false)
         private set
 
+    var isCreatingBooking by mutableStateOf(false)
+        private set
+
+    var bookingId by mutableStateOf<String?>(null)
+        private set
+
     fun initializeShowId(showId: String) {
         this.showId = showId
         loadShow()
     }
 
     fun onEvent(event: ShowBookingEvent) {
-        when(event) {
+        when (event) {
             ShowBookingEvent.RemoveSideEffect -> {
                 sideEffect = null
             }
+
             is ShowBookingEvent.UpdateSeatSelectionLimit -> {
-                if(event.limit in 1..6) {
+                if (event.limit in 1..6) {
                     seatSelectionLimit = event.limit
                 }
             }
+
             is ShowBookingEvent.ToggleSeat -> {
                 selectedSeats = if (selectedSeats.contains(event.seatId)) {
                     selectedSeats.toMutableSet().apply { remove(event.seatId) } // Create a new set
@@ -59,6 +68,37 @@ class ShowBookingViewModel @Inject constructor(
                     selectedSeats // Return the original set if no change
                 }
             }
+
+            ShowBookingEvent.StartBooking -> {
+                createBooking()
+            }
+
+            ShowBookingEvent.ClearBookingId -> {
+                bookingId = null
+            }
+        }
+    }
+
+    private fun createBooking() {
+        viewModelScope.launch {
+            isCreatingBooking = true
+            val result = userUseCases.createBooking(
+                data = BookingData(
+                    showId = showId,
+                    selectedSeats = selectedSeats.toList()
+                )
+            )
+
+            if (result.isSuccess) {
+                bookingId = result.getOrDefault(null)
+                sideEffect = "Booking is created"
+            } else {
+                sideEffect = result.exceptionOrNull()?.message
+                loadShow()
+                selectedSeats = mutableSetOf<String>()
+            }
+
+            isCreatingBooking = false
         }
     }
 
@@ -66,7 +106,7 @@ class ShowBookingViewModel @Inject constructor(
         isLoading = true
         viewModelScope.launch {
             val result = userUseCases.getShowDetailsForBooking(showId)
-            if(result.isSuccess) {
+            if (result.isSuccess) {
                 showDetails = result.getOrDefault(null)
             } else {
                 sideEffect = result.exceptionOrNull()?.message
@@ -74,10 +114,13 @@ class ShowBookingViewModel @Inject constructor(
         }
         isLoading = false
     }
+
 }
 
 sealed class ShowBookingEvent {
-    data object RemoveSideEffect: ShowBookingEvent()
-    data class UpdateSeatSelectionLimit(val limit: Int): ShowBookingEvent()
-    data class ToggleSeat(val seatId: String): ShowBookingEvent()
+    data object RemoveSideEffect : ShowBookingEvent()
+    data class UpdateSeatSelectionLimit(val limit: Int) : ShowBookingEvent()
+    data class ToggleSeat(val seatId: String) : ShowBookingEvent()
+    data object StartBooking : ShowBookingEvent()
+    data object ClearBookingId : ShowBookingEvent()
 }

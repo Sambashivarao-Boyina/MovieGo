@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -26,7 +27,7 @@ fun SubmitButton(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth()
             .height(50.dp),
-        shape = CircleShape
+        shape = RoundedCornerShape(10.dp)
     ) {
         if(loading) {
             CircularProgressIndicator(color = Color.White, modifier = Modifier.size(30.dp))

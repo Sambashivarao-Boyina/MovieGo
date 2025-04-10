@@ -1,6 +1,7 @@
 package com.example.moviego.presentation.user.show_booking
 
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,13 +58,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.moviego.R
 import com.example.moviego.domain.model.ShowDetails
-import com.example.moviego.presentation.admin.components.AccentRed
 import com.example.moviego.presentation.admin.components.BorderDark
 import com.example.moviego.presentation.admin.components.DarkComponent
-import com.example.moviego.presentation.admin.components.ProcessingYellow
 import com.example.moviego.presentation.admin.components.TextSecondary
-import com.example.moviego.presentation.admin.components.TopBar
 import com.example.moviego.presentation.authentication.components.SubmitButton
+import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.ui.theme.Black111
 import com.example.moviego.ui.theme.Black161
 import com.example.moviego.ui.theme.RedE31
@@ -75,8 +75,17 @@ fun ShowBookingScreen(
     onEvent: (ShowBookingEvent) -> Unit,
     navController: NavHostController,
     seatSelectionLimit: Int,
-    selectedSeats: MutableSet<String>
+    selectedSeats: MutableSet<String>,
+    isCreatingBooking: Boolean,
+    bookingId: String?
 ) {
+
+    LaunchedEffect(key1 = bookingId) {
+        if(bookingId != null) {
+            navController.navigate(Route.UserPaymentConfirmation.passBookingId(bookingId))
+            onEvent(ShowBookingEvent.ClearBookingId)
+        }
+    }
 
     var showSeatSelectionSheet by rememberSaveable {
         mutableStateOf(true)
@@ -95,6 +104,7 @@ fun ShowBookingScreen(
                     }
                 },
                 title = {
+                    Log.d("show", showDetails.toString())
                    if(showDetails != null) {
                       Column {
                           Text(text = showDetails.movie.Title)
@@ -249,9 +259,9 @@ fun ShowBookingScreen(
                         SubmitButton(
                             title = "Pay \u20B9 ${selectedSeats.size * showDetails.ticketCost}",
                             onClick = {
-
+                                onEvent(ShowBookingEvent.StartBooking)
                             },
-                            loading = false
+                            loading = isCreatingBooking
                         )
                     }
                 }

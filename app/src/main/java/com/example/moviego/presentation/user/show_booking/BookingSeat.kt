@@ -37,7 +37,7 @@ fun BookingSeat(
     ) {
         val (backgroundColor, borderColor, textColor) = if(selected) {
             Triple(RedE31, RedE31, Color.White)
-        } else if(seat.status == "Booked") {
+        } else if(seat.status == "Booked" || seat.status == "Processing") {
             Triple(DarkComponent, BorderDark, Color.Gray)
         } else {
             Triple(Color.Transparent, RedE31, Color.White)

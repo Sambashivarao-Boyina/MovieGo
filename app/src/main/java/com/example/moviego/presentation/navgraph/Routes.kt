@@ -1,5 +1,6 @@
 package com.example.moviego.presentation.navgraph
 
+import com.example.moviego.util.Constants.BOOKING_ID
 import com.example.moviego.util.Constants.MOVIE_ID
 import com.example.moviego.util.Constants.SHOW_ID
 import com.example.moviego.util.Constants.THEATER_ID
@@ -79,6 +80,12 @@ sealed class Route(val route: String) {
     object UserMovieShowBooking: Route("userMovieShowBooking/{${SHOW_ID}}") {
         fun passShowId(showId: String): String {
             return this.route.replace(oldValue = "{${SHOW_ID}}", newValue = showId)
+        }
+    }
+
+    object UserPaymentConfirmation: Route("userPaymentConfirmation/{${BOOKING_ID}}") {
+        fun passBookingId(bookingId: String): String {
+            return this.route.replace(oldValue = "{${BOOKING_ID}}", newValue = bookingId)
         }
     }
 

@@ -19,6 +19,7 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
@@ -154,6 +155,16 @@ interface MovieGoApi {
     @POST("api/user/booking")
     suspend fun createBooking(
         @Body data:BookingData
+    ): Response<ResponseBody>
+
+    @GET("api/user/booking/{bookingId}")
+    suspend fun getBookingDetails(
+        @Path("bookingId") bookingId: String
     ): Response<Booking>
+
+    @DELETE("api/user/booking/{bookingId}")
+    suspend fun cancelBooking(
+        @Path("bookingId") bookingId: String
+    ): Response<ResponseBody>
 
 }

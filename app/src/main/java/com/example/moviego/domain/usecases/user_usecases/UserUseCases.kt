@@ -12,5 +12,8 @@ data class UserUseCases(
     val getMovies: GetMovies,
     val getMovieDetails: GetUserMovieDetails,
     val getMovieShows: GetMovieShows,
-    val getShowDetailsForBooking: GetShowDetailsForBooking
+    val getShowDetailsForBooking: GetShowDetailsForBooking,
+    val createBooking: CreateBooking,
+    val getBookingDetails: GetBookingDetails,
+    val cancelBooking: CancelBooking
 )
