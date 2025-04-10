@@ -199,7 +199,12 @@ fun UserNavGraph(
                 navController = navController,
                 isLoading = userPaymentConfirmationViewModel.isLoading,
                 booking = userPaymentConfirmationViewModel.booking,
-                onEvent = userPaymentConfirmationViewModel::onEvent
+                onEvent = userPaymentConfirmationViewModel::onEvent,
+                cancelingBooking = userPaymentConfirmationViewModel.cancelingBooking,
+                navigateBack = userPaymentConfirmationViewModel.navigateBack,
+                ticketsPrice = userPaymentConfirmationViewModel.ticketsPrice,
+                convenienceFees = userPaymentConfirmationViewModel.convenienceFees,
+                totalPayment = userPaymentConfirmationViewModel.totalPayment
             )
         }
     }
