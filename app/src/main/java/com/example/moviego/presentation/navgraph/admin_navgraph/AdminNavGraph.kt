@@ -100,7 +100,8 @@ fun AdminNavGraph(
                 onEvent = adminAddShowViewModel::onEvent,
                 movies = adminAddShowViewModel.adminMovies,
                 theaters = adminAddShowViewModel.adminTheaters,
-                isCreatingShow = adminAddShowViewModel.isCreatingShow
+                isCreatingShow = adminAddShowViewModel.isCreatingShow,
+                isCreatedNewShow = adminAddShowViewModel.isCreatedNewShow
             )
         }
 

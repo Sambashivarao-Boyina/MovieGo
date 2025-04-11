@@ -1,11 +1,14 @@
 package com.example.moviego.presentation.admin.add_theater
 
 import android.Manifest
+import android.content.Context
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RawRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -51,6 +54,8 @@ import com.example.moviego.presentation.components.DropDownItem
 import com.example.moviego.presentation.components.DropDownSelect
 import com.example.moviego.ui.theme.Black1C1
 import com.example.moviego.util.Constants.getFileFromUri
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 @Composable
 fun AdminAddTheaterScreen(
@@ -65,10 +70,28 @@ fun AdminAddTheaterScreen(
     var permissionGranted by remember { mutableStateOf(false) }
 
     LaunchedEffect(isSuccess) {
-        if(isSuccess) {
+        if (isSuccess) {
             navController.popBackStack()
         }
     }
+
+    val gson = remember {
+        Gson()
+    }
+    val states = remember {
+        val statesJson = readRawResource(R.raw.states, context)
+        gson.fromJson<List<String>>(statesJson, object : TypeToken<List<String>>() {}.type)
+    }
+
+    val citiesMap = remember {
+        val jsonString = readRawResource(R.raw.state_cities, context)
+        gson.fromJson(jsonString, Root::class.java)
+    }
+
+
+
+    Log.d("cities", citiesMap.toString())
+
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -85,7 +108,7 @@ fun AdminAddTheaterScreen(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
             permissionGranted = isGranted
-            if(permissionGranted) {
+            if (permissionGranted) {
                 launcher.launch("image/*")
             } else {
                 Toast.makeText(context, "Permission is Denied", Toast.LENGTH_SHORT).show()
@@ -110,12 +133,14 @@ fun AdminAddTheaterScreen(
         }
     ) {
         Column(
-            modifier = Modifier.padding(it)
+            modifier = Modifier
+                .padding(it)
                 .padding(horizontal = 10.dp)
                 .fillMaxSize()
         ) {
             LazyColumn(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
@@ -176,16 +201,19 @@ fun AdminAddTheaterScreen(
                 }
 
                 item {
-                    InputBox(
-                        value = newTheaterState.city,
-                        onChange = {
-                            onEvent(AdminAddTheaterEvent.UpdateCity(it))
+                    DropDownSelect(
+                        items = citiesMap.states.find { it.state == newTheaterState.state }
+                            ?.cities
+                            ?.map { DropDownItem(title = it.city, ref = it.city) }
+                            ?: emptyList(),
+                        onSelect = {
+                            onEvent(AdminAddTheaterEvent.UpdateCity(it.title))
                         },
-                        placeHolder = "Enter City",
                         error = newTheaterState.cityError,
-                        leadingIcon = null,
-                        keyboardType = KeyboardType.Text
+                        unAvailableMessage = "Select the State",
+                        unSelectedMessage = "Select the City"
                     )
+
                 }
 
                 item {
@@ -209,7 +237,7 @@ fun AdminAddTheaterScreen(
                             .clip(RoundedCornerShape(12.dp))
                             .background(Black1C1, shape = RoundedCornerShape(12.dp))
                             .clickable {
-                                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                                     launcher.launch("image/*")
                                 } else {
                                     permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -231,15 +259,21 @@ fun AdminAddTheaterScreen(
                                 verticalArrangement = Arrangement.SpaceEvenly,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Icon(painter = painterResource(R.drawable.upload), contentDescription = null, modifier = Modifier.size(50.dp))
+                                Icon(
+                                    painter = painterResource(R.drawable.upload),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(50.dp)
+                                )
                                 Text(text = "Upload Poster")
                             }
                         }
                     }
 
-                    if(newTheaterState.imageError.isNotEmpty()) {
+                    if (newTheaterState.imageError.isNotEmpty()) {
                         Text(
-                            text = newTheaterState.imageError, color = Color.Red, modifier = Modifier.padding(
+                            text = newTheaterState.imageError,
+                            color = Color.Red,
+                            modifier = Modifier.padding(
                                 start = 20.dp, top = 10.dp
                             )
                         )
@@ -259,39 +293,22 @@ fun AdminAddTheaterScreen(
     }
 }
 
-var states: Array<String> = arrayOf("Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
-    "Andaman and Nicobar Islands",
-    "Chandigarh",
-    "Dadra and Nagar Haveli and Daman and Diu",
-    "Lakshadweep",
-    "Delhi",
-    "Puducherry",
-    "Ladakh",
-    "Jammu and Kashmir")
+fun readRawResource(@RawRes resId: Int, context: Context): String {
+    return context.resources.openRawResource(resId).bufferedReader().use { it.readText() }
+}
+
+data class Root(
+    val states: List<State>
+)
+
+data class State(
+    val state: String,
+    val cities: List<City>
+)
+
+data class City(
+    val city: String,
+    val latitude: Double,
+    val longitude: Double,
+    val wikidataid: String
+)

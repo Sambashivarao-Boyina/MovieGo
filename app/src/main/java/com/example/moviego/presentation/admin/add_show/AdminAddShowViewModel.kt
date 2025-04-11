@@ -36,6 +36,9 @@ class AdminAddShowViewModel @Inject constructor(
     var isCreatingShow by mutableStateOf(false)
         private set
 
+    var isCreatedNewShow by mutableStateOf(false)
+        private set
+
 
     init {
         isLoading = true
@@ -71,6 +74,10 @@ class AdminAddShowViewModel @Inject constructor(
                 if(validateAddShow()) {
                     createShow()
                 }
+            }
+
+            AdminAddShowEvent.RemoveNewShowCreated -> {
+                isCreatedNewShow = false
             }
         }
     }
@@ -143,6 +150,7 @@ class AdminAddShowViewModel @Inject constructor(
             if(result.isSuccess) {
                 sideEffect = result.getOrDefault("Movie is Created")
                 state = AdminAddShowState()
+                isCreatedNewShow = true
             } else {
                 sideEffect = result.exceptionOrNull()?.message
             }
@@ -174,4 +182,5 @@ sealed class AdminAddShowEvent {
     data class UpdateDate(val date:String): AdminAddShowEvent()
     data class UpdateShowTime(val showTime:String): AdminAddShowEvent()
     data object AddShowSubmit: AdminAddShowEvent()
+    data object RemoveNewShowCreated: AdminAddShowEvent()
 }

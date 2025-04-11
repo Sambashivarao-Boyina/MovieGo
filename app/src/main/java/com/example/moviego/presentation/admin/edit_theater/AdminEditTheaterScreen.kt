@@ -44,7 +44,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.moviego.R
-import com.example.moviego.presentation.admin.add_theater.states
+import com.example.moviego.presentation.admin.add_theater.AdminAddTheaterEvent
+import com.example.moviego.presentation.admin.add_theater.City
+import com.example.moviego.presentation.admin.add_theater.Root
+import com.example.moviego.presentation.admin.add_theater.readRawResource
 import com.example.moviego.presentation.admin.components.TopBar
 import com.example.moviego.presentation.authentication.components.InputBox
 import com.example.moviego.presentation.authentication.components.SubmitButton
@@ -52,6 +55,8 @@ import com.example.moviego.presentation.components.DropDownItem
 import com.example.moviego.presentation.components.DropDownSelect
 import com.example.moviego.ui.theme.Black1C1
 import com.example.moviego.util.Constants.getFileFromUri
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 @Composable
 fun AdminEditTheaterScreen(
@@ -69,6 +74,20 @@ fun AdminEditTheaterScreen(
             navController.popBackStack()
         }
     }
+
+    val gson = remember {
+        Gson()
+    }
+    val states = remember {
+        val statesJson = readRawResource(R.raw.states, context)
+        gson.fromJson<List<String>>(statesJson, object : TypeToken<List<String>>() {}.type)
+    }
+
+    val citiesMap = remember {
+        val jsonString = readRawResource(R.raw.state_cities, context)
+        gson.fromJson(jsonString, Root::class.java)
+    }
+
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -180,15 +199,17 @@ fun AdminEditTheaterScreen(
                 }
 
                 item {
-                    InputBox(
-                        value = editTheaterState.city,
-                        onChange = {
-                            onEvent(AdminEditTheaterEvent.UpdateCity(it))
+                    DropDownSelect(
+                        items = citiesMap.states.find { it.state == editTheaterState.state }
+                            ?.cities
+                            ?.map { DropDownItem(title = it.city, ref = it.city) }
+                            ?: emptyList(),
+                        onSelect = {
+                            onEvent(AdminEditTheaterEvent.UpdateCity(it.title))
                         },
-                        placeHolder = "Enter City",
                         error = editTheaterState.cityError,
-                        leadingIcon = null,
-                        keyboardType = KeyboardType.Text
+                        unAvailableMessage = "Select the State",
+                        unSelectedMessage = "Select the City"
                     )
                 }
 

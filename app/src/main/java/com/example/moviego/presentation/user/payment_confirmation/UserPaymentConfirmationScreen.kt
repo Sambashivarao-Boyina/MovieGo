@@ -82,6 +82,7 @@ fun UserPaymentConfirmationScreen(
     BackHandler(enabled = true) {
         showCancelConfirmDialog = true
     }
+
     Scaffold(
         topBar = {
             TopBar(
@@ -340,7 +341,6 @@ fun UserPaymentConfirmationScreen(
                 }
             }
         }
-
         if (showCancelConfirmDialog) {
             Dialog(
                 onDismissRequest = {
