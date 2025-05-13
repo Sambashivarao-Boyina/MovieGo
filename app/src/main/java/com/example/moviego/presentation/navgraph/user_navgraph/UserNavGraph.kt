@@ -1,5 +1,6 @@
 package com.example.moviego.presentation.navgraph.user_navgraph
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,7 +38,8 @@ import com.example.moviego.util.Constants.SHOW_ID
 
 @Composable
 fun UserNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    userPaymentConfirmationViewModel: UserPaymentConfirmationViewModel
 ) {
     NavHost(
         navController = navController,
@@ -180,9 +182,9 @@ fun UserNavGraph(
             arguments = listOf(navArgument(BOOKING_ID) {type = NavType.StringType})
         ) { backStackEntry ->
             val bookingId = backStackEntry.arguments?.getString(BOOKING_ID) ?: return@composable
-            val userPaymentConfirmationViewModel: UserPaymentConfirmationViewModel = hiltViewModel()
 
             if(userPaymentConfirmationViewModel.sideEffect != null) {
+                Log.d("sideEffect", userPaymentConfirmationViewModel.sideEffect.toString())
                 Toast.makeText(
                     LocalContext.current,
                     userPaymentConfirmationViewModel.sideEffect,
@@ -204,7 +206,8 @@ fun UserNavGraph(
                 navigateBack = userPaymentConfirmationViewModel.navigateBack,
                 ticketsPrice = userPaymentConfirmationViewModel.ticketsPrice,
                 convenienceFees = userPaymentConfirmationViewModel.convenienceFees,
-                totalPayment = userPaymentConfirmationViewModel.totalPayment
+                totalPayment = userPaymentConfirmationViewModel.totalPayment,
+                paymentState = userPaymentConfirmationViewModel.paymentState
             )
         }
     }

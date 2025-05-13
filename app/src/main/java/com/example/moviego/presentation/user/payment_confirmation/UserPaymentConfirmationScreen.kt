@@ -1,6 +1,8 @@
 package com.example.moviego.presentation.user.payment_confirmation
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,11 +20,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -49,10 +51,8 @@ import androidx.navigation.NavHostController
 import com.example.moviego.domain.model.Booking
 import com.example.moviego.presentation.admin.components.TopBar
 import com.example.moviego.presentation.authentication.components.SubmitButton
-import com.example.moviego.ui.theme.Black111
+import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.ui.theme.Black161
-import com.example.moviego.ui.theme.Black1C1
-import com.example.moviego.ui.theme.RedBB0
 import com.example.moviego.ui.theme.RedE31
 
 @SuppressLint("DefaultLocale")
@@ -66,15 +66,35 @@ fun UserPaymentConfirmationScreen(
     navigateBack: Boolean,
     ticketsPrice: Float,
     convenienceFees: Float,
-    totalPayment: Float
+    totalPayment: Float,
+    paymentState: PaymentState
 ) {
     var showCancelConfirmDialog by rememberSaveable {
         mutableStateOf(false)
     }
 
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = navigateBack) {
+        Log.d("changed", "changed")
         if (navigateBack) {
             navController.popBackStack()
+        }
+    }
+
+    LaunchedEffect(key1 = paymentState) {
+        when(paymentState) {
+            is PaymentState.Success -> {
+                navController.popBackStack(route = Route.UserHomeRoute.route, inclusive = false)
+                onEvent(UserPaymentConfirmationEvent.ResetConfirmation)
+            }
+            is PaymentState.Error -> {
+                onEvent(UserPaymentConfirmationEvent.ResetConfirmation)
+                navController.popBackStack(route = Route.UserMovieShowBooking.route, inclusive = false)
+            }
+            else -> {
+
+            }
         }
     }
 
@@ -302,7 +322,7 @@ fun UserPaymentConfirmationScreen(
                         ) {
                             SubmitButton(
                                 onClick = {
-
+                                    onEvent(UserPaymentConfirmationEvent.StartPayment(context as Activity))
                                 },
                                 title = "Continue",
                                 loading = false

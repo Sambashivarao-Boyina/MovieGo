@@ -44,8 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.moviego.R
-import com.example.moviego.presentation.admin.add_theater.AdminAddTheaterEvent
-import com.example.moviego.presentation.admin.add_theater.City
 import com.example.moviego.presentation.admin.add_theater.Root
 import com.example.moviego.presentation.admin.add_theater.readRawResource
 import com.example.moviego.presentation.admin.components.TopBar

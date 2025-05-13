@@ -60,4 +60,11 @@ class MainViewModel @Inject constructor(
         }
 
     }
+
+    fun sendPaymentId(paymentId: String){
+        viewModelScope.launch {
+            val result = userUseCases.checkoutBooking(paymentId)
+            Log.d("result", result.toString())
+        }
+    }
 }

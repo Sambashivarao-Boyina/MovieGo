@@ -69,4 +69,8 @@ class UserRepositoryImpl(
     override suspend fun cancelBooking(bookingId: String): Response<ResponseBody> {
         return movieGoApi.cancelBooking(bookingId)
     }
+
+    override suspend fun checkoutBooking( paymentId: String): Response<ResponseBody> {
+        return movieGoApi.checkoutBooking( paymentId)
+    }
 }

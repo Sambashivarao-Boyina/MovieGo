@@ -15,6 +15,9 @@ object Constants {
     const val USER = "User"
     const val BASE_URL = "http://10.0.2.2:3000/"
 
+    const val RAZOR_PAY_KEY_ID = ""
+
+
     const val SHOW_ID = "showId"
     const val THEATER_ID = "theaterId"
     const val MOVIE_ID = "movieID"

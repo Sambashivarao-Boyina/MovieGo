@@ -15,9 +15,12 @@ import com.example.moviego.presentation.components.BottomBar
 import com.example.moviego.presentation.components.BottomNavItem
 import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.presentation.navgraph.user_navgraph.UserNavGraph
+import com.example.moviego.presentation.user.payment_confirmation.UserPaymentConfirmationViewModel
 
 @Composable
-fun UserNavigator() {
+fun UserNavigator(
+    userPaymentConfirmationViewModel: UserPaymentConfirmationViewModel
+) {
     val navController = rememberNavController()
     val backstack = navController.currentBackStackEntryAsState().value
 
@@ -56,7 +59,7 @@ fun UserNavigator() {
             modifier = Modifier.fillMaxSize()
                 .padding(bottom = it.calculateBottomPadding())
         ) {
-            UserNavGraph(navController = navController)
+            UserNavGraph(navController = navController, userPaymentConfirmationViewModel = userPaymentConfirmationViewModel)
         }
     }
 }

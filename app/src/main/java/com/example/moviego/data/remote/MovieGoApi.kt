@@ -167,4 +167,9 @@ interface MovieGoApi {
         @Path("bookingId") bookingId: String
     ): Response<ResponseBody>
 
+    @PATCH("api/user/booking/checkout/{paymentId}")
+    suspend fun checkoutBooking(
+        @Path("paymentId") paymentId: String
+    ): Response<ResponseBody>
+
 }

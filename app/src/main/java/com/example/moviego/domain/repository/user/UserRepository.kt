@@ -27,4 +27,5 @@ interface UserRepository {
     suspend fun createBooking(data: BookingData): Response<ResponseBody>
     suspend fun getBookingDetails(bookingId: String): Response<Booking>
     suspend fun cancelBooking(bookingId: String): Response<ResponseBody>
+    suspend fun checkoutBooking(paymentId: String): Response<ResponseBody>
 }
