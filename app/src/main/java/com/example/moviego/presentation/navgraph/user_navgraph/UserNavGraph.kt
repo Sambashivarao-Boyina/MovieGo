@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.presentation.user.bookings.UserBookingViewModel
+import com.example.moviego.presentation.user.bookings.UserBookingsEvent
 import com.example.moviego.presentation.user.bookings.UserBookingsScreen
 import com.example.moviego.presentation.user.details.UserDetailsEvent
 import com.example.moviego.presentation.user.details.UserDetailsScreen
@@ -82,8 +83,22 @@ fun UserNavGraph(
         }
 
         composable(route = Route.UserBookings.route) {
-            val userBookingViewModel: UserBookingViewModel = hiltViewModel()
-            UserBookingsScreen()
+            val userBookingsViewModel: UserBookingViewModel = hiltViewModel()
+
+            if(userBookingsViewModel.sideEffect != null) {
+                Toast.makeText(
+                    LocalContext.current,
+                    userBookingsViewModel.sideEffect,
+                    Toast.LENGTH_SHORT
+                ).show()
+                userBookingsViewModel.onEvent(UserBookingsEvent.RemoveSideEffect)
+            }
+
+            UserBookingsScreen(
+                isLoading = userBookingsViewModel.isLoading,
+                bookings = userBookingsViewModel.bookings,
+                onEvent = userBookingsViewModel::onEvent
+            )
         }
 
         composable(
@@ -182,7 +197,6 @@ fun UserNavGraph(
             arguments = listOf(navArgument(BOOKING_ID) {type = NavType.StringType})
         ) { backStackEntry ->
             val bookingId = backStackEntry.arguments?.getString(BOOKING_ID) ?: return@composable
-
             if(userPaymentConfirmationViewModel.sideEffect != null) {
                 Log.d("sideEffect", userPaymentConfirmationViewModel.sideEffect.toString())
                 Toast.makeText(

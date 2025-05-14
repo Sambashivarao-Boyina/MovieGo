@@ -32,6 +32,7 @@ import com.example.moviego.domain.usecases.user_usecases.CancelBooking
 import com.example.moviego.domain.usecases.user_usecases.CheckoutBooking
 import com.example.moviego.domain.usecases.user_usecases.CreateBooking
 import com.example.moviego.domain.usecases.user_usecases.GetBookingDetails
+import com.example.moviego.domain.usecases.user_usecases.GetBookingsList
 import com.example.moviego.domain.usecases.user_usecases.GetMovieShows
 import com.example.moviego.domain.usecases.user_usecases.GetMovies
 import com.example.moviego.domain.usecases.user_usecases.GetShowDetailsForBooking
@@ -170,6 +171,7 @@ class AppModule {
             getMovieShows = GetMovieShows(userRepository),
             getShowDetailsForBooking = GetShowDetailsForBooking(userRepository),
             createBooking = CreateBooking(userRepository),
+            getBookingsList = GetBookingsList(userRepository),
             getBookingDetails = GetBookingDetails(userRepository),
             cancelBooking = CancelBooking(userRepository),
             checkoutBooking = CheckoutBooking(userRepository)

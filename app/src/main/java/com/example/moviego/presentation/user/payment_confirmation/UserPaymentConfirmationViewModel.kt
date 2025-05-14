@@ -1,6 +1,7 @@
 package com.example.moviego.presentation.user.payment_confirmation
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -90,7 +91,9 @@ class UserPaymentConfirmationViewModel @Inject constructor(
                 startPayment(activity = event.activity)
             }
             UserPaymentConfirmationEvent.ResetConfirmation -> {
+                navigateBack = false
                 paymentState = PaymentState.Idle
+
             }
         }
     }
@@ -103,6 +106,20 @@ class UserPaymentConfirmationViewModel @Inject constructor(
                 if(result.isSuccess) {
                     sideEffect = result.getOrNull()
                     navigateBack = true
+                } else {
+                    sideEffect = result.exceptionOrNull()?.message
+                }
+            }
+        }
+        cancelingBooking = false
+    }
+    private fun cancelBooking2() {
+        cancelingBooking = true
+        viewModelScope.launch {
+            if(bookingId != null) {
+                val result = userUseCases.cancelBooking(bookingId!!)
+                if(result.isSuccess) {
+                    sideEffect = result.getOrNull()
                 } else {
                     sideEffect = result.exceptionOrNull()?.message
                 }
@@ -160,10 +177,9 @@ class UserPaymentConfirmationViewModel @Inject constructor(
 
      fun handlePaymentError(message: String){
         viewModelScope.launch {
-            paymentState = PaymentState.Error(message)
-            cancelBooking()
+            cancelBooking2()
             sideEffect = message
-
+            paymentState = PaymentState.Error(message)
         }
     }
 }

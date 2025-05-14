@@ -76,21 +76,22 @@ fun UserPaymentConfirmationScreen(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = navigateBack) {
-        Log.d("changed", "changed")
         if (navigateBack) {
+            Log.d("navigateBack", "NavigateBack")
             navController.popBackStack()
         }
     }
 
     LaunchedEffect(key1 = paymentState) {
+
         when(paymentState) {
             is PaymentState.Success -> {
                 navController.popBackStack(route = Route.UserHomeRoute.route, inclusive = false)
                 onEvent(UserPaymentConfirmationEvent.ResetConfirmation)
             }
             is PaymentState.Error -> {
+                navController.popBackStack(route = Route.UserMovieShows.route, inclusive = false)
                 onEvent(UserPaymentConfirmationEvent.ResetConfirmation)
-                navController.popBackStack(route = Route.UserMovieShowBooking.route, inclusive = false)
             }
             else -> {
 

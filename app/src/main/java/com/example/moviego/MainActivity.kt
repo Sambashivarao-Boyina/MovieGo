@@ -20,6 +20,7 @@ import com.razorpay.Checkout
 import com.razorpay.PaymentData
 import com.razorpay.PaymentResultWithDataListener
 import dagger.hilt.android.AndroidEntryPoint
+import org.json.JSONObject
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -55,6 +56,17 @@ class MainActivity : ComponentActivity(), PaymentResultWithDataListener {
     }
 
     override fun onPaymentError(p0: Int, p1: String?, p2: PaymentData?) {
-        userPaymentConfirmationViewModel.handlePaymentError(p1.toString())
+        var errorMessage = "Unknown payment error"
+        try {
+            p1?.let {
+                val json = JSONObject(it)
+                val error = json.getJSONObject("error")
+                errorMessage = error.optString("reason", error.optString("reason", error.optString("code", errorMessage)))
+            }
+        } catch (e: Exception) {
+            // Log or handle JSON parsing error if needed
+        }
+
+        userPaymentConfirmationViewModel.handlePaymentError(errorMessage)
     }
 }

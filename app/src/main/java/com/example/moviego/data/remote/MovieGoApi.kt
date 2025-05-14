@@ -157,6 +157,11 @@ interface MovieGoApi {
         @Body data:BookingData
     ): Response<ResponseBody>
 
+    @GET("api/user/booking")
+    suspend fun getBookingsList(): Response<List<Booking>>
+
+
+
     @GET("api/user/booking/{bookingId}")
     suspend fun getBookingDetails(
         @Path("bookingId") bookingId: String

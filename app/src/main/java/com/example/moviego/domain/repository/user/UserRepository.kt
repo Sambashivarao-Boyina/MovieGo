@@ -25,6 +25,7 @@ interface UserRepository {
     suspend fun getMovieShows(movieId: String): Response<List<Show>>
     suspend fun getShowDetailsForBooking(showId: String): Response<ShowDetails>
     suspend fun createBooking(data: BookingData): Response<ResponseBody>
+    suspend fun getBookingsList(): Response<List<Booking>>
     suspend fun getBookingDetails(bookingId: String): Response<Booking>
     suspend fun cancelBooking(bookingId: String): Response<ResponseBody>
     suspend fun checkoutBooking(paymentId: String): Response<ResponseBody>
