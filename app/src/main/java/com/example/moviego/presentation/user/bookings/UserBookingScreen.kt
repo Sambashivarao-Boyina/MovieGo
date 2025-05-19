@@ -35,10 +35,12 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviego.R
 import com.example.moviego.domain.model.Booking
+import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.ui.theme.Black1C1
 import com.example.moviego.ui.theme.RedE31
 import java.util.Locale
@@ -48,7 +50,8 @@ import kotlin.math.sign
 fun UserBookingsScreen(
     isLoading: Boolean,
     bookings: List<Booking>,
-    onEvent:(UserBookingsEvent) -> Unit
+    onEvent:(UserBookingsEvent) -> Unit,
+    navController: NavHostController
 ) {
     Scaffold {
         if(isLoading) {
@@ -66,7 +69,9 @@ fun UserBookingsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(bookings) {
-                    BookingCard(it)
+                    BookingCard(it, onClick = {
+                        navController.navigate(Route.UserBookingDetails.passBookingId(it._id))
+                    })
                 }
             }
         }
@@ -74,12 +79,13 @@ fun UserBookingsScreen(
 }
 
 @Composable
-fun BookingCard(booking: Booking) {
+fun BookingCard(booking: Booking, onClick:()->Unit) {
     Card(
         elevation = CardDefaults.elevatedCardElevation(8.dp),
         colors = CardDefaults.cardColors().copy(
             containerColor = MaterialTheme.colorScheme.surface
-        )
+        ),
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier
@@ -228,8 +234,8 @@ fun BookingStatus(status: String) {
         elevation = CardDefaults.elevatedCardElevation(10.dp),
         modifier = Modifier
             .clip(RoundedCornerShape(10.dp))
-            .background(color = RedE31).padding(horizontal = 10.dp, vertical = 5.dp)
-
+            .background(color = RedE31)
+            .padding(horizontal = 10.dp, vertical = 5.dp)
     ) {
         Text(text = status.uppercase(Locale.ROOT), color = Color.White, modifier = Modifier.background(RedE31), fontWeight = FontWeight.Bold)
     }

@@ -7,4 +7,5 @@ data class Booking(
     val user: User,
     val bookingStatus: String,
     val createdAt: String,
+    val paymentId: String?
 )

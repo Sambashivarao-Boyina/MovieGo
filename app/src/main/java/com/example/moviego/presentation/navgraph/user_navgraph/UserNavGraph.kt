@@ -12,6 +12,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.moviego.presentation.navgraph.Route
+import com.example.moviego.presentation.user.booking_details.BookingDetailsEvent
+import com.example.moviego.presentation.user.booking_details.BookingDetailsScreen
+import com.example.moviego.presentation.user.booking_details.BookingDetailsViewModel
 import com.example.moviego.presentation.user.bookings.UserBookingViewModel
 import com.example.moviego.presentation.user.bookings.UserBookingsEvent
 import com.example.moviego.presentation.user.bookings.UserBookingsScreen
@@ -97,7 +100,37 @@ fun UserNavGraph(
             UserBookingsScreen(
                 isLoading = userBookingsViewModel.isLoading,
                 bookings = userBookingsViewModel.bookings,
-                onEvent = userBookingsViewModel::onEvent
+                onEvent = userBookingsViewModel::onEvent,
+                navController = navController
+            )
+        }
+
+        composable(
+            route = Route.UserBookingDetails.route,
+            arguments = listOf(navArgument(BOOKING_ID) {type = NavType.StringType})
+        ) { backStackEntry ->
+            val bookingId = backStackEntry.arguments?.getString(BOOKING_ID) ?: return@composable
+            val bookingDetailsViewModel: BookingDetailsViewModel = hiltViewModel()
+
+            LaunchedEffect(key1 = bookingId) {
+                if(bookingId.isNotEmpty()) {
+                    bookingDetailsViewModel.onEvent(BookingDetailsEvent.InitializeBookingId(bookingId))
+                }
+            }
+
+            if(bookingDetailsViewModel.sideEffect != null) {
+                Toast.makeText(
+                    LocalContext.current,
+                    bookingDetailsViewModel.sideEffect,
+                    Toast.LENGTH_SHORT
+                ).show()
+                bookingDetailsViewModel.onEvent(BookingDetailsEvent.RemoveSideEffect)
+            }
+
+            BookingDetailsScreen(
+                isLoading = bookingDetailsViewModel.isLoading,
+                booking = bookingDetailsViewModel.booking,
+                navController = navController
             )
         }
 
