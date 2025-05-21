@@ -121,4 +121,11 @@ dependencies {
     //Razor Pay
     implementation("com.razorpay:checkout:1.6.33")
 
+    implementation("androidx.compose.ui:ui-graphics:1.8.1") // or latest
+
+    //MapBox
+    implementation("com.mapbox.maps:android:11.12.1")
+    implementation("com.mapbox.extension:maps-compose:11.12.1")
+
+
 }

@@ -20,9 +20,9 @@ interface UserRepository {
     suspend fun getUserDetails():Response<User>
     suspend fun updateUserPhoneNumber(data: UpdateBody): Response<User>
     suspend fun updateUserPassword(data: UpdateBody): Response<ResponseBody>
-    suspend fun getMovies(): Response<List<Movie>>
+    suspend fun getMovies(state: String, city: String): Response<List<Movie>>
     suspend fun getMovieDetails(movieId: String): Response<Movie>
-    suspend fun getMovieShows(movieId: String): Response<List<Show>>
+    suspend fun getMovieShows(movieId: String, state: String, city: String): Response<List<Show>>
     suspend fun getShowDetailsForBooking(showId: String): Response<ShowDetails>
     suspend fun createBooking(data: BookingData): Response<ResponseBody>
     suspend fun getBookingsList(): Response<List<Booking>>

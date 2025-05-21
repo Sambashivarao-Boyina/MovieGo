@@ -7,9 +7,9 @@ import com.example.moviego.util.Constants.extractData
 class GetMovieShows (
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(movieId: String): Result<List<Show>> {
+    suspend operator fun invoke(movieId: String, state: String, city: String): Result<List<Show>> {
         return try {
-            val response = userRepository.getMovieShows(movieId)
+            val response = userRepository.getMovieShows(movieId = movieId, state = state, city = city)
             if(response.isSuccessful) {
                 response.body()?.let { shows: List<Show> ->
                     return Result.success(shows)

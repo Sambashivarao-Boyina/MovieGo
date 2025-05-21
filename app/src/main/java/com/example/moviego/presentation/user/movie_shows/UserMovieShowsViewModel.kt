@@ -32,6 +32,12 @@ class UserMovieShowsViewModel @Inject constructor(
 
     var movie by mutableStateOf<Movie?>(null)
         private set
+    var userLocation by mutableStateOf("")
+        private set
+
+    init {
+        getUserLocation()
+    }
 
 
 
@@ -51,7 +57,10 @@ class UserMovieShowsViewModel @Inject constructor(
     private fun loadShows() {
         isLoading = true
         viewModelScope.launch {
-            val result = userUseCases.getMovieShows(movieId)
+            Log.d("location",userLocation)
+            val state = if (userLocation == "") "empty" else userLocation.split(".")[0]
+            val city = if(userLocation == "") "empty" else userLocation.split(".")[1]
+            val result = userUseCases.getMovieShows(movieId = movieId, state = state, city = city)
             if(result.isSuccess) {
                 val newShows: List<Show> = result.getOrDefault(emptyList())
                 if(newShows.isNotEmpty()) {
@@ -74,6 +83,17 @@ class UserMovieShowsViewModel @Inject constructor(
             }
         }
         isLoading = false
+    }
+
+    private fun getUserLocation() {
+        viewModelScope.launch {
+            val result = userUseCases.getLocation()
+            if(result.isSuccess) {
+                userLocation = result.getOrDefault("")
+            } else {
+                sideEffect = result.exceptionOrNull()?.message
+            }
+        }
     }
 }
 

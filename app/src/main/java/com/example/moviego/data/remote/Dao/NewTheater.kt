@@ -6,5 +6,7 @@ data class NewTheater(
     val pincode: String,
     val city: String,
     val address: String,
-    val state: String
+    val state: String,
+    val longitude: Double,
+    val latitude: Double
 )

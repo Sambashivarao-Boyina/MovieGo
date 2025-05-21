@@ -42,16 +42,16 @@ class UserRepositoryImpl(
         return movieGoApi.updateUserPassword(data = data)
     }
 
-    override suspend fun getMovies(): Response<List<Movie>> {
-        return movieGoApi.getMovies()
+    override suspend fun getMovies(state: String, city: String): Response<List<Movie>> {
+        return movieGoApi.getMovies(state = state, city = city)
     }
 
     override suspend fun getMovieDetails(movieId: String): Response<Movie> {
         return movieGoApi.getUserMovieDetails(movieId)
     }
 
-    override suspend fun getMovieShows(movieId: String): Response<List<Show>> {
-        return movieGoApi.getMovieShows(movieId)
+    override suspend fun getMovieShows(movieId: String, state: String, city: String): Response<List<Show>> {
+        return movieGoApi.getMovieShows(movieId = movieId, state = state, city = city)
     }
 
     override suspend fun getShowDetailsForBooking(showId: String): Response<ShowDetails> {

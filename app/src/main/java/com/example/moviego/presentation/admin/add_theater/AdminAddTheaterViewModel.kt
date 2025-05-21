@@ -71,6 +71,10 @@ class AdminAddTheaterViewModel @Inject constructor(
                     submitNewTheater()
                 }
             }
+
+            is AdminAddTheaterEvent.UpdateCoordinates -> {
+                newTheaterState = newTheaterState.copy(longitude = event.longitude, latitude = event.latitude, cooridateError = "")
+            }
         }
     }
 
@@ -85,6 +89,8 @@ class AdminAddTheaterViewModel @Inject constructor(
                     city = newTheaterState.city,
                     state = newTheaterState.state,
                     pincode = newTheaterState.pincode,
+                    longitude = newTheaterState.longitude,
+                    latitude = newTheaterState.latitude
                 ),
                 image = newTheaterState.image!!
             )
@@ -129,6 +135,10 @@ class AdminAddTheaterViewModel @Inject constructor(
             result = false
             newTheaterState = newTheaterState.copy(pincodeError = "Enter Valid Pincode")
         }
+        if(newTheaterState.latitude == 0.0 || newTheaterState.longitude == 0.0) {
+            result = false
+            newTheaterState = newTheaterState.copy(cooridateError = "Coordinates are Required")
+        }
 
 
         return result
@@ -149,7 +159,10 @@ data class NewTheaterState(
     val state: String = "",
     val stateError: String = "",
     val pincode: String = "",
-    val pincodeError: String = ""
+    val pincodeError: String = "",
+    val longitude: Double = 0.0,
+    val latitude: Double = 0.0,
+    val cooridateError: String = ""
 )
 
 sealed class AdminAddTheaterEvent {
@@ -162,4 +175,5 @@ sealed class AdminAddTheaterEvent {
     data class UpdateState(val state: String) : AdminAddTheaterEvent()
     data class UpdatePincode(val pincode: String) : AdminAddTheaterEvent()
     data object SubmitNewTheater : AdminAddTheaterEvent()
+    data class UpdateCoordinates(val longitude: Double, val latitude: Double): AdminAddTheaterEvent()
 }

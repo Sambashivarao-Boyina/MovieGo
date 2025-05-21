@@ -33,6 +33,7 @@ import com.example.moviego.domain.usecases.user_usecases.CheckoutBooking
 import com.example.moviego.domain.usecases.user_usecases.CreateBooking
 import com.example.moviego.domain.usecases.user_usecases.GetBookingDetails
 import com.example.moviego.domain.usecases.user_usecases.GetBookingsList
+import com.example.moviego.domain.usecases.user_usecases.GetLocation
 import com.example.moviego.domain.usecases.user_usecases.GetMovieShows
 import com.example.moviego.domain.usecases.user_usecases.GetMovies
 import com.example.moviego.domain.usecases.user_usecases.GetShowDetailsForBooking
@@ -41,6 +42,7 @@ import com.example.moviego.domain.usecases.user_usecases.GetUserMovieDetails
 import com.example.moviego.domain.usecases.user_usecases.LoginUserUseCase
 import com.example.moviego.domain.usecases.user_usecases.LogoutUser
 import com.example.moviego.domain.usecases.user_usecases.RefreshUserToken
+import com.example.moviego.domain.usecases.user_usecases.SetLocation
 import com.example.moviego.domain.usecases.user_usecases.SignUpUserUseCase
 import com.example.moviego.domain.usecases.user_usecases.UpdateUserPassword
 import com.example.moviego.domain.usecases.user_usecases.UpdateUserPhone
@@ -174,7 +176,9 @@ class AppModule {
             getBookingsList = GetBookingsList(userRepository),
             getBookingDetails = GetBookingDetails(userRepository),
             cancelBooking = CancelBooking(userRepository),
-            checkoutBooking = CheckoutBooking(userRepository)
+            checkoutBooking = CheckoutBooking(userRepository),
+            setLocation = SetLocation(localUserManager),
+            getLocation = GetLocation(localUserManager)
         )
     }
 }

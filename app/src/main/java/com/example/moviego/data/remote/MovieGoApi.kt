@@ -53,18 +53,18 @@ interface MovieGoApi {
     suspend fun getAllAdminMovies(): Response<List<Movie>>
 
     @GET("api/admin/movie/{movieId}")
-    suspend fun getMovieDetails(@Path("movieId") movieId: String):Response<Movie>
+    suspend fun getMovieDetails(@Path("movieId") movieId: String): Response<Movie>
 
     @POST("api/admin/movie/{movieName}")
     suspend fun addNewMovie(
-        @Path("movieName") movieName:String
+        @Path("movieName") movieName: String
     ): Response<ResponseBody>
 
     @Multipart
     @POST("api/admin/theater")
     suspend fun addNewTheater(
         @Part image: MultipartBody.Part,
-        @Part("theater") theater:RequestBody
+        @Part("theater") theater: RequestBody
     ): Response<ResponseBody>
 
     @Multipart
@@ -134,17 +134,22 @@ interface MovieGoApi {
     @PATCH("api/user/password")
     suspend fun updateUserPassword(@Body data: UpdateBody): Response<ResponseBody>
 
-    @GET("api/user/movie")
-    suspend fun getMovies(): Response<List<Movie>>
+    @GET("api/user/movie/{state}/{city}")
+    suspend fun getMovies(
+        @Path("state") state: String,
+        @Path("city") city: String
+    ): Response<List<Movie>>
 
     @GET("api/user/movie/{movieId}")
     suspend fun getUserMovieDetails(
         @Path("movieId") movieId: String
     ): Response<Movie>
 
-    @GET("api/user/show/{movieId}")
+    @GET("api/user/show/{movieId}/{state}/{city}")
     suspend fun getMovieShows(
-        @Path("movieId") movieId: String
+        @Path("movieId") movieId: String,
+        @Path("state") state: String,
+        @Path("city") city: String
     ): Response<List<Show>>
 
     @GET("api/user/show/{showId}/details")
@@ -154,12 +159,11 @@ interface MovieGoApi {
 
     @POST("api/user/booking")
     suspend fun createBooking(
-        @Body data:BookingData
+        @Body data: BookingData
     ): Response<ResponseBody>
 
     @GET("api/user/booking")
     suspend fun getBookingsList(): Response<List<Booking>>
-
 
 
     @GET("api/user/booking/{bookingId}")

@@ -15,11 +15,11 @@ import javax.inject.Inject
 @HiltViewModel
 class AdminEditTheaterViewModel @Inject constructor(
     private val adminUseCases: AdminUseCases
-): ViewModel() {
-    
+) : ViewModel() {
+
     var editTheaterState by mutableStateOf(EditTheaterState())
         private set
-    
+
     var theaterId by mutableStateOf<String?>(null)
         private set
 
@@ -79,6 +79,10 @@ class AdminEditTheaterViewModel @Inject constructor(
                     submitEditTheater()
                 }
             }
+
+            is AdminEditTheaterEvent.UpdateCoordinates -> {
+                editTheaterState = editTheaterState.copy(longitude = event.longitude, latitude = event.latitude)
+            }
         }
     }
 
@@ -94,7 +98,8 @@ class AdminEditTheaterViewModel @Inject constructor(
         }
         if (editTheaterState.contactNumber.isEmpty() || editTheaterState.contactNumber.length != 10) {
             result = false
-            editTheaterState = editTheaterState.copy(contactNumberError = "Enter Valid Contact Number")
+            editTheaterState =
+                editTheaterState.copy(contactNumberError = "Enter Valid Contact Number")
         }
         if (editTheaterState.address.isEmpty()) {
             result = false
@@ -112,7 +117,7 @@ class AdminEditTheaterViewModel @Inject constructor(
 
         return result
     }
-    
+
     private fun submitEditTheater() {
         viewModelScope.launch {
             isLoading = true
@@ -124,13 +129,15 @@ class AdminEditTheaterViewModel @Inject constructor(
                     city = editTheaterState.city,
                     state = editTheaterState.state,
                     pincode = editTheaterState.pincode,
+                    longitude = editTheaterState.longitude,
+                    latitude = editTheaterState.latitude
                 ),
                 image = editTheaterState.image,
                 theaterId = theaterId!!
             )
 
-            if(result.isSuccess) {
-                sideEffect = "New Theater is Added"
+            if (result.isSuccess) {
+                sideEffect = "Theater edited successfully"
                 isSuccess = true
             } else {
                 sideEffect = result.exceptionOrNull()?.message
@@ -144,7 +151,7 @@ class AdminEditTheaterViewModel @Inject constructor(
             isLoading = true
             theaterId?.let {
                 val result = adminUseCases.getTheaterDetails(theaterId!!)
-                if(result.isSuccess) {
+                if (result.isSuccess) {
                     val theater = result.getOrNull()
                     theater?.let {
                         editTheaterState = editTheaterState.copy(
@@ -153,7 +160,9 @@ class AdminEditTheaterViewModel @Inject constructor(
                             contactNumber = theater.contactNumber,
                             address = theater.address,
                             state = theater.state,
-                            pincode = theater.pincode
+                            pincode = theater.pincode,
+                            longitude = theater.location?.coordinates?.get(0) ?: 0.0,
+                            latitude = theater.location?.coordinates?.get(1) ?: 0.0
                         )
                     }
                 } else {
@@ -179,7 +188,10 @@ data class EditTheaterState(
     val state: String = "",
     val stateError: String = "",
     val pincode: String = "",
-    val pincodeError: String = ""
+    val pincodeError: String = "",
+    val longitude: Double = 0.0,
+    val latitude: Double = 0.0,
+    val coordinateError: String = ""
 )
 
 sealed class AdminEditTheaterEvent {
@@ -192,4 +204,5 @@ sealed class AdminEditTheaterEvent {
     data class UpdateState(val state: String) : AdminEditTheaterEvent()
     data class UpdatePincode(val pincode: String) : AdminEditTheaterEvent()
     data object SubmitEditTheater : AdminEditTheaterEvent()
+    data class UpdateCoordinates(val longitude: Double, val latitude: Double) : AdminEditTheaterEvent()
 }

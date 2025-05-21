@@ -1,5 +1,7 @@
 package com.example.moviego.domain.model
 
+import com.example.moviego.presentation.admin.add_theater.AdminAddTheaterEvent
+
 data class Theater(
     val _id: String,
     val address: String,
@@ -10,5 +12,11 @@ data class Theater(
     val name: String,
     val pincode: String,
     val screens: List<String>,
-    val state: String
+    val state: String,
+    val location: Location?
+)
+
+data class Location(
+    val type: String,
+    val coordinates: List<Double>
 )
