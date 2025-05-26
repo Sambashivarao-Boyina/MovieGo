@@ -493,7 +493,7 @@ fun BookingDetailsScreen(
                                         // Construct the URI
 
                                        booking?.let {
-                                           val uri = Uri.parse("geo:${it.show.theater.location?.coordinates?.get(1)},${it.show.theater.location?.coordinates?.get(0)}?q=${it.show.theater.location?.coordinates?.get(1)},${it.show.theater.location?.coordinates?.get(0)}")
+                                           val uri = Uri.parse("geo:${it.show.theater.location.coordinates[1]},${it.show.theater.location.coordinates[0]}?q=${it.show.theater.location.coordinates[1]},${it.show.theater.location.coordinates[0]}")
 
                                            // Create an Intent to open the Maps app
                                            val intent = Intent(Intent.ACTION_VIEW, uri).apply {

@@ -107,4 +107,12 @@ class AdminRepositoryImp(
     ): Response<ResponseBody> {
         return movieGoApi.editTheater(image = image, theater = editTheater, theaterId = theaterId)
     }
+
+    override suspend fun openShow(showId: String): Response<ShowDetails> {
+        return movieGoApi.openShow(showId)
+    }
+
+    override suspend fun closeShow(showId: String): Response<ShowDetails> {
+        return movieGoApi.closeShow(showId)
+    }
 }

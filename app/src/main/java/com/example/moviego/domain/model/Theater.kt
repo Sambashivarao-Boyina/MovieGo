@@ -13,7 +13,7 @@ data class Theater(
     val pincode: String,
     val screens: List<String>,
     val state: String,
-    val location: Location?
+    val location: Location
 )
 
 data class Location(

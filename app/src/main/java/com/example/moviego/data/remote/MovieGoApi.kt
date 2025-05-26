@@ -99,6 +99,16 @@ interface MovieGoApi {
         @Body show: NewShow
     ): Response<ResponseBody>
 
+    @PATCH("api/admin/show/open/{showId}")
+    suspend fun openShow(
+        @Path("showId") showId: String
+    ): Response<ShowDetails>
+
+    @PATCH("api/admin/show/close/{showId}")
+    suspend fun closeShow(
+        @Path("showId") showId: String
+    ): Response<ShowDetails>
+
     //Admin Details
     @GET("api/admin")
     suspend fun getAdminDetails(): Response<Admin>

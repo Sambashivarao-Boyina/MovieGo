@@ -19,5 +19,7 @@ data class AdminUseCases(
     val addNewScreen: AddNewScreen,
     val editScreen: EditScreen,
     val addNewTheater: AddNewTheater,
-    val editTheater: EditTheater
+    val editTheater: EditTheater,
+    val openShow: OpenShow,
+    val closeShow: CloseShow
 )

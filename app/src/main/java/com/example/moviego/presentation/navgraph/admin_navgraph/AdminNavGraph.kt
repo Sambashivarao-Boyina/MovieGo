@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.key
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -75,11 +74,15 @@ fun AdminNavGraph(
         ) { backStackEntry ->
             val showId = backStackEntry.arguments?.getString(SHOW_ID) ?: return@composable
             val adminShowDetailsViewModel: AdminShowDetailsViewModel = hiltViewModel()
-            adminShowDetailsViewModel.loadShow(showId)
+            LaunchedEffect(key1 = showId) {
+                adminShowDetailsViewModel.loadShow(showId)
+            }
             AdminShowDetailsScreen(
                 showDetails = adminShowDetailsViewModel.showDetails,
                 isLoading = adminShowDetailsViewModel.isLoading,
-                onEvent = adminShowDetailsViewModel::onEvent
+                onEvent = adminShowDetailsViewModel::onEvent,
+                navController = navController,
+                updatingShowStatus = adminShowDetailsViewModel.updatingShowStatus
             )
         }
 

@@ -12,6 +12,7 @@ import com.example.moviego.domain.usecases.admin_usecases.AddNewMovie
 import com.example.moviego.domain.usecases.admin_usecases.AddNewScreen
 import com.example.moviego.domain.usecases.admin_usecases.AddNewTheater
 import com.example.moviego.domain.usecases.admin_usecases.AdminUseCases
+import com.example.moviego.domain.usecases.admin_usecases.CloseShow
 import com.example.moviego.domain.usecases.admin_usecases.CreateNewShow
 import com.example.moviego.domain.usecases.admin_usecases.EditScreen
 import com.example.moviego.domain.usecases.admin_usecases.EditTheater
@@ -24,6 +25,7 @@ import com.example.moviego.domain.usecases.admin_usecases.GetShowDetails
 import com.example.moviego.domain.usecases.admin_usecases.GetTheaterDetails
 import com.example.moviego.domain.usecases.admin_usecases.LogOutAdmin
 import com.example.moviego.domain.usecases.admin_usecases.LoginAdminUseCase
+import com.example.moviego.domain.usecases.admin_usecases.OpenShow
 import com.example.moviego.domain.usecases.admin_usecases.RefreshAdminToken
 import com.example.moviego.domain.usecases.admin_usecases.SignUpAdminUseCase
 import com.example.moviego.domain.usecases.admin_usecases.UpdatePassword
@@ -150,7 +152,9 @@ class AppModule {
             editScreen = EditScreen(adminRepository),
             addNewTheater = AddNewTheater(adminRepository),
             editTheater = EditTheater(adminRepository),
-            getMovieDetails = GetMovieDetails(adminRepository)
+            getMovieDetails = GetMovieDetails(adminRepository),
+            openShow = OpenShow(adminRepository),
+            closeShow = CloseShow(adminRepository)
         )
     }
 

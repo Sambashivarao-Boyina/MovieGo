@@ -37,4 +37,6 @@ interface AdminRepository {
     suspend fun editScreen(screenId: String, editScreen: NewScreen): Response<TheaterDetails>
     suspend fun addNewTheater(image: MultipartBody.Part, newTheater: RequestBody): Response<ResponseBody>
     suspend fun editTheater(theaterId: String,image: MultipartBody.Part?, editTheater: RequestBody): Response<ResponseBody>
+    suspend fun openShow(showId: String): Response<ShowDetails>
+    suspend fun closeShow(showId: String): Response<ShowDetails>
 }

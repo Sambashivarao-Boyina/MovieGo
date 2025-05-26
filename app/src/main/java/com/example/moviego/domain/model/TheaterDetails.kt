@@ -11,5 +11,5 @@ data class TheaterDetails(
     val pincode: String,
     val screens: List<Screen>,
     val state: String,
-    val location: Location?
+    val location: Location
 )
