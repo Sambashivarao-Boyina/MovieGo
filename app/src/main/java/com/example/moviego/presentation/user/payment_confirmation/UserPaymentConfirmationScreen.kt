@@ -33,7 +33,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -48,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
-import com.example.moviego.domain.model.Booking
+import com.example.moviego.domain.model.BookingDetails
 import com.example.moviego.presentation.admin.components.TopBar
 import com.example.moviego.presentation.authentication.components.SubmitButton
 import com.example.moviego.presentation.navgraph.Route
@@ -59,7 +58,7 @@ import com.example.moviego.ui.theme.RedE31
 @Composable
 fun UserPaymentConfirmationScreen(
     navController: NavHostController,
-    booking: Booking?,
+    bookingDetails: BookingDetails?,
     isLoading: Boolean,
     onEvent: (UserPaymentConfirmationEvent) -> Unit,
     cancelingBooking: Boolean,
@@ -137,7 +136,7 @@ fun UserPaymentConfirmationScreen(
             if (isLoading) {
                 CircularProgressIndicator()
             } else {
-                booking?.let {
+                bookingDetails?.let {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -172,11 +171,11 @@ fun UserPaymentConfirmationScreen(
                                     ) {
                                         Column {
                                             Text(
-                                                text = booking.show.movie.Title,
+                                                text = bookingDetails.show.movie.Title,
                                                 style = MaterialTheme.typography.titleLarge
                                             )
                                             Text(
-                                                text = "${booking.show.date} | ${booking.show.showTime}",
+                                                text = "${bookingDetails.show.date} | ${bookingDetails.show.showTime}",
                                                 style = MaterialTheme.typography.titleSmall
                                             )
                                         }
@@ -184,7 +183,7 @@ fun UserPaymentConfirmationScreen(
                                             horizontalAlignment = Alignment.End
                                         ) {
                                             Text(
-                                                text = "${booking.seats.size}",
+                                                text = "${bookingDetails.seats.size}",
                                                 style = MaterialTheme.typography.titleLarge,
 
                                                 )
@@ -193,12 +192,12 @@ fun UserPaymentConfirmationScreen(
 
                                     }
                                     Text(
-                                        text = "${booking.show.movie.Language}",
+                                        text = "${bookingDetails.show.movie.Language}",
                                         style = MaterialTheme.typography.titleSmall,
                                         color = Color.Gray
                                     )
                                     Text(
-                                        text = "${booking.show.theater.name} ${booking.show.screen.screenType} ${booking.show.screen.soundType} ${booking.show.theater.city} (${booking.show.screen.screenName}) ",
+                                        text = "${bookingDetails.show.theater.name} ${bookingDetails.show.screen.screenType} ${bookingDetails.show.screen.soundType} ${bookingDetails.show.theater.city} (${bookingDetails.show.screen.screenName}) ",
                                         style = MaterialTheme.typography.titleSmall,
                                         color = Color.Gray
                                     )
@@ -297,8 +296,8 @@ fun UserPaymentConfirmationScreen(
                                     verticalArrangement = Arrangement.spacedBy(5.dp)
                                 ) {
                                     Text(text = "Your Details", style = MaterialTheme.typography.titleLarge)
-                                    Text(text = "${booking.user.email}")
-                                    Text(text = "${booking.user.phone}")
+                                    Text(text = "${bookingDetails.user.email}")
+                                    Text(text = "${bookingDetails.user.phone}")
                                 }
                             }
                         }

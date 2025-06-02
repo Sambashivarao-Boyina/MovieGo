@@ -20,6 +20,7 @@ import com.example.moviego.domain.usecases.admin_usecases.GetAdminDetails
 import com.example.moviego.domain.usecases.admin_usecases.GetAllAdminMovies
 import com.example.moviego.domain.usecases.admin_usecases.GetAllAdminTheaters
 import com.example.moviego.domain.usecases.admin_usecases.GetAllShows
+import com.example.moviego.domain.usecases.admin_usecases.GetBookingsOfShow
 import com.example.moviego.domain.usecases.admin_usecases.GetMovieDetails
 import com.example.moviego.domain.usecases.admin_usecases.GetShowDetails
 import com.example.moviego.domain.usecases.admin_usecases.GetTheaterDetails
@@ -154,7 +155,8 @@ class AppModule {
             editTheater = EditTheater(adminRepository),
             getMovieDetails = GetMovieDetails(adminRepository),
             openShow = OpenShow(adminRepository),
-            closeShow = CloseShow(adminRepository)
+            closeShow = CloseShow(adminRepository),
+            getBookingsOfShow = GetBookingsOfShow(adminRepository)
         )
     }
 

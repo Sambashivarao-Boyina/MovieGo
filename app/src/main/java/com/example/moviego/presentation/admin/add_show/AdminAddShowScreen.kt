@@ -83,6 +83,7 @@ import com.example.moviego.presentation.components.DropDownSelect
 import com.example.moviego.presentation.components.ShowDatePicker
 import com.example.moviego.presentation.components.TheaterDetailRow
 import com.example.moviego.presentation.components.TimePicker
+import com.example.moviego.presentation.components.shimmerEffect
 import com.example.moviego.ui.theme.Black161
 import com.example.moviego.ui.theme.Black1C1
 import com.example.moviego.ui.theme.RedE31
@@ -138,10 +139,18 @@ fun AdminAddShowScreen(
         if(isLoading) {
             Column(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                CircularProgressIndicator()
+                Box(
+                    modifier = Modifier.fillMaxWidth().height(20.dp).clip(RoundedCornerShape(10.dp)).shimmerEffect()
+                )
+
+                Box(
+                    Modifier.fillMaxWidth(0.5f).height(400.dp).clip(RoundedCornerShape(20.dp)).shimmerEffect()
+                )
+                Box(
+                    Modifier.fillMaxWidth(0.5f).height(400.dp).clip(RoundedCornerShape(20.dp)).shimmerEffect()
+                )
             }
         } else {
             Column(

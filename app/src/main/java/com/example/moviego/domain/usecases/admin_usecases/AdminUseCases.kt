@@ -21,5 +21,6 @@ data class AdminUseCases(
     val addNewTheater: AddNewTheater,
     val editTheater: EditTheater,
     val openShow: OpenShow,
-    val closeShow: CloseShow
+    val closeShow: CloseShow,
+    val getBookingsOfShow: GetBookingsOfShow
 )

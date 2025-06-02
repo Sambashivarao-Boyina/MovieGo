@@ -2,7 +2,6 @@ package com.example.moviego.presentation.user.booking_details
 
 import android.Manifest
 import android.app.Activity
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,7 +10,6 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.MediaStore
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -69,12 +67,10 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviego.R
-import com.example.moviego.domain.model.Booking
+import com.example.moviego.domain.model.BookingDetails
 import com.example.moviego.presentation.admin.components.TopBar
 import com.example.moviego.ui.theme.Black111
 import com.example.moviego.ui.theme.RedE31
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -82,7 +78,7 @@ import java.io.IOException
 @Composable
 fun BookingDetailsScreen(
     isLoading: Boolean,
-    booking: Booking?,
+    bookingDetails: BookingDetails?,
     navController: NavHostController
 ) {
     Scaffold(
@@ -122,7 +118,7 @@ fun BookingDetailsScreen(
                 val context = LocalContext.current
                 val viewRef = remember { mutableStateOf<View?>(null) }
 
-                booking?.let {
+                bookingDetails?.let {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
@@ -175,18 +171,18 @@ fun BookingDetailsScreen(
                                                     ) {
                                                         Column {
                                                             Text(
-                                                                text = booking.show.movie.Title,
+                                                                text = bookingDetails.show.movie.Title,
                                                                 style = MaterialTheme.typography.displaySmall,
                                                                 color = RedE31,
                                                                 fontWeight = FontWeight.Bold
                                                             )
                                                             Spacer(Modifier.height(10.dp))
                                                             Text(
-                                                                text = "${booking.show.movie.Language} ",
+                                                                text = "${bookingDetails.show.movie.Language} ",
                                                                 color = Color.Gray
                                                             )
                                                             Text(
-                                                                text = "${booking.show.movie.Genre}",
+                                                                text = "${bookingDetails.show.movie.Genre}",
                                                                 color = Color.Gray
                                                             )
                                                         }
@@ -195,7 +191,7 @@ fun BookingDetailsScreen(
                                                             verticalArrangement = Arrangement.spacedBy(8.dp)
                                                         ) {
                                                             Text(
-                                                                text = booking.bookingStatus.uppercase(),
+                                                                text = bookingDetails.bookingStatus.uppercase(),
                                                                 style = MaterialTheme.typography.titleSmall,
                                                                 modifier = Modifier
                                                                     .clip(RoundedCornerShape(20.dp))
@@ -215,7 +211,7 @@ fun BookingDetailsScreen(
                                                                 )
 
                                                                 Text(
-                                                                    text = "${booking.show.movie.imdbRating}/10",
+                                                                    text = "${bookingDetails.show.movie.imdbRating}/10",
                                                                     fontWeight = FontWeight.SemiBold,
                                                                     color = Color.Yellow
                                                                 )
@@ -232,7 +228,7 @@ fun BookingDetailsScreen(
                                                     ) {
                                                         AsyncImage(
                                                             model = ImageRequest.Builder(LocalContext.current)
-                                                                .data(booking.show.movie.Poster)
+                                                                .data(bookingDetails.show.movie.Poster)
                                                                 .placeholder(R.drawable.placeholder)
                                                                 .error(R.drawable.placeholder)
                                                                 .allowHardware(false)
@@ -252,22 +248,22 @@ fun BookingDetailsScreen(
                                                         ) {
                                                             IconHeadline(
                                                                 icon = R.drawable.calender,
-                                                                text = "${booking.show.date}"
+                                                                text = "${bookingDetails.show.date}"
                                                             )
                                                             IconHeadline(
                                                                 icon = R.drawable.clock_outline,
-                                                                text = "${booking.show.showTime}"
+                                                                text = "${bookingDetails.show.showTime}"
                                                             )
                                                             IconHeadline(
                                                                 icon = R.drawable.ticket,
-                                                                text = "RUNTIME: ${booking.show.movie.Runtime}"
+                                                                text = "RUNTIME: ${bookingDetails.show.movie.Runtime}"
                                                             )
                                                             Text(
-                                                                text = "Director: ${booking.show.movie.Director}",
+                                                                text = "Director: ${bookingDetails.show.movie.Director}",
                                                                 color = Color.Gray
                                                             )
                                                             Text(
-                                                                text = "Stars: ${booking.show.movie.Actors}",
+                                                                text = "Stars: ${bookingDetails.show.movie.Actors}",
                                                                 color = Color.Gray
                                                             )
                                                         }
@@ -299,10 +295,10 @@ fun BookingDetailsScreen(
                                                         ) {
                                                             IconHeadline(
                                                                 icon = R.drawable.location,
-                                                                text = "${booking.show.theater.name}"
+                                                                text = "${bookingDetails.show.theater.name}"
                                                             )
                                                             Text(
-                                                                text = "${booking.show.theater.city}, ${booking.show.theater.address},${booking.show.theater.state}, ${booking.show.theater.pincode}",
+                                                                text = "${bookingDetails.show.theater.city}, ${bookingDetails.show.theater.address},${bookingDetails.show.theater.state}, ${bookingDetails.show.theater.pincode}",
                                                                 color = Color.Gray
                                                             )
                                                         }
@@ -317,17 +313,17 @@ fun BookingDetailsScreen(
                                                         TheaterInfo(
                                                             icon = R.drawable.ticket,
                                                             title = "Screen",
-                                                            value = booking.show.screen.screenName
+                                                            value = bookingDetails.show.screen.screenName
                                                         )
                                                         TheaterInfo(
                                                             icon = R.drawable.screen,
                                                             title = "Display",
-                                                            value = booking.show.screen.soundType
+                                                            value = bookingDetails.show.screen.soundType
                                                         )
                                                         TheaterInfo(
                                                             icon = R.drawable.headphones,
                                                             title = "Sound",
-                                                            value = booking.show.screen.soundType
+                                                            value = bookingDetails.show.screen.soundType
                                                         )
                                                     }
                                                     Spacer(Modifier.height(10.dp))
@@ -346,7 +342,7 @@ fun BookingDetailsScreen(
                                                             modifier = Modifier.fillMaxWidth(),
                                                             horizontalArrangement = Arrangement.Center,
                                                         ) {
-                                                            for (seat in booking.seats) {
+                                                            for (seat in bookingDetails.seats) {
                                                                 Text(
                                                                     text = seat.seatCode,
                                                                     fontWeight = FontWeight.Bold,
@@ -382,8 +378,8 @@ fun BookingDetailsScreen(
                                                             ),
                                                             horizontalAlignment = Alignment.End
                                                         ) {
-                                                            Text(text = booking.paymentId ?: "")
-                                                            Text(text = booking._id)
+                                                            Text(text = bookingDetails.paymentId ?: "")
+                                                            Text(text = bookingDetails._id)
                                                         }
                                                     }
 
@@ -413,8 +409,8 @@ fun BookingDetailsScreen(
                                                             ),
                                                             horizontalAlignment = Alignment.End
                                                         ) {
-                                                            Text(text = "₹${(booking.ticketCost * booking.seats.size)}")
-                                                            Text(text = "₹${(booking.ticketCost * booking.seats.size) * 0.1}")
+                                                            Text(text = "₹${(bookingDetails.ticketCost * bookingDetails.seats.size)}")
+                                                            Text(text = "₹${(bookingDetails.ticketCost * bookingDetails.seats.size) * 0.1}")
                                                         }
                                                     }
 
@@ -432,7 +428,7 @@ fun BookingDetailsScreen(
                                                             color = Color.Gray
                                                         )
                                                         Text(
-                                                            text = "₹${booking.totalBookingCost}",
+                                                            text = "₹${bookingDetails.totalBookingCost}",
                                                             style = MaterialTheme.typography.titleLarge,
                                                         )
                                                     }
@@ -492,7 +488,7 @@ fun BookingDetailsScreen(
                                     onClick = {
                                         // Construct the URI
 
-                                       booking?.let {
+                                       bookingDetails?.let {
                                            val uri = Uri.parse("geo:${it.show.theater.location.coordinates[1]},${it.show.theater.location.coordinates[0]}?q=${it.show.theater.location.coordinates[1]},${it.show.theater.location.coordinates[0]}")
 
                                            // Create an Intent to open the Maps app

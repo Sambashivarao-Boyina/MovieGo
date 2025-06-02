@@ -8,6 +8,8 @@ import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
 import com.example.moviego.data.remote.MovieGoApi
 import com.example.moviego.domain.model.Admin
+import com.example.moviego.domain.model.Booking
+import com.example.moviego.domain.model.BookingDetails
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.ShowDetails
@@ -114,5 +116,9 @@ class AdminRepositoryImp(
 
     override suspend fun closeShow(showId: String): Response<ShowDetails> {
         return movieGoApi.closeShow(showId)
+    }
+
+    override suspend fun getBookingsOfShow(showId: String): Response<List<Booking>> {
+        return movieGoApi.getBookingsOfShow(showId)
     }
 }

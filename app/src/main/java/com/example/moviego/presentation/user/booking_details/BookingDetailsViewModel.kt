@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.moviego.domain.model.Booking
+import com.example.moviego.domain.model.BookingDetails
 import com.example.moviego.domain.usecases.user_usecases.UserUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ class BookingDetailsViewModel @Inject constructor(
     var sideEffect by mutableStateOf<String?>(null)
         private set
 
-    var booking by mutableStateOf<Booking?>(null)
+    var bookingDetails by mutableStateOf<BookingDetails?>(null)
         private set
 
     fun onEvent(event: BookingDetailsEvent) {
@@ -45,8 +45,8 @@ class BookingDetailsViewModel @Inject constructor(
             bookingId?.let {
                 val result = userUseCases.getBookingDetails(bookingId)
                 if(result.isSuccess) {
-                    booking = result.getOrNull()
-                    if(booking == null) {
+                    bookingDetails = result.getOrNull()
+                    if(bookingDetails == null) {
                         sideEffect = "Something went wrong"
                     }
                 } else {

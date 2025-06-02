@@ -64,7 +64,8 @@ fun AdminNavGraph(
                 onEvent = adminShowsViewModel::onEvent,
                 navController = navController,
                 selectedFilters = adminShowsViewModel.selectedFilters,
-                filterOptions = adminShowsViewModel.filterOptions
+                filterOptions = adminShowsViewModel.filterOptions,
+                isLoading = adminShowsViewModel.isLoading
             )
         }
 
@@ -75,14 +76,16 @@ fun AdminNavGraph(
             val showId = backStackEntry.arguments?.getString(SHOW_ID) ?: return@composable
             val adminShowDetailsViewModel: AdminShowDetailsViewModel = hiltViewModel()
             LaunchedEffect(key1 = showId) {
-                adminShowDetailsViewModel.loadShow(showId)
+                adminShowDetailsViewModel.initializeShowId(showId)
             }
             AdminShowDetailsScreen(
                 showDetails = adminShowDetailsViewModel.showDetails,
                 isLoading = adminShowDetailsViewModel.isLoading,
                 onEvent = adminShowDetailsViewModel::onEvent,
                 navController = navController,
-                updatingShowStatus = adminShowDetailsViewModel.updatingShowStatus
+                updatingShowStatus = adminShowDetailsViewModel.updatingShowStatus,
+                isBookingsLoading = adminShowDetailsViewModel.isBookingsLoading,
+                bookings = adminShowDetailsViewModel.bookings
             )
         }
 

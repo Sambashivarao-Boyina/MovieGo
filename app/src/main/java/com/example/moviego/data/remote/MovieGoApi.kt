@@ -9,6 +9,7 @@ import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
 import com.example.moviego.domain.model.Admin
 import com.example.moviego.domain.model.Booking
+import com.example.moviego.domain.model.BookingDetails
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.ShowDetails
@@ -109,6 +110,11 @@ interface MovieGoApi {
         @Path("showId") showId: String
     ): Response<ShowDetails>
 
+    @GET("api/admin/booking/{showId}")
+    suspend fun getBookingsOfShow(
+        @Path("showId") showId: String
+    ): Response<List<Booking>>
+
     //Admin Details
     @GET("api/admin")
     suspend fun getAdminDetails(): Response<Admin>
@@ -173,13 +179,13 @@ interface MovieGoApi {
     ): Response<ResponseBody>
 
     @GET("api/user/booking")
-    suspend fun getBookingsList(): Response<List<Booking>>
+    suspend fun getBookingsList(): Response<List<BookingDetails>>
 
 
     @GET("api/user/booking/{bookingId}")
     suspend fun getBookingDetails(
         @Path("bookingId") bookingId: String
-    ): Response<Booking>
+    ): Response<BookingDetails>
 
     @DELETE("api/user/booking/{bookingId}")
     suspend fun cancelBooking(
@@ -190,5 +196,6 @@ interface MovieGoApi {
     suspend fun checkoutBooking(
         @Path("paymentId") paymentId: String
     ): Response<ResponseBody>
+
 
 }

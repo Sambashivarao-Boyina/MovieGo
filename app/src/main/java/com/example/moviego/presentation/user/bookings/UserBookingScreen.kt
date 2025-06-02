@@ -31,25 +31,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviego.R
-import com.example.moviego.domain.model.Booking
+import com.example.moviego.domain.model.BookingDetails
 import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.ui.theme.Black1C1
 import com.example.moviego.ui.theme.RedE31
 import java.util.Locale
-import kotlin.math.sign
 
 @Composable
 fun UserBookingsScreen(
     isLoading: Boolean,
-    bookings: List<Booking>,
+    bookingDetails: List<BookingDetails>,
     onEvent:(UserBookingsEvent) -> Unit,
     navController: NavHostController
 ) {
@@ -68,7 +65,7 @@ fun UserBookingsScreen(
                 verticalArrangement = Arrangement.spacedBy(13.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(bookings) {
+                items(bookingDetails) {
                     BookingCard(it, onClick = {
                         navController.navigate(Route.UserBookingDetails.passBookingId(it._id))
                     })
@@ -79,7 +76,7 @@ fun UserBookingsScreen(
 }
 
 @Composable
-fun BookingCard(booking: Booking, onClick:()->Unit) {
+fun BookingCard(bookingDetails: BookingDetails, onClick:()->Unit) {
     Card(
         elevation = CardDefaults.elevatedCardElevation(8.dp),
         colors = CardDefaults.cardColors().copy(
@@ -101,7 +98,7 @@ fun BookingCard(booking: Booking, onClick:()->Unit) {
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(booking.show.movie.Poster)
+                        .data(bookingDetails.show.movie.Poster)
                         .placeholder(R.drawable.placeholder)
                         .error(R.drawable.placeholder)
                         .build(),
@@ -125,7 +122,7 @@ fun BookingCard(booking: Booking, onClick:()->Unit) {
                         verticalArrangement = Arrangement.Bottom
 
                     ) {
-                        Text(text = booking.show.movie.Title, style = MaterialTheme.typography.titleLarge)
+                        Text(text = bookingDetails.show.movie.Title, style = MaterialTheme.typography.titleLarge)
                         Spacer(modifier = Modifier.height(6.dp))
                         Row {
                             Icon(
@@ -135,7 +132,7 @@ fun BookingCard(booking: Booking, onClick:()->Unit) {
                                 modifier = Modifier.size(20.dp)
                             )
                             Text(
-                                text = "${booking.show.theater.name} ${booking.show.theater.city}",
+                                text = "${bookingDetails.show.theater.name} ${bookingDetails.show.theater.city}",
                                 color = Color.Gray
                             )
                         }
@@ -144,7 +141,7 @@ fun BookingCard(booking: Booking, onClick:()->Unit) {
                     Row(
                         modifier = Modifier.align(Alignment.TopEnd)
                     ) {
-                        BookingStatus(status = booking.bookingStatus)
+                        BookingStatus(status = bookingDetails.bookingStatus)
                     }
 
                 }
@@ -157,15 +154,15 @@ fun BookingCard(booking: Booking, onClick:()->Unit) {
             ) {
                 DataBlock(
                     title = "Date",
-                    data = booking.show.date
+                    data = bookingDetails.show.date
                 )
                 DataBlock(
                     title = "Time",
-                    data = booking.show.showTime
+                    data = bookingDetails.show.showTime
                 )
                 DataBlock(
                     title = "Screen",
-                    data = booking.show.screen.screenName
+                    data = bookingDetails.show.screen.screenName
                 )
 
             }
@@ -188,13 +185,13 @@ fun BookingCard(booking: Booking, onClick:()->Unit) {
                         tint = RedE31
                     )
                     Text("Seats: ", color = RedE31)
-                    booking.seats.map {
+                    bookingDetails.seats.map {
                         Text("${it.seatCode}", color = RedE31, fontWeight = FontWeight.Bold)
                     }
                 }
 
                 Text(
-                    text = "₹${booking.seats.size * booking.show.ticketCost + (booking.seats.size * booking.show.ticketCost) / 10 }",
+                    text = "₹${bookingDetails.seats.size * bookingDetails.show.ticketCost + (bookingDetails.seats.size * bookingDetails.show.ticketCost) / 10 }",
                     color = RedE31,
                     fontWeight = FontWeight.Bold
                 )

@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.moviego.domain.model.Booking
+import com.example.moviego.domain.model.BookingDetails
 import com.example.moviego.domain.usecases.user_usecases.UserUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class UserBookingViewModel @Inject constructor(
     private val userUserUseCases: UserUseCases
 ): ViewModel() {
-    var bookings by mutableStateOf<List<Booking>>(emptyList())
+    var bookingDetails by mutableStateOf<List<BookingDetails>>(emptyList())
         private set
 
     var isLoading by mutableStateOf(false)
@@ -40,7 +40,7 @@ class UserBookingViewModel @Inject constructor(
         viewModelScope.launch {
             val result = userUserUseCases.getBookingsList()
             if(result.isSuccess) {
-                bookings = result.getOrDefault(emptyList())
+                bookingDetails = result.getOrDefault(emptyList())
             } else {
                 sideEffect = result.exceptionOrNull()?.message
             }

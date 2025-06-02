@@ -6,7 +6,7 @@ import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
 import com.example.moviego.data.remote.MovieGoApi
-import com.example.moviego.domain.model.Booking
+import com.example.moviego.domain.model.BookingDetails
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.ShowDetails
@@ -62,11 +62,11 @@ class UserRepositoryImpl(
         return movieGoApi.createBooking(data)
     }
 
-    override suspend fun getBookingsList(): Response<List<Booking>> {
+    override suspend fun getBookingsList(): Response<List<BookingDetails>> {
         return movieGoApi.getBookingsList()
     }
 
-    override suspend fun getBookingDetails(bookingId: String): Response<Booking> {
+    override suspend fun getBookingDetails(bookingId: String): Response<BookingDetails> {
         return movieGoApi.getBookingDetails(bookingId)
     }
 

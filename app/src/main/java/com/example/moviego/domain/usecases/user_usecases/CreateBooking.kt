@@ -1,7 +1,6 @@
 package com.example.moviego.domain.usecases.user_usecases
 
 import com.example.moviego.data.remote.Dao.BookingData
-import com.example.moviego.domain.model.Booking
 import com.example.moviego.domain.repository.user.UserRepository
 import com.example.moviego.util.Constants.extractData
 

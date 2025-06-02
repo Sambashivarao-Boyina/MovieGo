@@ -5,8 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.moviego.domain.model.Admin
+import com.example.moviego.domain.model.Booking
 import com.example.moviego.domain.model.ShowDetails
 import com.example.moviego.domain.usecases.admin_usecases.AdminUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +16,12 @@ import javax.inject.Inject
 class AdminShowDetailsViewModel @Inject constructor(
     private val adminUseCases: AdminUseCases
 ) : ViewModel() {
+    var showId by mutableStateOf<String?>(null)
+        private set
+    var isBookingsLoading by mutableStateOf(false)
+        private set
+    var bookings by mutableStateOf<List<Booking>>(emptyList())
+        private set
     var showDetails by mutableStateOf<ShowDetails?>(null)
         private set
     var isLoading by mutableStateOf(false)
@@ -26,21 +31,29 @@ class AdminShowDetailsViewModel @Inject constructor(
     var updatingShowStatus by mutableStateOf(false)
         private set
 
-    fun loadShow(showId:String) {
-        isLoading = true
-        viewModelScope.launch {
-            val result = adminUseCases.getShowDetails(showId)
-            if(result.isSuccess) {
-                showDetails = result.getOrDefault(null)
-            } else {
-                sideEffect = result.exceptionOrNull()?.message
+    fun initializeShowId(showId: String) {
+        this.showId = showId
+        loadShow()
+        loadBookingsOfShow()
+    }
+
+    private fun loadShow() {
+        showId?.let {
+            isLoading = true
+            viewModelScope.launch {
+                val result = adminUseCases.getShowDetails(it)
+                if (result.isSuccess) {
+                    showDetails = result.getOrDefault(null)
+                } else {
+                    sideEffect = result.exceptionOrNull()?.message
+                }
             }
+            isLoading = false
         }
-        isLoading = false
     }
 
     fun onEvent(event: AdminShowDetailsEvent) {
-        when(event) {
+        when (event) {
             AdminShowDetailsEvent.RemoveSideEffect -> {
                 sideEffect = null
             }
@@ -58,8 +71,9 @@ class AdminShowDetailsViewModel @Inject constructor(
         showDetails?.let {
             viewModelScope.launch {
                 val result = adminUseCases.openShow(it._id)
-                if(result.isSuccess) {
+                if (result.isSuccess) {
                     showDetails = result.getOrDefault(null)
+                    sideEffect = "Show is Opened"
                 } else {
                     sideEffect = result.exceptionOrNull()?.message
                 }
@@ -73,8 +87,9 @@ class AdminShowDetailsViewModel @Inject constructor(
         showDetails?.let {
             viewModelScope.launch {
                 val result = adminUseCases.closeShow(it._id)
-                if(result.isSuccess) {
+                if (result.isSuccess) {
                     showDetails = result.getOrDefault(null)
+                    sideEffect = "Show is Closed"
                 } else {
                     sideEffect = result.exceptionOrNull()?.message
                 }
@@ -83,10 +98,25 @@ class AdminShowDetailsViewModel @Inject constructor(
         updatingShowStatus = false
     }
 
+    private fun loadBookingsOfShow() {
+        showId?.let {
+            isBookingsLoading = true
+            viewModelScope.launch {
+                val result = adminUseCases.getBookingsOfShow(it)
+                if (result.isSuccess) {
+                    bookings = result.getOrDefault(emptyList())
+                } else {
+                    sideEffect = result.exceptionOrNull()?.message
+                }
+            }
+            isBookingsLoading = false
+        }
+    }
+
 }
 
 sealed class AdminShowDetailsEvent {
-    data object RemoveSideEffect: AdminShowDetailsEvent()
-    data object OpenShow: AdminShowDetailsEvent()
-    data object CloseShow: AdminShowDetailsEvent()
+    data object RemoveSideEffect : AdminShowDetailsEvent()
+    data object OpenShow : AdminShowDetailsEvent()
+    data object CloseShow : AdminShowDetailsEvent()
 }

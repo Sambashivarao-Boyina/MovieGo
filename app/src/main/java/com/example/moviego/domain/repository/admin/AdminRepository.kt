@@ -4,10 +4,11 @@ import com.example.moviego.data.remote.Dao.AuthResponse
 import com.example.moviego.data.remote.Dao.Login
 import com.example.moviego.data.remote.Dao.NewScreen
 import com.example.moviego.data.remote.Dao.NewShow
-import com.example.moviego.data.remote.Dao.NewTheater
 import com.example.moviego.data.remote.Dao.SignUp
 import com.example.moviego.data.remote.Dao.UpdateBody
 import com.example.moviego.domain.model.Admin
+import com.example.moviego.domain.model.Booking
+import com.example.moviego.domain.model.BookingDetails
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Show
 import com.example.moviego.domain.model.ShowDetails
@@ -16,7 +17,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
-import java.io.File
 
 interface AdminRepository {
     suspend fun loginAdmin(admin: Login): Response<AuthResponse>
@@ -39,4 +39,5 @@ interface AdminRepository {
     suspend fun editTheater(theaterId: String,image: MultipartBody.Part?, editTheater: RequestBody): Response<ResponseBody>
     suspend fun openShow(showId: String): Response<ShowDetails>
     suspend fun closeShow(showId: String): Response<ShowDetails>
+    suspend fun getBookingsOfShow(showId: String): Response<List<Booking>>
 }

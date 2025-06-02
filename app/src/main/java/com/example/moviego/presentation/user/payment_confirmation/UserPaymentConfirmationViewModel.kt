@@ -1,7 +1,6 @@
 package com.example.moviego.presentation.user.payment_confirmation
 
 import android.app.Activity
-import android.util.Log
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -9,7 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.moviego.domain.model.Booking
+import com.example.moviego.domain.model.BookingDetails
 import com.example.moviego.domain.usecases.user_usecases.UserUseCases
 import com.example.moviego.util.Constants.RAZOR_PAY_KEY_ID
 import com.razorpay.Checkout
@@ -25,7 +24,7 @@ class UserPaymentConfirmationViewModel @Inject constructor(
     var bookingId by mutableStateOf<String?>(null)
         private set
 
-    var booking by mutableStateOf<Booking?>(null)
+    var bookingDetails by mutableStateOf<BookingDetails?>(null)
         private set
 
     var cancelingBooking by mutableStateOf(false)
@@ -67,9 +66,9 @@ class UserPaymentConfirmationViewModel @Inject constructor(
             if(bookingId != null) {
                 val result = userUseCases.getBookingDetails(bookingId!!)
                 if(result.isSuccess) {
-                    booking = result.getOrNull()
-                    booking?.let {
-                        ticketsPrice = (booking!!.show.ticketCost * booking!!.seats.size).toFloat()
+                    bookingDetails = result.getOrNull()
+                    bookingDetails?.let {
+                        ticketsPrice = (bookingDetails!!.show.ticketCost * bookingDetails!!.seats.size).toFloat()
                     }
                 } else {
                     sideEffect = result.exceptionOrNull()?.message
@@ -136,7 +135,9 @@ class UserPaymentConfirmationViewModel @Inject constructor(
                 put("description",description)
                 put("currency","INR")
                 put("amount", (totalPayment * 100).toLong())
-                put("theme","#bb000e")
+                put("theme", JSONObject().apply {
+                    put("color", "#bb000e")
+                })
                 put("method",JSONObject().apply {
                     put("upi",true)
                     put("qr",true)
