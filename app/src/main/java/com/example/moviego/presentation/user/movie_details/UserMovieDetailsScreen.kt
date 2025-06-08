@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,6 +46,7 @@ import coil.request.ImageRequest
 import com.example.moviego.R
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.presentation.authentication.components.SubmitButton
+import com.example.moviego.presentation.components.shimmerEffect
 import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.ui.theme.RedE31
 
@@ -55,26 +57,48 @@ fun UserMovieDetailsScreen(
     onEvent: (UserMovieDetailsEvent) -> Unit,
     navController: NavHostController
 ) {
-    if (isLoading) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CircularProgressIndicator()
-        }
-    } else {
-        movie?.let {
-            Scaffold {
+    Scaffold { padding ->
+
+        if (isLoading) {
+            Column(
+                modifier = Modifier.padding(padding).padding(horizontal = 10.dp).fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                Box(
+                    modifier = Modifier.height(340.dp).fillMaxWidth().clip(RoundedCornerShape(20.dp)).shimmerEffect()
+                )
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    for(i in 1..3){
+                        Box(
+                            modifier = Modifier.width(100.dp).height(40.dp).clip(CircleShape).shimmerEffect()
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier.width(400.dp).height(20.dp).clip(CircleShape).shimmerEffect()
+                )
+                Box(
+                    modifier = Modifier.fillMaxWidth(0.97f).height(200.dp).clip(RoundedCornerShape(20.dp)).shimmerEffect()
+                )
+                Box(
+                    modifier = Modifier.fillMaxWidth(0.9f).height(100.dp).clip(RoundedCornerShape(20.dp)).shimmerEffect()
+                )
+            }
+        } else {
+            movie?.let {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(
-                            bottom = it.calculateBottomPadding(),
-                            start = it.calculateLeftPadding(
+                            bottom = padding.calculateBottomPadding(),
+                            start = padding.calculateLeftPadding(
                                 layoutDirection = LayoutDirection.Ltr
                             ),
-                            end = it.calculateEndPadding(LayoutDirection.Rtl)
+                            end = padding.calculateEndPadding(LayoutDirection.Rtl)
                         )
                 ) {
                     LazyColumn(
@@ -303,7 +327,6 @@ fun UserMovieDetailsScreen(
                         )
                     }
                 }
-
             }
         }
     }

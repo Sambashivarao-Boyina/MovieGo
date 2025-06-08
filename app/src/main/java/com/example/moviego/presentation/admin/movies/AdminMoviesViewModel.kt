@@ -31,6 +31,9 @@ class AdminMoviesViewModel @Inject constructor(
             AdminMoviesEvent.RemoveSideEffect -> {
                 sideEffect = null
             }
+            AdminMoviesEvent.ReloadMovies -> {
+                getAllMovies()
+            }
         }
     }
 
@@ -50,4 +53,5 @@ class AdminMoviesViewModel @Inject constructor(
 
 sealed class AdminMoviesEvent {
     data object RemoveSideEffect: AdminMoviesEvent()
+    data object ReloadMovies: AdminMoviesEvent()
 }

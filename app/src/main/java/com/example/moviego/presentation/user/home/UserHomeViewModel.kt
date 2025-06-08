@@ -3,6 +3,7 @@ package com.example.moviego.presentation.user.home
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.setValue
 import androidx.datastore.dataStore
 import androidx.lifecycle.ViewModel
@@ -11,11 +12,6 @@ import com.example.moviego.domain.manager.LocalUserManager
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.usecases.user_usecases.UserUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,8 +22,8 @@ class UserHomeViewModel @Inject constructor(
     var isLoading by mutableStateOf(false)
         private set
 
-    var movies by mutableStateOf<List<Movie>>(emptyList())
-        private set
+    private val allMovies = mutableStateOf<List<Movie>>(emptyList())
+    val movies = mutableStateOf<List<Movie>>(emptyList())
 
     var sideEffect by mutableStateOf<String?>(null)
         private set
@@ -41,6 +37,36 @@ class UserHomeViewModel @Inject constructor(
     var city by mutableStateOf("")
         private set
 
+    var selectedGenres by mutableStateOf(setOf<String>())
+        private set
+
+    var movieGerners = listOf(
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Drama",
+        "Romance",
+        "Horror",
+        "Thriller",
+        "Mystery",
+        "Sci-Fi",
+        "Fantasy",
+        "Animation",
+        "Family",
+        "Musical",
+        "Biography",
+        "Historical",
+        "Crime",
+        "Documentary",
+        "War",
+        "Western",
+        "Sport",
+        "Psychological",
+        "Tragedy",
+        "Superhero",
+        "Experimental",
+        "Short Film"
+    )
 
 
 
@@ -64,6 +90,18 @@ class UserHomeViewModel @Inject constructor(
             UserHomeEvent.LoadMovies -> {
                 loadMovies()
             }
+            is UserHomeEvent.AddGenreFilter -> {
+                selectedGenres = selectedGenres + event.genre
+                applyFilters()
+            }
+            is UserHomeEvent.RemoveGenreFilter -> {
+                selectedGenres = selectedGenres - event.genre
+                applyFilters()
+            }
+            UserHomeEvent.ClearFilters -> {
+                selectedGenres = emptySet()
+                applyFilters()
+            }
         }
     }
 
@@ -75,17 +113,16 @@ class UserHomeViewModel @Inject constructor(
     private fun loadMovies() {
         isLoading = true
         viewModelScope.launch {
-            Log.d("home", userLocation)
             val state = if (userLocation == "") "empty" else userLocation.split(".")[0]
-            Log.d("state", state)
             val city = if(userLocation == "") "empty" else userLocation.split(".")[1]
-            Log.d("city", city)
             val result = userUserUseCases.getMovies(state = state, city = city)
             if(result.isSuccess) {
-                movies = result.getOrDefault(emptyList())
+                allMovies.value = result.getOrDefault(emptyList())
+                movies.value = allMovies.value
             } else {
                 sideEffect = result.exceptionOrNull()?.message
             }
+            applyFilters()
         }
         isLoading = false
     }
@@ -114,7 +151,18 @@ class UserHomeViewModel @Inject constructor(
     }
 
 
+    private fun applyFilters() {
+        if (selectedGenres.isNotEmpty()) {
+            movies.value = allMovies.value.filter { movie ->
+                movie.Genre.split(",").any { genre ->
+                    selectedGenres.contains(genre.trim())
+                }
+            }
+        } else {
+            movies.value = allMovies.value
+        }
 
+    }
 }
 
 sealed class UserHomeEvent {
@@ -123,4 +171,7 @@ sealed class UserHomeEvent {
     data class SetNewState(var state: String): UserHomeEvent()
     data class SetNewCity(var city: String): UserHomeEvent()
     data object LoadMovies: UserHomeEvent()
+    data class AddGenreFilter(var genre: String): UserHomeEvent()
+    data class RemoveGenreFilter(var genre: String): UserHomeEvent()
+    data object ClearFilters: UserHomeEvent()
 }

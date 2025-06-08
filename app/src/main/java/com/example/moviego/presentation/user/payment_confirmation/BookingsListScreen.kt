@@ -185,7 +185,7 @@ fun EnhancedBookingCard(booking: Booking) {
             ) {
                 Column {
                     Text(
-                        text = "Booking #${booking._id.take(8).uppercase()}",
+                        text = "Booking\n#${booking._id.uppercase()}",
                         color = Color.White,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold

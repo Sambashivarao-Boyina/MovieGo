@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +50,9 @@ import com.example.moviego.presentation.components.shimmerEffect
 import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.ui.theme.Black111
 import com.example.moviego.ui.theme.Black161
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+
 
 @SuppressLint("NewApi")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +60,7 @@ import com.example.moviego.ui.theme.Black161
 fun AdminShowsScreen(
     shows: List<Show>,
     isLoading: Boolean,
-    onEvent: (AdminShowEvent) -> Unit,
+    onEvent: (AdminShowsEvent) -> Unit,
     navController: NavHostController,
     filterOptions: FilterOptions,
     selectedFilters: SelectedFilters
@@ -64,6 +68,10 @@ fun AdminShowsScreen(
     var showFilters by rememberSaveable {
         mutableStateOf(false)
     }
+    val swipeRefreshState = rememberSwipeRefreshState(
+        isRefreshing = isLoading,
+    )
+
     Scaffold {
         if(isLoading) {
             LazyColumn(
@@ -75,165 +83,198 @@ fun AdminShowsScreen(
                 }
             }
         } else{
-            Column(
-                modifier = Modifier.padding(it)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(end = 20.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End
+
+            SwipeRefresh(
+                state = swipeRefreshState,
+                onRefresh = {
+                    onEvent(AdminShowsEvent.ReloadShows)
+                },
+                modifier = Modifier.fillMaxSize()
+            ){
+                Column(
+                    modifier = Modifier.padding(it)
                 ) {
-
-                    Button(
-                        onClick = {
-                            showFilters = true
-                        }
-                    ) {
-                        Text(text = "Filters")
-                    }
-                }
-
-                LazyRow(
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    if (selectedFilters.date.isNotEmpty()) {
-                        item {
-                            FilterCard(title = selectedFilters.date) {
-                                onEvent(AdminShowEvent.UpdateFilterDate(""))
-                            }
-                        }
-                    }
-                    if (selectedFilters.movie != null) {
-                        item {
-                            FilterCard(title = selectedFilters.movie.Title) {
-                                onEvent(AdminShowEvent.UpdateFilterMovie(null))
-
-                            }
-                        }
-                    }
-                    if (selectedFilters.theater != null) {
-                        item {
-                            FilterCard(title = selectedFilters.theater.name) {
-                                onEvent(AdminShowEvent.UpdateFilterTheater(null))
-                            }
-                        }
-                    }
-                }
-                if (shows.isEmpty()) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text("No Shows Available ", style = MaterialTheme.typography.titleLarge)
-                    }
-                } else {
-                    LazyColumn(
+                    Row(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                            .padding(end = 20.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End
                     ) {
-                        items(shows) { show ->
-                            ShowCard(show = show, onClick = {
-                                navController.navigate(Route.AdminShowDetails.passShowId(showId = show._id))
-                            })
+
+                        Button(
+                            onClick = {
+                                showFilters = true
+                            }
+                        ) {
+                            Text(text = "Filters")
                         }
                     }
-                }
 
-                if (showFilters) {
-                    ModalBottomSheet(
-                        containerColor = Black161,
-                        onDismissRequest = {
-                            showFilters = false
-                        }
+                    LazyRow(
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 10.dp)
-                                .padding(bottom = 20.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            DatePicker(
-                                selectedDate = selectedFilters.date,
-                                onSelected = {
-                                    onEvent(AdminShowEvent.UpdateFilterDate(it))
-                                },
-                                error = "",
-                                allowPastDates = true
-                            )
-
-                            DropDownSelect(
-                                items = filterOptions.movies.map {
-                                    DropDownItem(title = it.Title, ref = it._id)
-                                },
-                                onSelect = {
-                                    onEvent(AdminShowEvent.UpdateFilterMovie(filterOptions.movies.find { movie ->
-                                        movie._id == it.ref
-                                    }))
-                                },
-                                error = "",
-                                unAvailableMessage = "Select Movie",
-                                initialValue = if(selectedFilters.movie !== null) DropDownItem(
-                                    title = selectedFilters.movie.Title,
-                                    ref = selectedFilters.movie._id
-                                ) else null
-                            )
-                            DropDownSelect(
-                                items = filterOptions.theaters.map {
-                                    DropDownItem(title = it.name, ref = it._id)
-                                },
-                                onSelect = {
-                                    onEvent(AdminShowEvent.UpdateFilterTheater(filterOptions.theaters.find { theater ->
-                                        theater._id == it.ref
-                                    }))
-                                },
-                                error = "",
-                                unAvailableMessage = "Select Theater",
-                                initialValue = if(selectedFilters.theater !== null) DropDownItem(
-                                    title = selectedFilters.theater.name,
-                                    ref = selectedFilters.theater._id
-                                ) else null
-                            )
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                Button(
-                                    onClick = {
-                                        onEvent(AdminShowEvent.UpdateFilterMovie(null))
-                                        onEvent(AdminShowEvent.UpdateFilterTheater(null))
-                                        onEvent(AdminShowEvent.UpdateFilterDate(""))
-                                        showFilters = false
-                                    }
-                                ) {
-                                    Text(text = "Clear Filters")
+                        if (selectedFilters.date.isNotEmpty()) {
+                            item {
+                                FilterCard(title = selectedFilters.date) {
+                                    onEvent(AdminShowsEvent.UpdateFilterDate(""))
                                 }
-                                Spacer(Modifier.width(20.dp))
-                                Button(
-                                    colors = ButtonDefaults.buttonColors().copy(
-                                        containerColor = Black111,
-                                        contentColor = Color.White
-                                    ),
-                                    onClick = {
-                                        showFilters = false
-                                    }
+                            }
+                        }
+                        if (selectedFilters.movie != null) {
+                            item {
+                                FilterCard(title = selectedFilters.movie.Title) {
+                                    onEvent(AdminShowsEvent.UpdateFilterMovie(null))
+
+                                }
+                            }
+                        }
+                        if (selectedFilters.theater != null) {
+                            item {
+                                FilterCard(title = selectedFilters.theater.name) {
+                                    onEvent(AdminShowsEvent.UpdateFilterTheater(null))
+                                }
+                            }
+                        }
+
+                        if(selectedFilters.showType != "All") {
+                            item {
+                                FilterCard(title = selectedFilters.showType) {
+                                    onEvent(AdminShowsEvent.UpdateShowType("All"))
+                                }
+                            }
+                        }
+                    }
+                    if (shows.isEmpty()) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("No Shows Available ", style = MaterialTheme.typography.titleLarge)
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(20.dp)
+                        ) {
+                            items(shows) { show ->
+                                ShowCard(show = show, onClick = {
+                                    navController.navigate(Route.AdminShowDetails.passShowId(showId = show._id))
+                                })
+                            }
+                        }
+                    }
+
+                    if (showFilters) {
+                        ModalBottomSheet(
+                            containerColor = Black161,
+                            onDismissRequest = {
+                                showFilters = false
+                            }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 10.dp)
+                                    .padding(bottom = 20.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                DropDownSelect(
+                                    items = filterOptions.showTypes.map {
+                                        DropDownItem(title = it, ref = it)
+                                    },
+                                    onSelect = {
+                                        onEvent(AdminShowsEvent.UpdateShowType(it.ref))
+                                    },
+                                    error = "",
+                                    unAvailableMessage = "Select Show Type",
+                                    initialValue =  DropDownItem(
+                                        title = selectedFilters.showType,
+                                        ref = selectedFilters.showType
+                                    )
+                                )
+                                DatePicker(
+                                    selectedDate = selectedFilters.date,
+                                    onSelected = {
+                                        onEvent(AdminShowsEvent.UpdateFilterDate(it))
+                                    },
+                                    error = "",
+                                    allowPastDates = true
+                                )
+
+                                DropDownSelect(
+                                    items = filterOptions.movies.map {
+                                        DropDownItem(title = it.Title, ref = it._id)
+                                    },
+                                    onSelect = {
+                                        onEvent(AdminShowsEvent.UpdateFilterMovie(filterOptions.movies.find { movie ->
+                                            movie._id == it.ref
+                                        }))
+                                    },
+                                    error = "",
+                                    unAvailableMessage = "Select Movie",
+                                    initialValue = if(selectedFilters.movie !== null) DropDownItem(
+                                        title = selectedFilters.movie.Title,
+                                        ref = selectedFilters.movie._id
+                                    ) else null
+                                )
+                                DropDownSelect(
+                                    items = filterOptions.theaters.map {
+                                        DropDownItem(title = it.name, ref = it._id)
+                                    },
+                                    onSelect = {
+                                        onEvent(AdminShowsEvent.UpdateFilterTheater(filterOptions.theaters.find { theater ->
+                                            theater._id == it.ref
+                                        }))
+                                    },
+                                    error = "",
+                                    unAvailableMessage = "Select Theater",
+                                    initialValue = if(selectedFilters.theater !== null) DropDownItem(
+                                        title = selectedFilters.theater.name,
+                                        ref = selectedFilters.theater._id
+                                    ) else null
+                                )
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End
                                 ) {
-                                    Text(text = "Close")
+                                    Button(
+                                        onClick = {
+                                            onEvent(AdminShowsEvent.UpdateFilterMovie(null))
+                                            onEvent(AdminShowsEvent.UpdateFilterTheater(null))
+                                            onEvent(AdminShowsEvent.UpdateFilterDate(""))
+                                            showFilters = false
+                                        }
+                                    ) {
+                                        Text(text = "Clear Filters")
+                                    }
+                                    Spacer(Modifier.width(20.dp))
+                                    Button(
+                                        colors = ButtonDefaults.buttonColors().copy(
+                                            containerColor = Black111,
+                                            contentColor = Color.White
+                                        ),
+                                        onClick = {
+                                            showFilters = false
+                                        }
+                                    ) {
+                                        Text(text = "Close")
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+
+
         }
     }
 }

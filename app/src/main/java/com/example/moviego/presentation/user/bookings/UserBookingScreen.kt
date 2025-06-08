@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -38,6 +41,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviego.R
 import com.example.moviego.domain.model.BookingDetails
+import com.example.moviego.presentation.components.shimmerEffect
 import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.ui.theme.Black1C1
 import com.example.moviego.ui.theme.RedE31
@@ -53,11 +57,13 @@ fun UserBookingsScreen(
     Scaffold {
         if(isLoading) {
             Column(
-                modifier = Modifier.padding(it).fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.padding(it)
             ) {
-                CircularProgressIndicator()
+                for(i in 1..6) {
+                    Box(
+                        modifier = Modifier.padding(10.dp).height(200.dp).fillMaxWidth().clip(RoundedCornerShape(20.dp)).shimmerEffect()
+                    )
+                }
             }
         } else {
             LazyColumn(

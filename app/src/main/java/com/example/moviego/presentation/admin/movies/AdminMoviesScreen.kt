@@ -22,12 +22,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.presentation.admin.components.TopBar
 import com.example.moviego.presentation.components.MovieCard
@@ -40,7 +43,8 @@ import com.example.moviego.ui.theme.RedE31
 fun AdminMoviesScreen(
     movies: List<Movie>,
     isLoading: Boolean,
-    navController: NavHostController
+    navController: NavHostController,
+    onEvent: (AdminMoviesEvent)-> Unit
 ){
 
     Scaffold(
@@ -70,6 +74,21 @@ fun AdminMoviesScreen(
             )
         }
     ) {
+
+        val currentBackStackEntry = navController.currentBackStackEntryAsState().value
+        val savedStateHandle = currentBackStackEntry?.savedStateHandle
+
+        val context = LocalContext.current
+
+        // Listen for result using LaunchedEffect
+        LaunchedEffect(key1 = savedStateHandle) {
+            savedStateHandle?.getLiveData<Boolean>("refresh")?.observeForever { shouldRefresh ->
+                if (shouldRefresh == true) {
+                    onEvent(AdminMoviesEvent.ReloadMovies)
+                    savedStateHandle.remove<Boolean>("refresh")
+                }
+            }
+        }
        if(isLoading) {
            Column(
                modifier = Modifier.padding(it)
@@ -81,7 +100,12 @@ fun AdminMoviesScreen(
                ) {
                    items(6) {
                        Box(
-                           modifier = Modifier.padding(10.dp).height(300.dp).fillMaxWidth().clip(RoundedCornerShape(20.dp)).shimmerEffect()
+                           modifier = Modifier
+                               .padding(10.dp)
+                               .height(300.dp)
+                               .fillMaxWidth()
+                               .clip(RoundedCornerShape(20.dp))
+                               .shimmerEffect()
                        )
                    }
                }

@@ -5,8 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.moviego.domain.model.Admin
 import com.example.moviego.domain.model.TheaterDetails
 import com.example.moviego.domain.usecases.admin_usecases.AdminUseCases
+import com.mapbox.maps.extension.style.expressions.dsl.generated.get
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,6 +35,9 @@ class AdminTheatersViewModel @Inject constructor(
             AdminTheatersEvent.RemoveSideEffect -> {
                 sideEffect = null
             }
+            AdminTheatersEvent.ReloadTheaters -> {
+                getTheaters()
+            }
         }
     }
 
@@ -53,4 +58,5 @@ class AdminTheatersViewModel @Inject constructor(
 
 sealed class AdminTheatersEvent {
     data object RemoveSideEffect: AdminTheatersEvent()
+    data object ReloadTheaters: AdminTheatersEvent()
 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -45,6 +47,7 @@ import androidx.navigation.NavHostController
 import com.example.moviego.R
 import com.example.moviego.domain.model.User
 import com.example.moviego.presentation.authentication.components.PasswordInput
+import com.example.moviego.presentation.components.shimmerEffect
 import com.example.moviego.ui.theme.Black111
 import com.example.moviego.ui.theme.Black161
 import com.example.moviego.ui.theme.Black1C1
@@ -57,289 +60,324 @@ fun UserDetailsScreen(
     onEvent:(UserDetailsEvent) -> Unit,
     changePhoneNumber: ChangePhoneNumber,
     changePassword: ChangePassword,
-    navController: NavHostController
+    navController: NavHostController,
+    isLoading: Boolean
 ) {
     Scaffold {
         Column(
             modifier = Modifier.fillMaxSize().padding(it)
         ) {
-            user?.let {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ){
+            if(isLoading) {
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(it),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    Box(
+                        modifier = Modifier.size(200.dp).clip(CircleShape).shimmerEffect()
+                    )
+
+                    Box(
+                        modifier = Modifier.height(20.dp).width(300.dp).clip(RoundedCornerShape(10.dp)).shimmerEffect()
+                    )
+                    Box(
+                        modifier = Modifier.height(20.dp).width(350.dp).clip(RoundedCornerShape(10.dp)).shimmerEffect()
+                    )
+
+                    Box(
+                        modifier = Modifier.height(50.dp).fillMaxWidth().clip(RoundedCornerShape(20.dp)).shimmerEffect()
+                    )
+                    Box(
+                        modifier = Modifier.height(50.dp).fillMaxWidth().clip(RoundedCornerShape(20.dp)).shimmerEffect()
+                    )
+                    Box(
+                        modifier = Modifier.height(50.dp).fillMaxWidth().clip(RoundedCornerShape(20.dp)).shimmerEffect()
+                    )
+                    Box(
+                        modifier = Modifier.height(50.dp).fillMaxWidth().clip(RoundedCornerShape(20.dp)).shimmerEffect()
+                    )
+
+                }
+            } else {
+                user?.let {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
 
 
-                    item {
-                        Image(
-                            painter = painterResource(R.drawable.profile_placeholder),
-                            contentDescription = "Profile",
-                            modifier = Modifier.size(100.dp)
-                                .clip(RoundedCornerShape(50)),
-                            contentScale = ContentScale.Fit,
+                        item {
+                            Image(
+                                painter = painterResource(R.drawable.profile_placeholder),
+                                contentDescription = "Profile",
+                                modifier = Modifier.size(100.dp)
+                                    .clip(RoundedCornerShape(50)),
+                                contentScale = ContentScale.Fit,
 
-                            )
-
-
-                        Text(
-                            text = user.email,
-                            style = MaterialTheme.typography.titleLarge,
-                        )
-                    }
-
-                    item {
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(10.dp)
-                        ) {
-                            OutlinedTextField(
-                                value = user.phone,
-                                readOnly = true,
-                                onValueChange = {
-
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(10.dp),
-                                leadingIcon = {
-                                    Icon(imageVector = Icons.Default.Phone, contentDescription = "Phone number")
-                                },
-                                trailingIcon = {
-                                    IconButton(
-                                        onClick = {
-                                            onEvent(UserDetailsEvent.UpdatePhoneNumberPopup(true))
-                                        }
-                                    ) {
-                                        Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit", tint = RedE31)
-                                    }
-                                },
-                                colors = TextFieldDefaults.colors().copy(
-                                    focusedContainerColor = Black1C1,
-                                    unfocusedContainerColor = Black1C1,
-                                    unfocusedIndicatorColor = Black111,
-                                    focusedIndicatorColor = Black111
                                 )
+
+
+                            Text(
+                                text = user.email,
+                                style = MaterialTheme.typography.titleLarge,
                             )
                         }
 
-
-                        if(changePhoneNumber.isOpenPopup) {
-                            Dialog(
-                                onDismissRequest = {
-                                    onEvent(UserDetailsEvent.UpdatePhoneNumberPopup(false))
-
-                                },
-                                properties = DialogProperties(
-                                    dismissOnClickOutside = true,
-                                    dismissOnBackPress = true,
-                                    usePlatformDefaultWidth = true
-                                )
+                        item {
+                            Column(
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(10.dp)
                             ) {
-                                Column(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(20.dp))
-                                        .background(Black1C1)
-                                        .padding(20.dp),
-                                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                                ) {
-                                    Text(text = "Change Phone Number", style = MaterialTheme.typography.titleMedium)
+                                OutlinedTextField(
+                                    value = user.phone,
+                                    readOnly = true,
+                                    onValueChange = {
 
-                                    OutlinedTextField(
-                                        value = changePhoneNumber.newPhoneNumber,
-                                        onValueChange = {
-                                            onEvent(UserDetailsEvent.UpdatePhoneNumber(it))
-                                        },
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(10.dp),
-                                        leadingIcon = {
-                                            Icon(imageVector = Icons.Default.Phone, contentDescription = "Phone number")
-                                        },
-                                        colors = TextFieldDefaults.colors().copy(
-                                            focusedContainerColor = Black111,
-                                            unfocusedContainerColor = Black111,
-                                            unfocusedIndicatorColor = Black111,
-                                            focusedIndicatorColor = Black111
-                                        ),
-                                        keyboardOptions = KeyboardOptions(
-                                            keyboardType = KeyboardType.Phone
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(10.dp),
+                                    leadingIcon = {
+                                        Icon(imageVector = Icons.Default.Phone, contentDescription = "Phone number")
+                                    },
+                                    trailingIcon = {
+                                        IconButton(
+                                            onClick = {
+                                                onEvent(UserDetailsEvent.UpdatePhoneNumberPopup(true))
+                                            }
+                                        ) {
+                                            Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit", tint = RedE31)
+                                        }
+                                    },
+                                    colors = TextFieldDefaults.colors().copy(
+                                        focusedContainerColor = Black1C1,
+                                        unfocusedContainerColor = Black1C1,
+                                        unfocusedIndicatorColor = Black111,
+                                        focusedIndicatorColor = Black111
+                                    )
+                                )
+                            }
+
+
+                            if(changePhoneNumber.isOpenPopup) {
+                                Dialog(
+                                    onDismissRequest = {
+                                        onEvent(UserDetailsEvent.UpdatePhoneNumberPopup(false))
+
+                                    },
+                                    properties = DialogProperties(
+                                        dismissOnClickOutside = true,
+                                        dismissOnBackPress = true,
+                                        usePlatformDefaultWidth = true
+                                    )
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(20.dp))
+                                            .background(Black1C1)
+                                            .padding(20.dp),
+                                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                                    ) {
+                                        Text(text = "Change Phone Number", style = MaterialTheme.typography.titleMedium)
+
+                                        OutlinedTextField(
+                                            value = changePhoneNumber.newPhoneNumber,
+                                            onValueChange = {
+                                                onEvent(UserDetailsEvent.UpdatePhoneNumber(it))
+                                            },
+                                            modifier = Modifier.fillMaxWidth(),
+                                            shape = RoundedCornerShape(10.dp),
+                                            leadingIcon = {
+                                                Icon(imageVector = Icons.Default.Phone, contentDescription = "Phone number")
+                                            },
+                                            colors = TextFieldDefaults.colors().copy(
+                                                focusedContainerColor = Black111,
+                                                unfocusedContainerColor = Black111,
+                                                unfocusedIndicatorColor = Black111,
+                                                focusedIndicatorColor = Black111
+                                            ),
+                                            keyboardOptions = KeyboardOptions(
+                                                keyboardType = KeyboardType.Phone
+                                            )
                                         )
-                                    )
 
-                                    if(changePhoneNumber.isError.isNotEmpty()) {
-                                        Text(changePhoneNumber.isError, color = RedE31)
-                                    }
-
-                                    Row (
-                                        modifier = Modifier.fillMaxWidth()
-                                            .padding(top = 30.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.End
-                                    ) {
-                                        Button(
-                                            onClick = {
-                                                onEvent(UserDetailsEvent.UpdatePhoneNumberPopup(false))
-
-                                            },
-                                            colors = ButtonDefaults.buttonColors().copy(
-                                                contentColor = RedE31,
-                                                containerColor = Black161
-                                            )
-                                        ) {
-                                            Text("Cancel")
+                                        if(changePhoneNumber.isError.isNotEmpty()) {
+                                            Text(changePhoneNumber.isError, color = RedE31)
                                         }
-                                        Spacer(modifier = Modifier.width(20.dp))
-                                        Button(
-                                            onClick = {
-                                                onEvent(UserDetailsEvent.SubmitNewPhoneNumber)
-                                            },
-                                            enabled = !changePhoneNumber.isChangingPhone,
-                                            colors = ButtonDefaults.buttonColors().copy(
-                                                containerColor = RedE31,
-                                                disabledContainerColor = RedBB0,
-                                                contentColor = Color.White,
-                                                disabledContentColor = Color.White
-                                            ),
+
+                                        Row (
+                                            modifier = Modifier.fillMaxWidth()
+                                                .padding(top = 30.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.End
                                         ) {
-                                            if(changePhoneNumber.isChangingPhone) {
-                                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
-                                            } else {
-                                                Text("Submit")
+                                            Button(
+                                                onClick = {
+                                                    onEvent(UserDetailsEvent.UpdatePhoneNumberPopup(false))
+
+                                                },
+                                                colors = ButtonDefaults.buttonColors().copy(
+                                                    contentColor = RedE31,
+                                                    containerColor = Black161
+                                                )
+                                            ) {
+                                                Text("Cancel")
                                             }
+                                            Spacer(modifier = Modifier.width(20.dp))
+                                            Button(
+                                                onClick = {
+                                                    onEvent(UserDetailsEvent.SubmitNewPhoneNumber)
+                                                },
+                                                enabled = !changePhoneNumber.isChangingPhone,
+                                                colors = ButtonDefaults.buttonColors().copy(
+                                                    containerColor = RedE31,
+                                                    disabledContainerColor = RedBB0,
+                                                    contentColor = Color.White,
+                                                    disabledContentColor = Color.White
+                                                ),
+                                            ) {
+                                                if(changePhoneNumber.isChangingPhone) {
+                                                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
+                                                } else {
+                                                    Text("Submit")
+                                                }
+                                            }
+
+
                                         }
-
-
                                     }
                                 }
                             }
                         }
-                    }
 
 
 
-                    item {
-                        Spacer(Modifier.height(10.dp))
-                        Card(
-                            modifier = Modifier.fillMaxWidth()
-                                .height(50.dp)
-                                .padding(horizontal = 10.dp)
-                                .clickable {
-                                    onEvent(UserDetailsEvent.UpdatePasswordPopup(true))
+                        item {
+                            Spacer(Modifier.height(10.dp))
+                            Card(
+                                modifier = Modifier.fillMaxWidth()
+                                    .height(50.dp)
+                                    .padding(horizontal = 10.dp)
+                                    .clickable {
+                                        onEvent(UserDetailsEvent.UpdatePasswordPopup(true))
+                                    }
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxSize()
+                                        .background(Black1C1),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center,
+
+                                    ) {
+                                    Text("Change Password", color = RedE31, style = MaterialTheme.typography.titleLarge)
                                 }
-                        ) {
+                            }
+
+                            if(changePassword.isOpenPopup) {
+                                Dialog(
+                                    onDismissRequest = {
+                                        onEvent(UserDetailsEvent.UpdatePasswordPopup(false))
+                                    },
+                                    properties = DialogProperties(
+                                        dismissOnClickOutside = true,
+                                        dismissOnBackPress = true,
+                                        usePlatformDefaultWidth = true
+                                    )
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(20.dp))
+                                            .background(Black1C1)
+                                            .padding(20.dp),
+                                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                                    ) {
+                                        Text(text = "Change Password", style = MaterialTheme.typography.titleMedium)
+
+                                        PasswordInput(
+                                            value = changePassword.newPassword,
+                                            onChange = {
+                                                onEvent(UserDetailsEvent.UpdateNewPassword(it))
+                                            },
+                                            placeholder = "New Password",
+                                            error = changePassword.isNewPasswordError
+                                        )
+
+                                        PasswordInput(
+                                            value = changePassword.confirmPassword,
+                                            onChange = {
+                                                onEvent(UserDetailsEvent.UpdateConfirmPassword(it))
+                                            },
+                                            placeholder = "Confirm Password",
+                                            error = changePassword.isConfirmPasswordError
+                                        )
+
+                                        Row (
+                                            modifier = Modifier.fillMaxWidth()
+                                                .padding(top = 30.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.End
+                                        ) {
+                                            Button(
+                                                onClick = {
+                                                    onEvent(UserDetailsEvent.UpdatePasswordPopup(false))
+
+                                                },
+                                                colors = ButtonDefaults.buttonColors().copy(
+                                                    contentColor = RedE31,
+                                                    containerColor = Black161
+                                                )
+                                            ) {
+                                                Text("Cancel")
+                                            }
+                                            Spacer(modifier = Modifier.width(20.dp))
+                                            Button(
+                                                onClick = {
+                                                    onEvent(UserDetailsEvent.SubmitUpdatePassword)
+                                                },
+                                                enabled = !changePassword.isUpdatingPassword,
+                                                colors = ButtonDefaults.buttonColors().copy(
+                                                    containerColor = RedE31,
+                                                    disabledContainerColor = RedBB0,
+                                                    contentColor = Color.White,
+                                                    disabledContentColor = Color.White
+                                                ),
+                                            ) {
+                                                if(changePassword.isUpdatingPassword) {
+                                                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
+                                                } else {
+                                                    Text("Update")
+                                                }
+                                            }
+
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        item {
+                            Spacer(modifier = Modifier.height(20.dp))
                             Row(
-                                modifier = Modifier.fillMaxSize()
-                                    .background(Black1C1),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center,
-
-                                ) {
-                                Text("Change Password", color = RedE31, style = MaterialTheme.typography.titleLarge)
-                            }
-                        }
-
-                        if(changePassword.isOpenPopup) {
-                            Dialog(
-                                onDismissRequest = {
-                                    onEvent(UserDetailsEvent.UpdatePasswordPopup(false))
-                                },
-                                properties = DialogProperties(
-                                    dismissOnClickOutside = true,
-                                    dismissOnBackPress = true,
-                                    usePlatformDefaultWidth = true
-                                )
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(horizontal = 10.dp)
                             ) {
-                                Column(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(20.dp))
-                                        .background(Black1C1)
-                                        .padding(20.dp),
-                                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                                ) {
-                                    Text(text = "Change Password", style = MaterialTheme.typography.titleMedium)
 
-                                    PasswordInput(
-                                        value = changePassword.newPassword,
-                                        onChange = {
-                                            onEvent(UserDetailsEvent.UpdateNewPassword(it))
-                                        },
-                                        placeholder = "New Password",
-                                        error = changePassword.isNewPasswordError
-                                    )
-
-                                    PasswordInput(
-                                        value = changePassword.confirmPassword,
-                                        onChange = {
-                                            onEvent(UserDetailsEvent.UpdateConfirmPassword(it))
-                                        },
-                                        placeholder = "Confirm Password",
-                                        error = changePassword.isConfirmPasswordError
-                                    )
-
-                                    Row (
-                                        modifier = Modifier.fillMaxWidth()
-                                            .padding(top = 30.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.End
-                                    ) {
-                                        Button(
-                                            onClick = {
-                                                onEvent(UserDetailsEvent.UpdatePasswordPopup(false))
-
-                                            },
-                                            colors = ButtonDefaults.buttonColors().copy(
-                                                contentColor = RedE31,
-                                                containerColor = Black161
-                                            )
-                                        ) {
-                                            Text("Cancel")
-                                        }
-                                        Spacer(modifier = Modifier.width(20.dp))
-                                        Button(
-                                            onClick = {
-                                                onEvent(UserDetailsEvent.SubmitUpdatePassword)
-                                            },
-                                            enabled = !changePassword.isUpdatingPassword,
-                                            colors = ButtonDefaults.buttonColors().copy(
-                                                containerColor = RedE31,
-                                                disabledContainerColor = RedBB0,
-                                                contentColor = Color.White,
-                                                disabledContentColor = Color.White
-                                            ),
-                                        ) {
-                                            if(changePassword.isUpdatingPassword) {
-                                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
-                                            } else {
-                                                Text("Update")
-                                            }
-                                        }
-
-
+                                Button(
+                                    shape = RoundedCornerShape(10.dp),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    onClick = {
+                                        onEvent(UserDetailsEvent.Logout)
                                     }
+                                ) {
+                                    Text("Logout", style = MaterialTheme.typography.titleLarge)
                                 }
-                            }
-                        }
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(20.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(horizontal = 10.dp)
-                        ) {
-
-                            Button(
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.fillMaxWidth(),
-                                onClick = {
-                                    onEvent(UserDetailsEvent.Logout)
-                                }
-                            ) {
-                                Text("Logout", style = MaterialTheme.typography.titleLarge)
                             }
                         }
                     }
                 }
             }
+
         }
 
     }

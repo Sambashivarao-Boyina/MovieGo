@@ -128,4 +128,5 @@ dependencies {
     implementation("com.mapbox.extension:maps-compose:11.12.1")
 
 
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.32.0")
 }

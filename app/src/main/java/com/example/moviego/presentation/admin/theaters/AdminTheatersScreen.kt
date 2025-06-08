@@ -21,14 +21,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.moviego.domain.model.TheaterDetails
 import com.example.moviego.presentation.admin.components.TopBar
+import com.example.moviego.presentation.admin.movies.AdminMoviesEvent
 import com.example.moviego.presentation.components.TheaterCard
 import com.example.moviego.presentation.components.shimmerEffect
 import com.example.moviego.presentation.navgraph.Route
@@ -38,9 +43,9 @@ import com.example.moviego.ui.theme.RedE31
 fun AdminTheatersScreen(
     theaters: List<TheaterDetails>,
     isLoading: Boolean,
-    navController: NavHostController
+    navController: NavHostController,
+    onEvent: (AdminTheatersEvent)->Unit
 ) {
-
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -68,6 +73,17 @@ fun AdminTheatersScreen(
             )
         }
     ) {
+        val currentBackStackEntry = navController.currentBackStackEntryAsState().value
+        val savedStateHandle = currentBackStackEntry?.savedStateHandle
+
+        LaunchedEffect(key1 = savedStateHandle) {
+            savedStateHandle?.getLiveData<Boolean>("refresh")?.observeForever { shouldRefresh ->
+                if (shouldRefresh == true) {
+                    onEvent(AdminTheatersEvent.ReloadTheaters)
+                    savedStateHandle.remove<Boolean>("refresh")
+                }
+            }
+        }
         if(isLoading) {
             Column(
                 modifier = Modifier.fillMaxSize(),

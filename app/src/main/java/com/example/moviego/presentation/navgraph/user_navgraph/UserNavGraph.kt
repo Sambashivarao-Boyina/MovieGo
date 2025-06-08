@@ -61,12 +61,13 @@ fun UserNavGraph(
             }
             UserHomeScreen(
                 isLoading = userHomeViewModel.isLoading,
-                movies = userHomeViewModel.movies,
+                movies = userHomeViewModel.movies.value,
                 navController = navController,
                 location = userHomeViewModel.userLocation,
                 onEvent = userHomeViewModel::onEvent,
                 state = userHomeViewModel.state,
-                city = userHomeViewModel.city
+                selectedFilters = userHomeViewModel.selectedGenres,
+                genres = userHomeViewModel.movieGerners
             )
         }
 
@@ -86,6 +87,7 @@ fun UserNavGraph(
                 changePhoneNumber = userDetailsViewModel.changePhoneNumber,
                 user = userDetailsViewModel.userDetails,
                 navController = navController,
+                isLoading = userDetailsViewModel.isLoading
             )
         }
 

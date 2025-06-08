@@ -32,7 +32,7 @@ class UserDetailsViewModel @Inject constructor(
         private set
 
     init {
-        getAdminDetails()
+        getUserDetails()
     }
 
     fun onEvent(event: UserDetailsEvent) {
@@ -79,7 +79,7 @@ class UserDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun getAdminDetails() {
+    private fun getUserDetails() {
         viewModelScope.launch {
             isLoading = true
 

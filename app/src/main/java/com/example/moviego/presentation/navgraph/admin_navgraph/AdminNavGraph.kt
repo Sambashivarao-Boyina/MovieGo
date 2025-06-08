@@ -32,8 +32,10 @@ import com.example.moviego.presentation.admin.movie_details.AdminMovieDetailsVie
 import com.example.moviego.presentation.admin.movies.AdminMoviesEvent
 import com.example.moviego.presentation.admin.movies.AdminMoviesScreen
 import com.example.moviego.presentation.admin.movies.AdminMoviesViewModel
+import com.example.moviego.presentation.admin.show_details.AdminShowDetailsEvent
 import com.example.moviego.presentation.admin.show_details.AdminShowDetailsScreen
 import com.example.moviego.presentation.admin.show_details.AdminShowDetailsViewModel
+import com.example.moviego.presentation.admin.shows.AdminShowsEvent
 import com.example.moviego.presentation.admin.shows.AdminShowsScreen
 import com.example.moviego.presentation.admin.shows.AdminShowsViewModel
 import com.example.moviego.presentation.admin.theater_details.AdminTheaterDetailsEvent
@@ -59,6 +61,14 @@ fun AdminNavGraph(
     ) {
         composable(route = Route.AdminShows.route) {
             val adminShowsViewModel: AdminShowsViewModel = hiltViewModel()
+            if (adminShowsViewModel.sideEffect != null) {
+                Toast.makeText(
+                    LocalContext.current,
+                    adminShowsViewModel.sideEffect,
+                    Toast.LENGTH_SHORT
+                ).show()
+                adminShowsViewModel.onEvent(AdminShowsEvent.RemoveSideEffect)
+            }
             AdminShowsScreen(
                 shows = adminShowsViewModel.shows.value,
                 onEvent = adminShowsViewModel::onEvent,
@@ -77,6 +87,14 @@ fun AdminNavGraph(
             val adminShowDetailsViewModel: AdminShowDetailsViewModel = hiltViewModel()
             LaunchedEffect(key1 = showId) {
                 adminShowDetailsViewModel.initializeShowId(showId)
+            }
+            if (adminShowDetailsViewModel.sideEffect != null) {
+                Toast.makeText(
+                    LocalContext.current,
+                    adminShowDetailsViewModel.sideEffect,
+                    Toast.LENGTH_SHORT
+                ).show()
+                adminShowDetailsViewModel.onEvent(AdminShowDetailsEvent.RemoveSideEffect)
             }
             AdminShowDetailsScreen(
                 showDetails = adminShowDetailsViewModel.showDetails,
@@ -146,7 +164,8 @@ fun AdminNavGraph(
             AdminMoviesScreen(
                 movies = adminMoviesViewModel.movies,
                 isLoading = adminMoviesViewModel.isLoading,
-                navController = navController
+                navController = navController,
+                onEvent = adminMoviesViewModel::onEvent
             )
         }
 
@@ -164,7 +183,8 @@ fun AdminNavGraph(
             AdminTheatersScreen(
                 theaters = adminTheatersViewModel.theaters,
                 isLoading = adminTheatersViewModel.isLoading,
-                navController = navController
+                navController = navController,
+                onEvent = adminTheatersViewModel::onEvent
             )
         }
 
@@ -204,7 +224,12 @@ fun AdminNavGraph(
                 adminAddMovieViewModel.eventFlow.collect { event ->
                     when (event) {
                         AdminAddMovieViewModel.UiEvent.Success -> {
+                            navController.previousBackStackEntry
+                                ?.savedStateHandle
+                                ?.set("refresh", true)
+
                             navController.popBackStack()
+
                         }
                     }
                 }

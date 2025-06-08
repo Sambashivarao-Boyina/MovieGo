@@ -254,7 +254,7 @@ fun ShowBookingScreen(
                         }
                     }
                 }
-                if(selectedSeats.isNotEmpty()) {
+                if(selectedSeats.isNotEmpty() && selectedSeats.size == seatSelectionLimit) {
                     if (showDetails != null) {
                         SubmitButton(
                             title = "Pay \u20B9 ${selectedSeats.size * showDetails.ticketCost}",

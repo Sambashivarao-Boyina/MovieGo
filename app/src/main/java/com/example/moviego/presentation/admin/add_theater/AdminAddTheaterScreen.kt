@@ -90,6 +90,9 @@ fun AdminAddTheaterScreen(
 
     LaunchedEffect(isSuccess) {
         if (isSuccess) {
+            navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.set("refresh", true)
             navController.popBackStack()
         }
     }
