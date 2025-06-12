@@ -1,6 +1,5 @@
 package com.example.moviego.domain.model
 
-import com.example.moviego.presentation.admin.add_theater.AdminAddTheaterEvent
 
 data class Theater(
     val _id: String,

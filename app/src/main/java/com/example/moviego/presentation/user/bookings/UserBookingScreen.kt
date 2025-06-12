@@ -1,7 +1,12 @@
 package com.example.moviego.presentation.user.bookings
 
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -27,24 +33,40 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviego.R
 import com.example.moviego.domain.model.BookingDetails
+import com.example.moviego.presentation.admin.shows.AdminShowsEvent
 import com.example.moviego.presentation.components.shimmerEffect
 import com.example.moviego.presentation.navgraph.Route
+import com.example.moviego.ui.theme.Black111
+import com.example.moviego.ui.theme.Black161
 import com.example.moviego.ui.theme.Black1C1
+import com.example.moviego.ui.theme.RedBB0
 import com.example.moviego.ui.theme.RedE31
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import java.util.Locale
 
 @Composable
@@ -54,6 +76,9 @@ fun UserBookingsScreen(
     onEvent:(UserBookingsEvent) -> Unit,
     navController: NavHostController
 ) {
+    val swipeRefreshState = rememberSwipeRefreshState(
+        isRefreshing = isLoading,
+    )
     Scaffold {
         if(isLoading) {
             Column(
@@ -66,17 +91,26 @@ fun UserBookingsScreen(
                 }
             }
         } else {
-            LazyColumn(
-                modifier = Modifier.padding(it).padding(horizontal = 10.dp).fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(13.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(bookingDetails) {
-                    BookingCard(it, onClick = {
-                        navController.navigate(Route.UserBookingDetails.passBookingId(it._id))
-                    })
+            SwipeRefresh(
+                state = swipeRefreshState,
+                onRefresh = {
+                    onEvent(UserBookingsEvent.ReloadData)
+                },
+                modifier = Modifier.fillMaxSize()
+            ){
+                LazyColumn(
+                    modifier = Modifier.padding(it).padding(horizontal = 10.dp).fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(13.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items(bookingDetails) {
+                        BookingCard(it, onClick = {
+                            navController.navigate(Route.UserBookingDetails.passBookingId(it._id))
+                        })
+                    }
                 }
             }
+
         }
     }
 }
@@ -93,7 +127,7 @@ fun BookingCard(bookingDetails: BookingDetails, onClick:()->Unit) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Black1C1)
+                .background(Black161)
                 .padding(10.dp)
         ) {
             Row(
@@ -154,19 +188,24 @@ fun BookingCard(bookingDetails: BookingDetails, onClick:()->Unit) {
             }
             Spacer(modifier = Modifier.height(10.dp))
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(90.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 DataBlock(
+                    icon = R.drawable.calender,
                     title = "Date",
                     data = bookingDetails.show.date
                 )
+                VerticalDivider(Modifier.fillMaxHeight(0.7f))
                 DataBlock(
+                    icon = R.drawable.time,
                     title = "Time",
                     data = bookingDetails.show.showTime
                 )
+                VerticalDivider(Modifier.fillMaxHeight(0.7f))
                 DataBlock(
+                    icon = R.drawable.screen,
                     title = "Screen",
                     data = bookingDetails.show.screen.screenName
                 )
@@ -210,22 +249,19 @@ fun BookingCard(bookingDetails: BookingDetails, onClick:()->Unit) {
 
 @Composable
 fun DataBlock(
+    icon: Int,
     title: String,
     data: String
 ) {
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(10.dp))
-            .border(
-                width = 0.3.dp,
-                color = Color.White,
-                shape = RoundedCornerShape(10.dp)
-            )
             .background(Color.White.copy(alpha = 0.04f))
             .padding(horizontal = 10.dp, vertical = 5.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
+        Icon(painter = painterResource(icon), modifier = Modifier.size(20.dp), tint = RedE31, contentDescription = null)
         Text(text = title, color = Color.Gray)
         Text(text = data, fontWeight = FontWeight.Bold)
     }

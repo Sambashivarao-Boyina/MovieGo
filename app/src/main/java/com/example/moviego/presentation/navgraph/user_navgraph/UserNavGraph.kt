@@ -66,8 +66,10 @@ fun UserNavGraph(
                 location = userHomeViewModel.userLocation,
                 onEvent = userHomeViewModel::onEvent,
                 state = userHomeViewModel.state,
-                selectedFilters = userHomeViewModel.selectedGenres,
-                genres = userHomeViewModel.movieGerners
+                selectedGenres = userHomeViewModel.selectedGenres,
+                genres = userHomeViewModel.movieGerners,
+                selectedLanguage = userHomeViewModel.selectedLanguage,
+                languages = userHomeViewModel.movieLanguages
             )
         }
 

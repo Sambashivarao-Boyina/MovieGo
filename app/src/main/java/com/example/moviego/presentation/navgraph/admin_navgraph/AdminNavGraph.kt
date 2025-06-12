@@ -107,7 +107,7 @@ fun AdminNavGraph(
             )
         }
 
-        composable(route = Route.AdminAddShow.route) {
+        composable(route = Route.AdminAddShow.route) { navBackStackEntry ->
             val adminAddShowViewModel: AdminAddShowViewModel = hiltViewModel()
             if (adminAddShowViewModel.sideEffect != null) {
                 Toast.makeText(
@@ -116,6 +116,10 @@ fun AdminNavGraph(
                     Toast.LENGTH_SHORT
                 ).show()
                 adminAddShowViewModel.onEvent(AdminAddShowEvent.RemoveSideEffect)
+            }
+
+            LaunchedEffect(navBackStackEntry) {
+                adminAddShowViewModel.onEvent(AdminAddShowEvent.ReloadAdminDetails)
             }
 
             AdminAddShowScreen(

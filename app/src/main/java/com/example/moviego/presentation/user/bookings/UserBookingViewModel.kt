@@ -29,6 +29,9 @@ class UserBookingViewModel @Inject constructor(
             UserBookingsEvent.RemoveSideEffect -> {
                 sideEffect = null
             }
+            UserBookingsEvent.ReloadData -> {
+                getBookingsList()
+            }
         }
     }
 
@@ -50,4 +53,5 @@ class UserBookingViewModel @Inject constructor(
 
 sealed class UserBookingsEvent {
     data object RemoveSideEffect: UserBookingsEvent()
+    data object ReloadData: UserBookingsEvent()
 }

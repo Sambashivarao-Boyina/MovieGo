@@ -1,5 +1,6 @@
 package com.example.moviego.presentation.user.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,7 +25,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,22 +44,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.moviego.R
 import com.example.moviego.domain.model.Movie
-import com.example.moviego.presentation.admin.add_theater.AdminAddTheaterEvent
 import com.example.moviego.presentation.admin.add_theater.Root
 import com.example.moviego.presentation.admin.add_theater.readRawResource
-import com.example.moviego.presentation.admin.shows.AdminShowsEvent
 import com.example.moviego.presentation.admin.shows.FilterCard
 import com.example.moviego.presentation.authentication.components.InputBox
-import com.example.moviego.presentation.components.DatePicker
 import com.example.moviego.presentation.components.DropDownItem
 import com.example.moviego.presentation.components.DropDownSelect
 import com.example.moviego.presentation.components.MovieCard
@@ -65,6 +68,7 @@ import com.example.moviego.presentation.components.shimmerEffect
 import com.example.moviego.presentation.navgraph.Route
 import com.example.moviego.ui.theme.Black111
 import com.example.moviego.ui.theme.Black161
+import com.example.moviego.ui.theme.Black1C1
 import com.example.moviego.ui.theme.RedE31
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -78,8 +82,10 @@ fun UserHomeScreen(
     location: String,
     onEvent: (UserHomeEvent) -> Unit,
     state: String,
-    selectedFilters: Set<String>,
-    genres: List<String>
+    selectedGenres: Set<String>,
+    genres: List<String>,
+    selectedLanguage: Set<String>,
+    languages: List<String>
 ) {
     val context = LocalContext.current
 
@@ -107,11 +113,14 @@ fun UserHomeScreen(
     var showFilters by rememberSaveable {
         mutableStateOf(false)
     }
+    var selectedFilterOptionToShow by rememberSaveable {
+        mutableStateOf<FilterOption>(FilterOption.Genre)
+    }
 
 
 
     LaunchedEffect(key1 = location) {
-        if(location == "") {
+        if (location == "") {
             showCitySelectionPopup = true
         } else {
             onEvent(UserHomeEvent.LoadMovies)
@@ -120,7 +129,7 @@ fun UserHomeScreen(
 
     Scaffold(
     ) {
-        if(isLoading) {
+        if (isLoading) {
             Column(
                 modifier = Modifier.padding(it)
             ) {
@@ -131,9 +140,14 @@ fun UserHomeScreen(
                 ) {
                     items(6) {
                         Box(
-                            modifier = Modifier.padding(10.dp).height(300.dp).fillMaxWidth().clip(
-                                RoundedCornerShape(20.dp)
-                            ).shimmerEffect()
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .height(300.dp)
+                                .fillMaxWidth()
+                                .clip(
+                                    RoundedCornerShape(20.dp)
+                                )
+                                .shimmerEffect()
                         )
                     }
                 }
@@ -144,9 +158,12 @@ fun UserHomeScreen(
             ) {
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().clickable {
-                        showCitySelectionPopup = true
-                    }.padding(horizontal = 10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            showCitySelectionPopup = true
+                        }
+                        .padding(horizontal = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -161,11 +178,19 @@ fun UserHomeScreen(
                         )
                         Spacer(Modifier.width(15.dp))
                         Column {
-                            if(location == "") {
+                            if (location == "") {
                                 Text("Set the Location")
                             } else {
-                                Text(location.split(".")[1], style = MaterialTheme.typography.titleLarge, color = RedE31)
-                                Text(location.split(".")[0], style = MaterialTheme.typography.titleSmall, color = Color.Gray)
+                                Text(
+                                    location.split(".")[1],
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = RedE31
+                                )
+                                Text(
+                                    location.split(".")[0],
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = Color.Gray
+                                )
                             }
                         }
                     }
@@ -178,12 +203,14 @@ fun UserHomeScreen(
                     }
                 }
 
-                if(selectedFilters.isNotEmpty()) {
+                if (selectedGenres.isNotEmpty()) {
                     LazyRow(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 5.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp, vertical = 5.dp),
                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
-                        items(selectedFilters.toList()) {
+                        items(selectedGenres.toList()) {
                             FilterCard(
                                 title = it,
                                 onClick = {
@@ -191,9 +218,18 @@ fun UserHomeScreen(
                                 }
                             )
                         }
+
+                        items(selectedLanguage.toList()) {
+                            FilterCard(
+                                title = it,
+                                onClick = {
+                                    onEvent(UserHomeEvent.RemoveLanguageFilter(it))
+                                }
+                            )
+                        }
                     }
                 }
-                if(movies.isEmpty()) {
+                if (movies.isEmpty()) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -218,7 +254,7 @@ fun UserHomeScreen(
                 }
             }
 
-            if(showCitySelectionPopup) {
+            if (showCitySelectionPopup) {
                 ModalBottomSheet(
                     onDismissRequest = {
                         showCitySelectionPopup = false
@@ -260,7 +296,9 @@ fun UserHomeScreen(
                             derivedStateOf {
                                 citiesMap.states.find { s -> s.state == state }
                                     ?.cities
-                                    ?.filter { city -> city.city.lowercase().contains(citySearch.lowercase()) }
+                                    ?.filter { city ->
+                                        city.city.lowercase().contains(citySearch.lowercase())
+                                    }
                             }
                         }
 
@@ -270,20 +308,25 @@ fun UserHomeScreen(
                                 .heightIn(max = 400.dp)
                         ) {
                             filteredCities?.let { list ->
-                                if(list.size > 0) {
+                                if (list.size > 0) {
                                     items(list) { c ->
                                         Text(
                                             text = c.city,
-                                            modifier = Modifier.clickable {
-                                                onEvent(UserHomeEvent.SetNewCity(c.city))
-                                                showCitySelectionPopup = false
-                                            }
+                                            modifier = Modifier
+                                                .clickable {
+                                                    onEvent(UserHomeEvent.SetNewCity(c.city))
+                                                    showCitySelectionPopup = false
+                                                }
                                                 .padding(5.dp)
                                         )
                                     }
                                 } else {
                                     item {
-                                        Text(text = "No Cities Found ", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                                        Text(
+                                            text = "No Cities Found ",
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
                                     }
                                 }
                             }
@@ -296,72 +339,251 @@ fun UserHomeScreen(
             }
 
             if (showFilters) {
-                ModalBottomSheet(
-                    containerColor = Black161,
-                    onDismissRequest = {
+                FiltersModalSheet(
+                    onClose = {
                         showFilters = false
-                    }
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 10.dp)
-                            .padding(bottom = 20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-
-                        Text("Select the Genres")
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(max = 300.dp)
-                        ) {
-                            val genrestoShow: List<String> = genres.filter { genre:String ->
-                                !selectedFilters.contains(genre)
-                            }
-                            items(genrestoShow) { genre ->
-                                Text(
-                                    text = genre,
-                                    modifier = Modifier.clickable {
-                                        onEvent(UserHomeEvent.AddGenreFilter(genre))
-                                        showCitySelectionPopup = false
-                                    }
-                                        .padding(5.dp)
-                                )
-                            }
-                        }
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Button(
-                                onClick = {
-                                    showFilters = false
-                                    onEvent(UserHomeEvent.ClearFilters)
-                                }
-                            ) {
-                                Text(text = "Clear Filters")
-                            }
-                            Spacer(Modifier.width(20.dp))
-                            Button(
-                                colors = ButtonDefaults.buttonColors().copy(
-                                    containerColor = Black111,
-                                    contentColor = Color.White
-                                ),
-                                onClick = {
-                                    showFilters = false
-                                }
-                            ) {
-                                Text(text = "Close")
-                            }
-                        }
-                    }
-                }
+                    },
+                    selectedLanguage = selectedLanguage,
+                    selectedGenres = selectedGenres,
+                    genres = genres,
+                    languages = languages,
+                    onEvent = onEvent,
+                    setOptionLanguage = {
+                        selectedFilterOptionToShow = FilterOption.Language
+                    },
+                    setOptionGenre = {
+                        selectedFilterOptionToShow = FilterOption.Genre
+                    },
+                    selectedFilterOption = selectedFilterOptionToShow
+                )
             }
 
         }
     }
 }
 
+@Composable
+fun FilterItem(
+    title: String,
+    onClick: () -> Unit,
+    isChecked: Boolean
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = isChecked,
+            onCheckedChange = {
+                onClick()
+            }
+        )
+
+        Text(text = title)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FiltersModalSheet(
+    onClose: () -> Unit,
+    genres: List<String>,
+    selectedGenres: Set<String>,
+    onEvent: (UserHomeEvent) -> Unit,
+    selectedLanguage: Set<String>,
+    languages: List<String>,
+    setOptionLanguage: () -> Unit,
+    setOptionGenre: () -> Unit,
+    selectedFilterOption: FilterOption
+) {
+    ModalBottomSheet(
+        containerColor = Black161,
+        onDismissRequest = {
+            onClose()
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp)
+                .padding(bottom = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+
+            Text("Select the Genres")
+
+            Row(
+                modifier = Modifier
+                    .background(Black161)
+                    .heightIn(max = 300.dp)
+                    .fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .background(Color.Black)
+                        .weight(0.4f)
+                        .fillMaxHeight()
+                ) {
+                    Text(
+                        text = "Genre",
+                        color = if (selectedFilterOption == FilterOption.Genre) RedE31 else Color.White,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .leftBorder(
+                                borderColor = if (selectedFilterOption == FilterOption.Genre) RedE31 else Color.Transparent,
+                                borderWidth = 5.dp
+                            )
+                            .clip(RoundedCornerShape(bottomEnd = if (selectedFilterOption == FilterOption.Language) 20.dp else 0.dp))
+                            .background(
+                                color = if (selectedFilterOption == FilterOption.Genre) Color.Black else Black161,
+                            )
+                            .clickable {
+                                setOptionGenre()
+                            }
+                            .padding(horizontal = 10.dp, vertical = 10.dp),
+                        fontSize = 20.sp
+                    )
+                    Text(
+                        text = "Language",
+                        color = if (selectedFilterOption == FilterOption.Language) RedE31 else Color.White,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .leftBorder(
+                                borderColor = if (selectedFilterOption == FilterOption.Language) RedE31 else Color.Transparent,
+                                borderWidth = 5.dp
+                            )
+                            .clip(RoundedCornerShape(topEnd = if (selectedFilterOption == FilterOption.Genre) 20.dp else 0.dp))
+
+                            .background(
+                                color = if (selectedFilterOption == FilterOption.Language) Color.Black else Black161,
+                            )
+                            .clickable {
+                                setOptionLanguage()
+                            }
+                            .padding(horizontal = 10.dp, vertical = 10.dp),
+                        fontSize = 20.sp
+                    )
+
+                    Spacer(
+                        Modifier
+
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(topEnd = if (selectedFilterOption == FilterOption.Language) 20.dp else 0.dp))
+                            .background(Black161)
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = if (selectedFilterOption == FilterOption.Language) 20.dp else 0.dp,
+                                topEnd = 20.dp,
+                                bottomEnd = 20.dp,
+                                bottomStart = 20.dp
+                            )
+                        )
+                        .background(Color.Black)
+
+                ) {
+                    if (selectedFilterOption == FilterOption.Genre) {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                        ) {
+
+                            items(genres) { genre ->
+                                FilterItem(
+                                    title = genre,
+                                    isChecked = selectedGenres.contains(genre),
+                                    onClick = {
+                                        if (selectedGenres.contains(genre)) {
+                                            onEvent(UserHomeEvent.RemoveGenreFilter(genre))
+                                        } else {
+                                            onEvent(UserHomeEvent.AddGenreFilter(genre))
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                        ) {
+
+                            items(languages) { language ->
+                                FilterItem(
+                                    title = language,
+                                    isChecked = selectedLanguage.contains(language),
+                                    onClick = {
+                                        if (selectedLanguage.contains(language)) {
+                                            onEvent(UserHomeEvent.RemoveLanguageFilter(language))
+                                        } else {
+                                            onEvent(UserHomeEvent.AddLanguageFilter(language))
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                }
+            }
+
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    onClick = {
+                        onClose()
+                        onEvent(UserHomeEvent.ClearFilters)
+                    }
+                ) {
+                    Text(text = "Clear Filters")
+                }
+                Spacer(Modifier.width(20.dp))
+                Button(
+                    colors = ButtonDefaults.buttonColors().copy(
+                        containerColor = Black111,
+                        contentColor = Color.White
+                    ),
+                    onClick = {
+                        onClose()
+                    }
+                ) {
+                    Text(text = "Close")
+                }
+            }
+        }
+    }
+}
+
+
+enum class FilterOption {
+    Genre,
+    Language
+}
+
+fun Modifier.leftBorder(borderWidth: Dp, borderColor: Color): Modifier = this.then(
+    Modifier.drawBehind {
+        drawLine(
+            color = borderColor,
+            start = Offset(0f, 0f),
+            end = Offset(0f, size.height),
+            strokeWidth = borderWidth.toPx()
+        )
+    }
+)

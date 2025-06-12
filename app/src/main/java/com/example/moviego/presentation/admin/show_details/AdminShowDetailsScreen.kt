@@ -8,9 +8,7 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.os.Environment
-import android.view.View
-import android.widget.FrameLayout
-import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,20 +31,27 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,47 +60,39 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.moviego.R
 import com.example.moviego.domain.model.Booking
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.model.Screen
+import com.example.moviego.domain.model.Seat
 import com.example.moviego.domain.model.ShowDetails
 import com.example.moviego.domain.model.Theater
-import com.example.moviego.presentation.admin.components.AccentRed
-import com.example.moviego.presentation.admin.components.BorderDark
-import com.example.moviego.presentation.admin.components.DarkComponent
-import com.example.moviego.presentation.admin.components.DarkSurface
-import com.example.moviego.presentation.admin.components.ProcessingYellow
-import com.example.moviego.presentation.admin.components.SeatComponent
-import com.example.moviego.presentation.admin.components.TextPrimary
-import com.example.moviego.presentation.admin.components.TextSecondary
 import com.example.moviego.presentation.admin.components.TopBar
 import com.example.moviego.presentation.components.shimmerEffect
 import com.example.moviego.presentation.user.payment_confirmation.BookingListScreen
-import com.example.moviego.ui.theme.Black111
 import com.example.moviego.ui.theme.Black161
 import com.example.moviego.ui.theme.RedE31
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -235,8 +232,8 @@ fun AdminShowDetailsScreen(
                             // Booking Status
                             item {
                                 BookingStatus(
-                                    bookedCount = showDetails.bookedSeatsCount,
-                                    totalSeats = showDetails.seats.size
+                                    totalSeats = showDetails.seats.size,
+                                    bookedCount = showDetails.bookedSeatsCount
                                 )
                             }
 
@@ -248,59 +245,11 @@ fun AdminShowDetailsScreen(
 
 
                             item {
-                                Spacer(Modifier.height(50.dp))
-                                Canvas(modifier = Modifier.size(800.dp, 10.dp)) {
-                                    val width = size.width
-                                    val height = size.height
+                                TheaterScreen()
+                            }
 
-                                    drawPath(
-                                        path = Path().apply {
-                                            moveTo(0f, height)
-                                            quadraticTo(
-                                                width / 2,
-                                                -height,
-                                                width,
-                                                height
-                                            ) // Control point to create curve
-                                            lineTo(width, height)
-                                            lineTo(0f, height)
-                                            close()
-                                        },
-                                        color = RedE31
-                                    )
-                                }
-                                Spacer(Modifier.height(50.dp))
-
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize() // Vertical scrolling
-                                        .horizontalScroll(rememberScrollState()) // Horizontal scrolling
-                                ) {
-                                    // Split seats into rows of 20
-                                    showDetails.seats.chunked(20)
-                                        .forEachIndexed { rowIndex, rowSeats ->
-                                            Row(
-                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                // Display the alphabet for the row (A, B, C, etc.)
-                                                Text(
-                                                    text = (rowIndex + 65).toChar()
-                                                        .toString(), // Convert index to alphabet (A, B, C, ...)
-                                                    modifier = Modifier.width(32.dp),
-                                                    style = MaterialTheme.typography.titleMedium,
-                                                    color = RedE31
-                                                )
-
-                                                rowSeats.forEachIndexed { columnIndex, seat ->
-                                                    if (columnIndex == 10) {
-                                                        Spacer(modifier = Modifier.width(42.dp)) // Gap between column 10 and 11
-                                                    }
-                                                    SeatComponent(seat) // Call your custom Seat component
-                                                }
-                                            }
-                                        }
-                                }
+                            item {
+                                SeatMap(seats = showDetails.seats)
                             }
 
                             item {
@@ -374,240 +323,288 @@ fun AdminShowDetailsScreen(
 
 
         if (updatingShowStatus) {
-            Dialog(
-                onDismissRequest = {
-
-                },
-
-                ) {
-                Column(
-                    modifier = Modifier
-                        .height(150.dp)
-                        .width(300.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Black111),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CircularProgressIndicator()
-                    Spacer(Modifier.height(10.dp))
-                    Text(text = "Updating Status Please wait")
-                }
-            }
+            LoadingDialog()
         }
     }
 }
 
 
+
 @Composable
-fun MovieInfoHeader(movie: Movie, ticketCost: Int, status: String) {
+private fun MovieInfoHeader(movie: Movie, ticketCost: Int, status: String) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(8.dp)
-            .border(
-                width = 1.dp,
-                color = BorderDark,
-                shape = RoundedCornerShape(8.dp)
-            ),
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = DarkSurface
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
         ),
-        shape = RoundedCornerShape(8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        shape = RoundedCornerShape(20.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Movie Poster
-            AsyncImage(
-                model = movie.Poster,
-                contentDescription = "${movie.Title} Poster",
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(150.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .border(
-                        width = 1.dp,
-                        color = AccentRed,
-                        shape = RoundedCornerShape(8.dp)
-                    ),
-                contentScale = ContentScale.Crop
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Movie Details
-            Column(modifier = Modifier.weight(1f)) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                    Text(
-                        text = status.uppercase(), modifier = Modifier
-                            .clip(RoundedCornerShape(30.dp))
-                            .background(
-                                RedE31
+        Column {
+            Box {
+                // Background gradient
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                                    MaterialTheme.colorScheme.surface
+                                )
                             )
-                            .padding(
-                                horizontal = 10.dp,
-                                vertical = 5.dp
-                            ),
-                        fontWeight = FontWeight.Bold
+                        )
+                )
+
+                Row(
+                    modifier = Modifier.padding(24.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Enhanced Movie Poster
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        shadowElevation = 8.dp
+                    ) {
+                        AsyncImage(
+                            model = movie.Poster,
+                            contentDescription = "${movie.Title} Poster",
+                            modifier = Modifier
+                                .width(120.dp)
+                                .height(160.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(20.dp))
+
+                    // Movie Details
+                    Column(modifier = Modifier.weight(1f)) {
+                        // Status Badge
+                        Surface(
+                            shape = RoundedCornerShape(20.dp),
+                            color = when (status.lowercase()) {
+                                "open" -> Color(0xFF4CAF50)
+                                "closed" -> Color(0xFFE53E3E)
+                                else -> MaterialTheme.colorScheme.primary
+                            }
+                        ) {
+                            Text(
+                                text = status.uppercase(),
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                                color = Color.White,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.5.sp
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Text(
+                            text = movie.Title,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        MovieInfoRow(
+                            icon = R.drawable.time,
+                            label = "Duration",
+                            value = "${movie.Runtime}"
+                        )
+
+                        MovieInfoRow(
+                            icon = R.drawable.language,
+                            label = "Language",
+                            value = movie.Language
+                        )
+
+                        MovieInfoRow(
+                            icon = R.drawable.rupee,
+                            label = "Ticket Cost",
+                            value = "₹$ticketCost"
+                        )
+                    }
+                }
+            }
+
+            // IMDB Rating and Genre
+            if (movie.imdbRating.isNotEmpty() && movie.imdbRating != "N/A") {
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = Color(0xFFFFC107),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = movie.imdbRating,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "/10 IMDB",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    Text(
+                        text = movie.Genre,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
-                Text(
-                    text = movie.Title,
-                    color = TextPrimary,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Duration: ${movie.Runtime} minutes",
-                    color = TextSecondary,
-                    fontSize = 14.sp
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "Language: ${movie.Language}",
-                    color = TextSecondary,
-                    fontSize = 14.sp
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "Ticket Cost: ₹$ticketCost",
-                    color = TextSecondary,
-                    fontSize = 14.sp
-                )
             }
         }
     }
 }
 
 @Composable
-fun TheaterShowInfo(theater: Theater, screen: Screen, date: String, showTime: String) {
+private fun MovieInfoRow(icon: Int, label: String, value: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 2.dp)
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = null,
+            modifier = Modifier.size(16.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = "$label: ",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
+@Composable
+private fun TheaterShowInfo(theater: Theater, screen: Screen, date: String, showTime: String) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(8.dp)
-            .border(
-                width = 1.dp,
-                color = BorderDark,
-                shape = RoundedCornerShape(8.dp)
-            ),
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = DarkSurface
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
         ),
-        shape = RoundedCornerShape(8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier = Modifier.padding(20.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Theater Info
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = theater.name,
-                        color = TextPrimary,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = theater.address,
-                        color = TextSecondary,
-                        fontSize = 14.sp
-                    )
-
-                    Spacer(modifier = Modifier.height(2.dp))
-
-                    Text(
-                        text = "${theater.city}, ${theater.state} - ${theater.pincode}",
-                        color = TextSecondary,
-                        fontSize = 14.sp
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = "Screen: ${screen.screenName} (${screen.screenType}, ${screen.soundType})",
-                        color = TextSecondary,
-                        fontSize = 14.sp
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                // Show Timing
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(
-                        text = "Date: $date",
-                        color = TextSecondary,
-                        fontSize = 14.sp
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = "Time: $showTime",
-                        color = TextSecondary,
-                        fontSize = 14.sp
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = "Contact: ${theater.contactNumber}",
-                        color = TextSecondary,
-                        fontSize = 14.sp
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "Theater Information",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Theater Details
+            TheaterInfoItem(
+                label = "Theater",
+                value = theater.name,
+                icon = R.drawable.theater_icon
+            )
+
+            TheaterInfoItem(
+                label = "Address",
+                value = "${theater.address}, ${theater.city}, ${theater.state} - ${theater.pincode}",
+                icon = R.drawable.location
+            )
+
+            TheaterInfoItem(
+                label = "Screen",
+                value = "${screen.screenName} (${screen.screenType}, ${screen.soundType})",
+                icon = R.drawable.screen
+            )
+
+            TheaterInfoItem(
+                label = "Date & Time",
+                value = "$date at $showTime",
+                icon = R.drawable.calender
+            )
+
+            TheaterInfoItem(
+                label = "Contact",
+                value = theater.contactNumber,
+                icon = R.drawable.phone
+            )
         }
     }
 }
 
 @Composable
-fun BookingStatus(bookedCount: Int, totalSeats: Int) {
-    Card(
+private fun TheaterInfoItem(label: String, value: String, icon: Int) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(4.dp)
-            .border(
-                width = 2.dp,
-                color = AccentRed,
-                shape = RoundedCornerShape(8.dp)
-            ),
-        colors = CardDefaults.cardColors(
-            containerColor = DarkComponent
-        ),
-        shape = RoundedCornerShape(8.dp)
+            .padding(vertical = 6.dp),
+        verticalAlignment = Alignment.Top
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+            modifier = Modifier.size(32.dp)
         ) {
+            Icon(
+                painter = painterResource(icon),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(16.dp)
+                    .padding(8.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Booking Status: $bookedCount seats booked out of $totalSeats seats",
-                color = TextPrimary,
-                fontSize = 16.sp,
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -615,37 +612,306 @@ fun BookingStatus(bookedCount: Int, totalSeats: Int) {
 }
 
 @Composable
-fun SeatLegend() {
-    Row(
+private fun BookingStatus(bookedCount: Int, totalSeats: Int) {
+    val progressPercentage = (bookedCount.toFloat() / totalSeats.toFloat())
+
+    Card(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(16.dp)
     ) {
-        LegendItem(color = DarkComponent, borderColor = BorderDark, text = "Available")
-        LegendItem(color = AccentRed, borderColor = AccentRed, text = "Booked")
-        LegendItem(color = ProcessingYellow, borderColor = ProcessingYellow, text = "Processing")
+        Column(
+            modifier = Modifier.padding(20.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Booking Progress",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "${(progressPercentage * 100).toInt()}%",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            LinearProgressIndicator(
+                progress = progressPercentage,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp)),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        text = "$bookedCount",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "Booked",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "${totalSeats - bookedCount}",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "Available",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
     }
 }
 
 @Composable
-fun LegendItem(color: Color, borderColor: Color, text: String) {
+private fun SeatLegend() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LegendItem(
+                color = MaterialTheme.colorScheme.surface,
+                borderColor = MaterialTheme.colorScheme.outline,
+                text = "Available"
+            )
+            LegendItem(
+                color = Color(0xFFE53E3E),
+                borderColor = Color(0xFFE53E3E),
+                text = "Booked"
+            )
+            LegendItem(
+                color = Color(0xFFFF9800),
+                borderColor = Color(0xFFFF9800),
+                text = "Processing"
+            )
+        }
+    }
+}
+
+@Composable
+private fun LegendItem(color: Color, borderColor: Color, text: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .size(20.dp)
-                .background(color, RoundedCornerShape(4.dp))
-                .border(1.dp, borderColor, RoundedCornerShape(4.dp))
-        )
+        Surface(
+            modifier = Modifier.size(24.dp),
+            shape = RoundedCornerShape(6.dp),
+            color = color,
+            border = BorderStroke(2.dp, borderColor)
+        ) {}
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        Text(text = text, color = TextSecondary, fontSize = 14.sp)
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
+@Composable
+private fun TheaterScreen() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "SCREEN",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            letterSpacing = 2.sp
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(12.dp)
+        ) {
+            val width = size.width
+            val height = size.height
+
+            drawPath(
+                path = Path().apply {
+                    moveTo(width * 0.1f, height)
+                    quadraticTo(
+                        width / 2,
+                        -height * 2,
+                        width * 0.9f,
+                        height
+                    )
+                    lineTo(width * 0.9f, height)
+                    lineTo(width * 0.1f, height)
+                    close()
+                },
+                color = Color(0xFFE53E3E)
+            )
+        }
+    }
+}
+
+@Composable
+private fun SeatMap(seats: List<Seat>) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        seats.chunked(20).forEachIndexed { rowIndex, rowSeats ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(vertical = 4.dp)
+            ) {
+                // Row Label
+                Surface(
+                    modifier = Modifier.size(32.dp),
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surface
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(
+                            text = (rowIndex + 65).toChar().toString(),
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                rowSeats.forEachIndexed { columnIndex, seat ->
+                    if (columnIndex == 10) {
+                        Spacer(modifier = Modifier.width(32.dp))
+                    }
+                    SeatComponent(seat)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SeatComponent(seat: Seat) {
+    val seatColor = when (seat.status.lowercase()) {
+        "booked" -> Color(0xFFE53E3E)
+        "processing" -> Color(0xFFFF9800)
+        else -> MaterialTheme.colorScheme.surface
+    }
+
+    val borderColor = when (seat.status.lowercase()) {
+        "booked" -> Color(0xFFE53E3E)
+        "processing" -> Color(0xFFFF9800)
+        else -> MaterialTheme.colorScheme.outline
+    }
+
+    Surface(
+        modifier = Modifier.size(28.dp),
+        shape = RoundedCornerShape(6.dp),
+        color = seatColor,
+        border = BorderStroke(1.5.dp, borderColor),
+        shadowElevation = if (seat.status != "available") 2.dp else 0.dp
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            if (seat.status == "Booked") {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(16.dp)
+                )
+            } else {
+                Text(text = seat.seatCode, fontSize = 10.sp)
+            }
+        }
     }
 }
 
 
+@Composable
+private fun LoadingDialog() {
+    Dialog(onDismissRequest = {}) {
+        Card(
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(32.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(48.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 4.dp
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Updating Status",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Medium
+                )
+
+                Text(
+                    text = "Please wait...",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
 enum class Option {
     Details,
     Bookings

@@ -1,14 +1,10 @@
 package com.example.moviego.presentation.user.home
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.setValue
-import androidx.datastore.dataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.moviego.domain.manager.LocalUserManager
 import com.example.moviego.domain.model.Movie
 import com.example.moviego.domain.usecases.user_usecases.UserUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,33 +36,14 @@ class UserHomeViewModel @Inject constructor(
     var selectedGenres by mutableStateOf(setOf<String>())
         private set
 
-    var movieGerners = listOf(
-        "Action",
-        "Adventure",
-        "Comedy",
-        "Drama",
-        "Romance",
-        "Horror",
-        "Thriller",
-        "Mystery",
-        "Sci-Fi",
-        "Fantasy",
-        "Animation",
-        "Family",
-        "Musical",
-        "Biography",
-        "Historical",
-        "Crime",
-        "Documentary",
-        "War",
-        "Western",
-        "Sport",
-        "Psychological",
-        "Tragedy",
-        "Superhero",
-        "Experimental",
-        "Short Film"
-    )
+    var selectedLanguage by mutableStateOf(setOf<String>())
+        private set
+
+    var movieGerners by mutableStateOf<List<String>>(emptyList())
+        private set
+
+    var movieLanguages by mutableStateOf<List<String>>(emptyList())
+        private set
 
 
 
@@ -102,6 +79,15 @@ class UserHomeViewModel @Inject constructor(
                 selectedGenres = emptySet()
                 applyFilters()
             }
+
+            is UserHomeEvent.AddLanguageFilter -> {
+                selectedLanguage = selectedGenres + event.language
+                applyFilters()
+            }
+            is UserHomeEvent.RemoveLanguageFilter -> {
+                selectedLanguage = selectedGenres - event.language
+                applyFilters()
+            }
         }
     }
 
@@ -122,6 +108,7 @@ class UserHomeViewModel @Inject constructor(
             } else {
                 sideEffect = result.exceptionOrNull()?.message
             }
+            extractFilterOptions()
             applyFilters()
         }
         isLoading = false
@@ -152,16 +139,31 @@ class UserHomeViewModel @Inject constructor(
 
 
     private fun applyFilters() {
-        if (selectedGenres.isNotEmpty()) {
+        if (selectedGenres.isNotEmpty() || selectedLanguage.isNotEmpty()) {
             movies.value = allMovies.value.filter { movie ->
-                movie.Genre.split(",").any { genre ->
+                val genre = if(selectedGenres.size > 0) movie.Genre.split(",").any { genre ->
                     selectedGenres.contains(genre.trim())
-                }
+                } else true
+                val language = if(selectedLanguage.size > 0) selectedLanguage.contains(movie.Language) else true
+
+                genre && language
             }
+
         } else {
             movies.value = allMovies.value
         }
 
+    }
+
+    private fun extractFilterOptions() {
+        var genreSet:MutableSet<String> = mutableSetOf()
+        var languageSet:MutableSet<String> = mutableSetOf()
+        for( movie in allMovies.value) {
+            genreSet.addAll(movie.Genre.split(","))
+            languageSet.add(movie.Language)
+        }
+        movieGerners = genreSet.toList().sorted().map { it.trim() }
+        movieLanguages = languageSet.toList().sorted().map { it.trim() }
     }
 }
 
@@ -173,5 +175,7 @@ sealed class UserHomeEvent {
     data object LoadMovies: UserHomeEvent()
     data class AddGenreFilter(var genre: String): UserHomeEvent()
     data class RemoveGenreFilter(var genre: String): UserHomeEvent()
+    data class AddLanguageFilter(var language: String): UserHomeEvent()
+    data class RemoveLanguageFilter(var language: String): UserHomeEvent()
     data object ClearFilters: UserHomeEvent()
 }

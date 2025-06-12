@@ -2,6 +2,7 @@ package com.example.moviego.presentation.admin.shows
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -286,8 +287,10 @@ fun FilterCard(
 ) {
     Row(
         modifier = Modifier
-            .clip(
-                RoundedCornerShape(20.dp)
+            .border(
+                width = 2.dp,
+                color = Color.White,
+                shape = RoundedCornerShape(15.dp)
             )
             .background(Black161)
             .padding(start = 20.dp),

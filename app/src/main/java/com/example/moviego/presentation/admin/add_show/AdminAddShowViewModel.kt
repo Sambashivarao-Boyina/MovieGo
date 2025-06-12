@@ -79,6 +79,10 @@ class AdminAddShowViewModel @Inject constructor(
             AdminAddShowEvent.RemoveNewShowCreated -> {
                 isCreatedNewShow = false
             }
+            AdminAddShowEvent.ReloadAdminDetails -> {
+                getAllTheaters()
+                getAllMovies()
+            }
         }
     }
     
@@ -183,4 +187,5 @@ sealed class AdminAddShowEvent {
     data class UpdateShowTime(val showTime:String): AdminAddShowEvent()
     data object AddShowSubmit: AdminAddShowEvent()
     data object RemoveNewShowCreated: AdminAddShowEvent()
+    data object ReloadAdminDetails: AdminAddShowEvent()
 }
