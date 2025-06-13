@@ -54,7 +54,6 @@ MovieGo is a movie ticket booking application built with **Jetpack Compose** and
 ## 🧪 Libraries & APIs Used
 
 - **Retrofit + KotlinX Serialization** – API communication
-- **Room** – Local storage (if used)
 - **Coil** – Image loading
 - **OMDb API** – Movie metadata
 - **Razorpay SDK** – Payment gateway
